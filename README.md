@@ -1,2 +1,2 @@
-# looking_glass
-House Addressable's iOS application
+# Addressable. iOS Application
+House's Addressable's iOS application
