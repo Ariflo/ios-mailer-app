@@ -16,7 +16,6 @@
 		B370BC542576C3D30066624A /* SignInAddressableWithApple.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370BC532576C3D30066624A /* SignInAddressableWithApple.swift */; };
 		B370BC652576CA800066624A /* SignInWithAppleDelegates.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370BC642576CA800066624A /* SignInWithAppleDelegates.swift */; };
 		B370BC872576DE9F0066624A /* UserAndPassword.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370BC862576DE9F0066624A /* UserAndPassword.swift */; };
-		B370BC9A2576E3FE0066624A /* Assests.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B370BC992576E3FE0066624A /* Assests.xcassets */; };
 		B3DB527F257992F8004196A6 /* MailingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB527E257992F8004196A6 /* MailingsView.swift */; };
 		B3DB52872579A84B004196A6 /* Mailing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB52862579A84B004196A6 /* Mailing.swift */; };
 /* End PBXBuildFile section */
@@ -55,7 +54,6 @@
 		B370BC532576C3D30066624A /* SignInAddressableWithApple.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInAddressableWithApple.swift; sourceTree = "<group>"; };
 		B370BC642576CA800066624A /* SignInWithAppleDelegates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInWithAppleDelegates.swift; sourceTree = "<group>"; };
 		B370BC862576DE9F0066624A /* UserAndPassword.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAndPassword.swift; sourceTree = "<group>"; };
-		B370BC992576E3FE0066624A /* Assests.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assests.xcassets; sourceTree = "<group>"; };
 		B3DB527E257992F8004196A6 /* MailingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsView.swift; sourceTree = "<group>"; };
 		B3DB52862579A84B004196A6 /* Mailing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailing.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -108,19 +106,13 @@
 		B370BC152576BAC10066624A /* Addressable */ = {
 			isa = PBXGroup;
 			children = (
-				B370BC712576CF5D0066624A /* SignInCredentials */,
-				B370BC4C2576C2860066624A /* Addressable.entitlements */,
 				B370BC162576BAC10066624A /* AddressableApp.swift */,
-				B370BC182576BAC10066624A /* ContentView.swift */,
+				CA3CE7F6259BBA1900A230E1 /* Models */,
+				B370BC712576CF5D0066624A /* Views */,
 				B370BC1A2576BAC10066624A /* Assets.xcassets */,
+				B370BC4C2576C2860066624A /* Addressable.entitlements */,
 				B370BC1F2576BAC10066624A /* Info.plist */,
 				B370BC1C2576BAC10066624A /* Preview Content */,
-				B370BC532576C3D30066624A /* SignInAddressableWithApple.swift */,
-				B370BC642576CA800066624A /* SignInWithAppleDelegates.swift */,
-				B370BC862576DE9F0066624A /* UserAndPassword.swift */,
-				B3DB527E257992F8004196A6 /* MailingsView.swift */,
-				B3DB52862579A84B004196A6 /* Mailing.swift */,
-				B370BC992576E3FE0066624A /* Assests.xcassets */,
 			);
 			path = Addressable;
 			sourceTree = "<group>";
@@ -151,11 +143,24 @@
 			path = AddressableUITests;
 			sourceTree = "<group>";
 		};
-		B370BC712576CF5D0066624A /* SignInCredentials */ = {
+		B370BC712576CF5D0066624A /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B370BC182576BAC10066624A /* ContentView.swift */,
+				B3DB527E257992F8004196A6 /* MailingsView.swift */,
+				B370BC862576DE9F0066624A /* UserAndPassword.swift */,
 			);
-			path = SignInCredentials;
+			path = Views;
+			sourceTree = "<group>";
+		};
+		CA3CE7F6259BBA1900A230E1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B370BC532576C3D30066624A /* SignInAddressableWithApple.swift */,
+				B370BC642576CA800066624A /* SignInWithAppleDelegates.swift */,
+				B3DB52862579A84B004196A6 /* Mailing.swift */,
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -168,6 +173,7 @@
 				B370BC0F2576BAC10066624A /* Sources */,
 				B370BC102576BAC10066624A /* Frameworks */,
 				B370BC112576BAC10066624A /* Resources */,
+				CA3CE7EB259BB30500A230E1 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -262,7 +268,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				B370BC1E2576BAC10066624A /* Preview Assets.xcassets in Resources */,
-				B370BC9A2576E3FE0066624A /* Assests.xcassets in Resources */,
 				B370BC1B2576BAC10066624A /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -282,6 +287,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		CA3CE7EB259BB30500A230E1 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		B370BC0F2576BAC10066624A /* Sources */ = {
