@@ -1,37 +1,27 @@
 //
-//  MailingsView.swift
+//  SignInViewModel.swift
 //  Addressable
 //
-//  Created by Arian Flores on 12/3/20.
+//  Created by Ari on 12/29/20.
 //
 
 import SwiftUI
 
-struct MailingsView: View {
-    @State private var mailingItems: [MailingMailing] = []
+struct MailingsListViewModel {
+    func getMailings() -> [MailingMailing]? {
+        var listData: [MailingMailing] = []
 
-    var body: some View {
-        VStack {
-            Text("Addressable Mailings").font(.title)
-            Spacer()
-
-            List(mailingItems) { mailing in
-                Text(mailing.name)
-            }
-            Spacer()
-        }.navigationBarHidden(true).onAppear { getMailings() }
-    }
-
-    func getMailings() {
-        guard let url = URL(string: "http://localhost:3000/api/v1/mailings") else {
-            return
+        guard let url = URL(string: "\(baseUrl())/mailings") else {
+            return nil
         }
 
         var request = URLRequest(url: url)
 
-        request.setValue("application/json", forHTTPHeaderField: "ContentType")
-        request.setValue("ari+123@addressable.app", forHTTPHeaderField: "X-User-Email")
-        request.setValue("9BhZZxj87iZCriJtbUVgkz2n", forHTTPHeaderField: "X-User-Token")
+        if let authToken = KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] {
+            request.setValue("Basic \(authToken)", forHTTPHeaderField: "Authorization")
+        } else {
+            return nil
+        }
 
 
         URLSession.shared.dataTask(with: request) { data, response, error in
@@ -60,19 +50,14 @@ struct MailingsView: View {
 
             print("THIS IS THE RESPONSE ->", response)
             // Update mailing items on main thread
+
             DispatchQueue.main.async {
-                mailingItems = response.mailings.reduce(into: []) { mailings, mailingElement in
+                listData = response.mailings.reduce(into: []) { mailings, mailingElement in
                     mailings.append(mailingElement.mailing)
                 }
             }
         }.resume()
-    }
-}
 
-struct MailingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            MailingsView()
-        }
+        return listData
     }
 }
