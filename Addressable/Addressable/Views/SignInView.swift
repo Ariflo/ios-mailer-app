@@ -51,7 +51,7 @@ struct SignInView: View {
                 }
             }
 
-            NavigationLink(destination: MailingsListView(), tag: 1, selection: $successfullyLoggedin) {
+            NavigationLink(destination: AppView(), tag: 1, selection: $successfullyLoggedin) {
                 Button(action: {
                     let ws = CharacterSet.whitespacesAndNewlines
 

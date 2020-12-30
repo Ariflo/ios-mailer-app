@@ -9,7 +9,7 @@ import Foundation
 let USER_BASIC_AUTH_TOKEN = "userBasicAuthToken"
 
 open class KeyChainServiceUtil {
-    open var loggingEnabled = false
+    open var loggingEnabled = true
 
     private init() {}
     public static let shared = KeyChainServiceUtil()

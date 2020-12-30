@@ -7,7 +7,7 @@
 
 import Foundation
 
-func baseUrl() -> String {
+func getBaseUrl() -> String {
     #if DEBUG
     return "http://localhost:3000/api/v1"
     #elseif PRODUCTION
