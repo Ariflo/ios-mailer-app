@@ -15,13 +15,14 @@
 		B370BC872576DE9F0066624A /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370BC862576DE9F0066624A /* SignInView.swift */; };
 		B3DB527F257992F8004196A6 /* MailingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB527E257992F8004196A6 /* MailingsView.swift */; };
 		B3DB52872579A84B004196A6 /* Mailing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB52862579A84B004196A6 /* Mailing.swift */; };
-		CA3CE817259BC38500A230E1 /* MailingsListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3CE816259BC38500A230E1 /* MailingsListViewModel.swift */; };
-		CA3CE837259BCC4F00A230E1 /* UrlUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3CE836259BCC4F00A230E1 /* UrlUtil.swift */; };
+		CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */; };
 		CAC8B086259BE6D400D4447F /* KeychainServiceUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */; };
 		CAC8B0A0259CFBC800D4447F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B09F259CFBC800D4447F /* AppView.swift */; };
 		CAC8B0AB259D017E00D4447F /* CallsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0AA259D017E00D4447F /* CallsView.swift */; };
 		CAC8B0B0259D01C300D4447F /* MessagesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0AF259D01C300D4447F /* MessagesView.swift */; };
 		CAC8B0BD259D020500D4447F /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0BC259D020500D4447F /* ProfileView.swift */; };
+		CAC8B0D5259D347F00D4447F /* JsonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0D4259D347F00D4447F /* JsonUtil.swift */; };
+		CAC8B0DD259D36AF00D4447F /* AddressableDataFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0DC259D36AF00D4447F /* AddressableDataFetcher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,15 +58,16 @@
 		B370BC862576DE9F0066624A /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		B3DB527E257992F8004196A6 /* MailingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsView.swift; sourceTree = "<group>"; };
 		B3DB52862579A84B004196A6 /* Mailing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailing.swift; sourceTree = "<group>"; };
-		CA3CE816259BC38500A230E1 /* MailingsListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsListViewModel.swift; sourceTree = "<group>"; };
+		CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsViewModel.swift; sourceTree = "<group>"; };
 		CA3CE821259BC9E000A230E1 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
 		CA3CE822259BC9FA00A230E1 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
-		CA3CE836259BCC4F00A230E1 /* UrlUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UrlUtil.swift; sourceTree = "<group>"; };
 		CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceUtil.swift; sourceTree = "<group>"; };
 		CAC8B09F259CFBC800D4447F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		CAC8B0AA259D017E00D4447F /* CallsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallsView.swift; sourceTree = "<group>"; };
 		CAC8B0AF259D01C300D4447F /* MessagesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesView.swift; sourceTree = "<group>"; };
 		CAC8B0BC259D020500D4447F /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		CAC8B0D4259D347F00D4447F /* JsonUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonUtil.swift; sourceTree = "<group>"; };
+		CAC8B0DC259D36AF00D4447F /* AddressableDataFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressableDataFetcher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,7 +124,7 @@
 				CA3CE7F6259BBA1900A230E1 /* Models */,
 				B370BC712576CF5D0066624A /* Views */,
 				CA3CE815259BC35E00A230E1 /* ViewModels */,
-				CA3CE835259BCC2800A230E1 /* Utils */,
+				CA3CE835259BCC2800A230E1 /* Utilities */,
 				B370BC1A2576BAC10066624A /* Assets.xcassets */,
 				B370BC4C2576C2860066624A /* Addressable.entitlements */,
 				B370BC1F2576BAC10066624A /* Info.plist */,
@@ -174,6 +176,7 @@
 			isa = PBXGroup;
 			children = (
 				B3DB52862579A84B004196A6 /* Mailing.swift */,
+				CAC8B0DC259D36AF00D4447F /* AddressableDataFetcher.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -181,7 +184,7 @@
 		CA3CE815259BC35E00A230E1 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
-				CA3CE816259BC38500A230E1 /* MailingsListViewModel.swift */,
+				CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -202,13 +205,13 @@
 			path = Production;
 			sourceTree = "<group>";
 		};
-		CA3CE835259BCC2800A230E1 /* Utils */ = {
+		CA3CE835259BCC2800A230E1 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				CA3CE836259BCC4F00A230E1 /* UrlUtil.swift */,
 				CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */,
+				CAC8B0D4259D347F00D4447F /* JsonUtil.swift */,
 			);
-			path = Utils;
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -341,13 +344,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAC8B086259BE6D400D4447F /* KeychainServiceUtil.swift in Sources */,
+				CAC8B0D5259D347F00D4447F /* JsonUtil.swift in Sources */,
+				CAC8B0DD259D36AF00D4447F /* AddressableDataFetcher.swift in Sources */,
 				CAC8B0A0259CFBC800D4447F /* AppView.swift in Sources */,
 				B3DB527F257992F8004196A6 /* MailingsView.swift in Sources */,
-				CA3CE817259BC38500A230E1 /* MailingsListViewModel.swift in Sources */,
+				CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */,
 				B3DB52872579A84B004196A6 /* Mailing.swift in Sources */,
 				CAC8B0AB259D017E00D4447F /* CallsView.swift in Sources */,
 				CAC8B0B0259D01C300D4447F /* MessagesView.swift in Sources */,
-				CA3CE837259BCC4F00A230E1 /* UrlUtil.swift in Sources */,
 				CAC8B0BD259D020500D4447F /* ProfileView.swift in Sources */,
 				B370BC872576DE9F0066624A /* SignInView.swift in Sources */,
 				B370BC172576BAC10066624A /* AddressableApp.swift in Sources */,

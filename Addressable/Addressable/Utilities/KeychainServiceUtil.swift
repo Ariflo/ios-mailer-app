@@ -9,7 +9,7 @@ import Foundation
 let USER_BASIC_AUTH_TOKEN = "userBasicAuthToken"
 
 open class KeyChainServiceUtil {
-    open var loggingEnabled = true
+    open var loggingEnabled = false
 
     private init() {}
     public static let shared = KeyChainServiceUtil()
@@ -58,7 +58,6 @@ open class KeyChainServiceUtil {
             let resultsData = resultsDict.value(forKey: kSecValueData as String) as? Data,
             status == noErr
         else {
-            logPrint("Load status: ", status)
             return nil
         }
         return String(data: resultsData, encoding: .utf8)

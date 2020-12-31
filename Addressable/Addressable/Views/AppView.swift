@@ -12,12 +12,14 @@ struct AppView: View {
         /// User Authenticaton Check
         if KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] != nil {
             TabView {
-                MailingsView()
-                    .navigationBarHidden(true)
-                    .tabItem {
-                        Image(systemName: "mail")
-                        Text("Mailings")
-                    }
+                MailingsView(
+                    viewModel: MailingsViewModel(addressableDataFetcher: AddressableDataFetcher())
+                )
+                .navigationBarHidden(true)
+                .tabItem {
+                    Image(systemName: "mail")
+                    Text("Mailings")
+                }
                 CallsView()
                     .navigationBarHidden(true)
                     .tabItem {

@@ -12,10 +12,10 @@ struct MailingsResponse: Codable {
 }
 
 struct MailingElement: Codable {
-    let mailing: MailingMailing
+    let mailing: AddressableMailing
 }
 
-struct MailingMailing: Codable, Identifiable {
+struct AddressableMailing: Codable, Identifiable {
     let id: Int
     let name: String
     let phone, email: String?
