@@ -32,8 +32,6 @@ struct MailingsView: View {
 
 struct MailingsView_Previews: PreviewProvider {
     static var previews: some View {
-        Group {
-            MailingsView(viewModel: MailingsViewModel(addressableDataFetcher: AddressableDataFetcher()))
-        }
+        MailingsView(viewModel: MailingsViewModel(addressableDataFetcher: AddressableDataFetcher()))
     }
 }

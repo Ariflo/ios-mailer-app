@@ -40,7 +40,9 @@ struct AppView: View {
                     }
             }
         } else {
-            SignInView().navigationBarHidden(true)
+            SignInView(
+                viewModel: SignInViewModel(addressableDataFetcher: AddressableDataFetcher())
+            ).navigationBarHidden(true)
         }
     }
 }

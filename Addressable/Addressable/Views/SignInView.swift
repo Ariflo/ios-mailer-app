@@ -8,11 +8,17 @@
 import SwiftUI
 
 struct SignInView: View {
+    @ObservedObject var viewModel: SignInViewModel
+
+    init(viewModel: SignInViewModel) {
+        self.viewModel = viewModel
+    }
+
     @State var username: String = ""
     @State var password: String = ""
     @State var showingAlert = false
     @State var alertText: String = ""
-    @State var successfullyLoggedin: Int?
+    @State var authorizedUser: Int?
     @State var isNavigationBarHidden: Bool = true
     @State var secured: Bool = true
 
@@ -51,7 +57,7 @@ struct SignInView: View {
                 }
             }
 
-            NavigationLink(destination: AppView(), tag: 1, selection: $successfullyLoggedin) {
+            NavigationLink(destination: AppView(), tag: 1, selection: $authorizedUser) {
                 Button(action: {
                     let ws = CharacterSet.whitespacesAndNewlines
 
@@ -67,10 +73,14 @@ struct SignInView: View {
                     let loginString = String(format: "%@:%@", account, pwd)
                     let loginData = loginString.data(using: String.Encoding.utf8)!
 
-                    KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] = loginData.base64EncodedString()
-
-                    if KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] != nil {
-                        successfullyLoggedin = 1
+                    viewModel.login(with: loginData.base64EncodedString()) { authenticatedUserInfo in
+                        guard authenticatedUserInfo != nil else {
+                            alertText = "Incorrect Username or Password. Try Agian!"
+                            showingAlert = true
+                            return
+                        }
+                        KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] = loginData.base64EncodedString()
+                        authorizedUser = 1
                     }
                 }) {
                     Text("Log In")
@@ -104,7 +114,7 @@ struct EyeImage: View {
 #if DEBUG
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInView()
+        SignInView(viewModel: SignInViewModel(addressableDataFetcher: AddressableDataFetcher()))
     }
 }
 #endif

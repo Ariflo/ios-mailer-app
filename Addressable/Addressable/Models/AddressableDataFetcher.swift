@@ -10,6 +10,7 @@ import Combine
 
 protocol FetchableData {
     func getCurrentUserMailings() -> AnyPublisher<MailingsResponse, ApiError>
+    func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError>
 }
 
 class AddressableDataFetcher {
@@ -21,24 +22,28 @@ class AddressableDataFetcher {
 }
 
 extension AddressableDataFetcher: FetchableData {
+    func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError> {
+        return makeApiRequest(with: getAuthorizationRequestComponents(), token: basicAuthToken)
+    }
+
     func getCurrentUserMailings() -> AnyPublisher<MailingsResponse, ApiError> {
         return makeApiRequest(with: getMailingsRequestComponents())
     }
 
     private func makeApiRequest<T>(
-        with components: URLComponents
+        with components: URLComponents,
+        token: String? = nil
     ) -> AnyPublisher<T, ApiError> where T: Decodable {
         guard let url = components.url else {
             let error = ApiError.network(description: "Couldn't create URL")
             return Fail(error: error).eraseToAnyPublisher()
         }
-
         var request = URLRequest(url: url)
 
-        if let authToken = KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] {
+        if let authToken = token ?? KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] {
             request.setValue("Basic \(authToken)", forHTTPHeaderField: "Authorization")
         } else {
-            let error = ApiError.network(description: "Missing Authorization Token for Request")
+            let error = ApiError.network(description: "Unable to apply authorization token to request")
             return Fail(error: error).eraseToAnyPublisher()
         }
 
@@ -63,6 +68,19 @@ private extension AddressableDataFetcher {
         static let host = "api.addressable.app"
         #endif
         static let path = "/api/v1"
+    }
+
+    func getAuthorizationRequestComponents() -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        #if DEBUG
+        components.port = 3000
+        #endif
+        components.path = AddressableAPI.path + "/auth.json"
+
+        return components
     }
 
     func getMailingsRequestComponents() -> URLComponents {
