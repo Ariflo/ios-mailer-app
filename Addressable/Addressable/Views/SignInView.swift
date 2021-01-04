@@ -1,5 +1,5 @@
 //
-//  UserAndPassword.swift
+//  SignInView.swift
 //  Addressable
 //
 //  Created by Arian Flores on 12/1/20.
@@ -42,6 +42,7 @@ struct SignInView: View {
                         .textContentType(.password)
                 } else {
                     TextField("Password", text: $password)
+                        .autocapitalization(.none)
                         .padding(4)
                         .border(Color.black, width: 1)
                 }

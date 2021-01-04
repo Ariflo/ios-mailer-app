@@ -1,5 +1,5 @@
 //
-//  SignInViewModel.swift
+//  MailingsViewModel.swift
 //  Addressable
 //
 //  Created by Ari on 12/29/20.
@@ -10,6 +10,7 @@ import Combine
 
 class MailingsViewModel: ObservableObject, Identifiable {
     @Published var dataSource: [AddressableMailing] = []
+    @Published var loading: Bool = false
 
     private let addressableDataFetcher: FetchableData
     private var disposables = Set<AnyCancellable>()
@@ -19,6 +20,7 @@ class MailingsViewModel: ObservableObject, Identifiable {
     }
 
     func getMailings() {
+        loading = true
         addressableDataFetcher.getCurrentUserMailings()
             .map { resp in
                 resp.mailings.map { $0.mailing }
@@ -30,6 +32,7 @@ class MailingsViewModel: ObservableObject, Identifiable {
                     switch value {
                     case .failure:
                         self.dataSource = []
+                        self.loading = false
                     case .finished:
                         break
                     }
@@ -37,6 +40,7 @@ class MailingsViewModel: ObservableObject, Identifiable {
                 receiveValue: { [weak self] apiData in
                     guard let self = self else { return }
                     self.dataSource = apiData
+                    self.loading = false
                 })
             .store(in: &disposables)
     }

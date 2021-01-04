@@ -1,5 +1,5 @@
 //
-//  MainView.swift
+//  AppView.swift
 //  Addressable
 //
 //  Created by Ari on 12/30/20.

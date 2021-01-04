@@ -9,21 +9,26 @@ import SwiftUI
 
 struct MailingsView: View {
     @ObservedObject var viewModel: MailingsViewModel
+    var refreshControl = UIRefreshControl()
 
     init(viewModel: MailingsViewModel) {
         self.viewModel = viewModel
     }
 
     var body: some View {
-        VStack {
-            Text("Addressable Mailings").font(.title)
-            Spacer()
-
-            List(viewModel.dataSource) { mailing in
-                Text(mailing.name)
+        GeometryReader { geometry in
+            VStack {
+                Text("Addressable Mailings").font(.title)
+                CustomRefreshableScrollView(viewBuilder: {
+                    VStack {
+                        List(viewModel.dataSource) { mailing in
+                            Text(mailing.name)
+                        }
+                    }
+                }, size: geometry.size) {
+                    viewModel.getMailings()
+                }
             }
-
-            Spacer()
         }.onAppear {
             viewModel.getMailings()
         }
