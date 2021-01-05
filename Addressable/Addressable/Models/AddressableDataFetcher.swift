@@ -60,13 +60,18 @@ extension AddressableDataFetcher: FetchableData {
 
 private extension AddressableDataFetcher {
     struct AddressableAPI {
-        #if DEBUG
-        static let scheme = "http"
-        static let host = "localhost"
-        #elseif PRODUCTION
-        static let scheme = "https"
-        static let host = "api.addressable.app"
-        #endif
+        static var scheme: String {
+            #if DEBUG
+            return "http"
+            #endif
+            return "https"
+        }
+        static var host: String {
+            #if DEBUG
+            return "localhost"
+            #endif
+            return "api.addressable.app"
+        }
         static let path = "/api/v1"
     }
 
