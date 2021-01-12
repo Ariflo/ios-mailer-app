@@ -32,15 +32,13 @@ class MailingsViewModel: ObservableObject, Identifiable {
                     switch value {
                     case .failure:
                         self.dataSource = []
-                        self.loading = false
                     case .finished:
                         break
                     }
                 },
-                receiveValue: { [weak self] apiData in
+                receiveValue: { [weak self] mailingsListData in
                     guard let self = self else { return }
-                    self.dataSource = apiData
-                    self.loading = false
+                    self.dataSource = mailingsListData
                 })
             .store(in: &disposables)
     }

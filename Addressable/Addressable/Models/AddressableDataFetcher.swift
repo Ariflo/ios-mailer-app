@@ -11,6 +11,7 @@ import Combine
 protocol FetchableData {
     func getCurrentUserMailings() -> AnyPublisher<MailingsResponse, ApiError>
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError>
+    func getTwilioAccessToken() -> AnyPublisher<TwilioAccessToken, ApiError>
 }
 
 class AddressableDataFetcher {
@@ -22,6 +23,10 @@ class AddressableDataFetcher {
 }
 
 extension AddressableDataFetcher: FetchableData {
+    func getTwilioAccessToken() -> AnyPublisher<TwilioAccessToken, ApiError> {
+        return makeApiRequest(with: getTwilioAccessTokenRequestComponents())
+    }
+
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError> {
         return makeApiRequest(with: getAuthorizationRequestComponents(), token: basicAuthToken)
     }
@@ -62,13 +67,13 @@ private extension AddressableDataFetcher {
     struct AddressableAPI {
         static var scheme: String {
             #if DEBUG
-            return "http"
+            return "https"
             #endif
             return "https"
         }
         static var host: String {
             #if DEBUG
-            return "localhost"
+            return "bbd4e1ced737.ngrok.io"
             #endif
             return "api.addressable.app"
         }
@@ -81,9 +86,26 @@ private extension AddressableDataFetcher {
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
         #if DEBUG
-        components.port = 3000
+        //        components.port = 3000
         #endif
         components.path = AddressableAPI.path + "/auth.json"
+
+        return components
+    }
+
+    func getTwilioAccessTokenRequestComponents() -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        #if DEBUG
+        //        components.port = 3000
+        #endif
+        //        TODO: Send identity with requet for access token
+        //        components.queryItems = [
+        //            URLQueryItem(name: "identity", value: identity),
+        //        ]
+        components.path = AddressableAPI.path + "/auth/mobile_login"
 
         return components
     }
@@ -94,7 +116,7 @@ private extension AddressableDataFetcher {
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
         #if DEBUG
-        components.port = 3000
+        //        components.port = 3000
         #endif
         components.path = AddressableAPI.path + "/mailings.json"
 

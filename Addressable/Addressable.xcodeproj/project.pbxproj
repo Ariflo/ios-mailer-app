@@ -16,6 +16,9 @@
 		B3DB527F257992F8004196A6 /* MailingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB527E257992F8004196A6 /* MailingsView.swift */; };
 		B3DB52872579A84B004196A6 /* Mailing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB52862579A84B004196A6 /* Mailing.swift */; };
 		CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */; };
+		CA8555D125A81AF80063274D /* ProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8555D025A81AF80063274D /* ProviderDelegate.swift */; };
+		CA8555D625A81B330063274D /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8555D525A81B330063274D /* CallManager.swift */; };
+		CA85560925A9FA8F0063274D /* AddressableCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA85560825A9FA8F0063274D /* AddressableCall.swift */; };
 		CA88420225A39F2700E0D75A /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88420125A39F2700E0D75A /* SignInViewModel.swift */; };
 		CA88420725A3A7D200E0D75A /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88420625A3A7D200E0D75A /* Authorization.swift */; };
 		CA88422925A3D52F00E0D75A /* CustomRefreshableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */; };
@@ -64,6 +67,10 @@
 		CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsViewModel.swift; sourceTree = "<group>"; };
 		CA3CE821259BC9E000A230E1 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
 		CA3CE822259BC9FA00A230E1 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
+		CA8555C025A648FB0063274D /* TwilioVoice.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwilioVoice.framework; path = Carthage/Build/iOS/TwilioVoice.framework; sourceTree = "<group>"; };
+		CA8555D025A81AF80063274D /* ProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderDelegate.swift; sourceTree = "<group>"; };
+		CA8555D525A81B330063274D /* CallManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
+		CA85560825A9FA8F0063274D /* AddressableCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressableCall.swift; sourceTree = "<group>"; };
 		CA88420125A39F2700E0D75A /* SignInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewModel.swift; sourceTree = "<group>"; };
 		CA88420625A3A7D200E0D75A /* Authorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authorization.swift; sourceTree = "<group>"; };
 		CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomRefreshableScrollView.swift; path = Addressable/Utilities/CustomRefreshableScrollView.swift; sourceTree = SOURCE_ROOT; };
@@ -110,6 +117,7 @@
 				B370BC272576BAC20066624A /* AddressableTests */,
 				B370BC322576BAC20066624A /* AddressableUITests */,
 				B370BC142576BAC10066624A /* Products */,
+				CA8555BF25A648FB0063274D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -185,6 +193,9 @@
 				B3DB52862579A84B004196A6 /* Mailing.swift */,
 				CAC8B0DC259D36AF00D4447F /* AddressableDataFetcher.swift */,
 				CA88420625A3A7D200E0D75A /* Authorization.swift */,
+				CA8555D025A81AF80063274D /* ProviderDelegate.swift */,
+				CA8555D525A81B330063274D /* CallManager.swift */,
+				CA85560825A9FA8F0063274D /* AddressableCall.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -223,6 +234,14 @@
 			path = Utilities;
 			sourceTree = "<group>";
 		};
+		CA8555BF25A648FB0063274D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CA8555C025A648FB0063274D /* TwilioVoice.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -233,6 +252,7 @@
 				B370BC0F2576BAC10066624A /* Sources */,
 				B370BC102576BAC10066624A /* Frameworks */,
 				B370BC112576BAC10066624A /* Resources */,
+				CA8555C425A6490B0063274D /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -347,18 +367,41 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		CA8555C425A6490B0063274D /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/TwilioVoice.framework",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		B370BC0F2576BAC10066624A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				CAC8B086259BE6D400D4447F /* KeychainServiceUtil.swift in Sources */,
+				CA85560925A9FA8F0063274D /* AddressableCall.swift in Sources */,
 				CAC8B0D5259D347F00D4447F /* JsonUtil.swift in Sources */,
 				CAC8B0DD259D36AF00D4447F /* AddressableDataFetcher.swift in Sources */,
 				CAC8B0A0259CFBC800D4447F /* AppView.swift in Sources */,
 				CA88420225A39F2700E0D75A /* SignInViewModel.swift in Sources */,
 				CA88420725A3A7D200E0D75A /* Authorization.swift in Sources */,
 				B3DB527F257992F8004196A6 /* MailingsView.swift in Sources */,
+				CA8555D125A81AF80063274D /* ProviderDelegate.swift in Sources */,
 				CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */,
 				B3DB52872579A84B004196A6 /* Mailing.swift in Sources */,
 				CAC8B0AB259D017E00D4447F /* CallsView.swift in Sources */,
@@ -367,6 +410,7 @@
 				B370BC872576DE9F0066624A /* SignInView.swift in Sources */,
 				B370BC172576BAC10066624A /* AddressableApp.swift in Sources */,
 				CA88422925A3D52F00E0D75A /* CustomRefreshableScrollView.swift in Sources */,
+				CA8555D625A81B330063274D /* CallManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -531,6 +575,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 2MK28T8Y6R;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = Addressable/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -555,6 +603,10 @@
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 2MK28T8Y6R;
 				ENABLE_PREVIEWS = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = Addressable/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
