@@ -20,7 +20,11 @@ class ProviderDelegate: NSObject {
     private var callManager: CallManager
     private let provider: CXProvider
 
+    var audioDevice = DefaultAudioDevice()
+    var callKitCompletionCallback: ((Bool) -> Void)?
+
     var incomingPushCompletionCallback: (() -> Void)?
+    var userInitiatedDisconnect: Bool = false
 
     init(callManager: CallManager) {
         self.callManager = callManager
@@ -29,6 +33,12 @@ class ProviderDelegate: NSObject {
 
         super.init()
         provider.setDelegate(self, queue: nil)
+        /*
+         * The important thing to remember when providing a TVOAudioDevice is that the device must be set
+         * before performing any other actions with the SDK (such as connecting a Call, or accepting an incoming Call).
+         * In this case we've already initialized our own `TVODefaultAudioDevice` instance which we will now set.
+         */
+        TwilioVoice.audioDevice = audioDevice
     }
 
     static var providerConfiguration: CXProviderConfiguration = {
@@ -40,6 +50,59 @@ class ProviderDelegate: NSObject {
 
         return providerConfiguration
     }()
+}
+
+// MARK: - CXProviderDelegate
+extension ProviderDelegate: CXProviderDelegate {
+    func providerDidReset(_ provider: CXProvider) {
+        print("Stopping audio")
+        audioDevice.isEnabled = false
+
+        for call in callManager.calls {
+            call.end()
+        }
+
+        callManager.removeAllCalls()
+    }
+
+    func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
+        print("provider:performAnswerCallAction:")
+
+        performAnswerVoiceCall(uuid: action.callUUID) { success in
+            if success {
+                print("performAnswerVoiceCall() successful")
+            } else {
+                print("performAnswerVoiceCall() failed")
+                action.fail()
+            }
+        }
+
+        action.fulfill()
+    }
+
+    func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
+        print("Starting audio")
+        audioDevice.isEnabled = true
+    }
+
+    func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
+        print("provider:performEndCallAction:")
+        guard let addressableCall = callManager.callWithUUID(uuid: action.callUUID) else {
+            action.fail()
+            return
+        }
+        print("Stopping audio")
+
+        if let invite = addressableCall.incomingCall {
+            invite.reject()
+            callManager.remove(call: addressableCall)
+        } else if let call = addressableCall.outgoingCall {
+            call.disconnect()
+        } else {
+            print("Unknown UUID to perform end-call action with")
+        }
+        action.fulfill()
+    }
 
     func reportIncomingCall(
         callInvite: CallInvite,
@@ -59,43 +122,87 @@ class ProviderDelegate: NSObject {
             completion?(error)
         }
     }
+
+    func performAnswerVoiceCall(uuid: UUID, completionHandler: @escaping (Bool) -> Void) {
+        guard let incomingAddressableCall = callManager.callWithUUID(uuid: uuid) else {
+            print("No CallInvite matches the UUID")
+            return
+        }
+        let callInvite = incomingAddressableCall.incomingCall!
+
+        let acceptOptions = AcceptOptions(callInvite: callInvite) { builder in
+            builder.uuid = callInvite.uuid
+        }
+        let call = callInvite.accept(options: acceptOptions, delegate: self)
+
+        callManager.currentActiveCall = call
+        callManager.add(AddressableCall(incomingCall: nil, outgoingCall: call))
+
+        callKitCompletionCallback = completionHandler
+        callManager.remove(call: incomingAddressableCall)
+
+        guard #available(iOS 13, *) else {
+            incomingPushHandled()
+            return
+        }
+    }
 }
 
-// MARK: - CXProviderDelegate
-extension ProviderDelegate: CXProviderDelegate {
-    func providerDidReset(_ provider: CXProvider) {
-        print("Stopping audio")
+// MARK: - TVOCallDelegate
 
-        for call in callManager.calls {
-            call.end()
+extension ProviderDelegate: CallDelegate {
+    func callDidConnect(call: Call) {
+        print("callDidConnect:")
+
+        if let callKitCompletionCallback = callKitCompletionCallback {
+            callKitCompletionCallback(true)
         }
-
-        callManager.removeAllCalls()
     }
 
-    func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
-        guard let call = callManager.callWithUUID(uuid: action.callUUID) else {
-            action.fail()
+    func callDidFailToConnect(call: Call, error: Error) {
+        print("Call failed to connect: \(error.localizedDescription)")
+
+        if let completion = callKitCompletionCallback {
+            completion(false)
+        }
+
+        provider.reportCall(with: call.uuid!, endedAt: Date(), reason: CXCallEndedReason.failed)
+
+        callDisconnected(call: call)
+    }
+
+    func callDidDisconnect(call: Call, error: Error?) {
+        if let error = error {
+            print("Call failed: \(error.localizedDescription)")
+        } else {
+            print("Call disconnected")
+        }
+
+        if !userInitiatedDisconnect {
+            var reason = CXCallEndedReason.remoteEnded
+
+            if error != nil {
+                reason = .failed
+            }
+            provider.reportCall(with: call.uuid!, endedAt: Date(), reason: reason)
+        }
+
+        callDisconnected(call: call)
+    }
+
+    func callDisconnected(call: Call) {
+        if call == callManager.currentActiveCall {
+            callManager.currentActiveCall = nil
+        }
+
+        guard let addressableCall = callManager.callWithUUID(uuid: call.uuid!) else {
+            print("No call matches the UUID")
             return
         }
-        configureAudioSession()
-        call.answer()
-        action.fulfill()
-    }
 
-    func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
-        print("Starting audio")
-    }
+        callManager.remove(call: addressableCall)
 
-    func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
-        guard let call = callManager.callWithUUID(uuid: action.callUUID) else {
-            action.fail()
-            return
-        }
-        print("Stopping audio")
-        call.end()
-        action.fulfill()
-        callManager.remove(call: call)
+        userInitiatedDisconnect = false
     }
 }
 
@@ -214,19 +321,17 @@ extension ProviderDelegate: NotificationDelegate {
             }
         }
 
-        // Report incoming call to OS
+        // Report incoming call to iOS
         let from = (callInvite.from ?? "").replacingOccurrences(of: "client:", with: "")
 
         let backgroundTaskIdentifier =
             UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            self.reportIncomingCall(
-                callInvite: callInvite,
-                from: from
-            ) { _ in
-                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
-            }
+        self.reportIncomingCall(
+            callInvite: callInvite,
+            from: from
+        ) { _ in
+            UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
         }
     }
 

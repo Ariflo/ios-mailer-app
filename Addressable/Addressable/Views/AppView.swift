@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct AppView: View {
     var body: some View {
@@ -38,6 +39,10 @@ struct AppView: View {
                         Image(systemName: "person")
                         Text("Profile")
                     }
+            }.onAppear {
+                checkRecordPermission { micPermissionGranted in
+                    guard !micPermissionGranted else { return }
+                }
             }
         } else {
             SignInView(

@@ -19,6 +19,7 @@
 		CA8555D125A81AF80063274D /* ProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8555D025A81AF80063274D /* ProviderDelegate.swift */; };
 		CA8555D625A81B330063274D /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8555D525A81B330063274D /* CallManager.swift */; };
 		CA85560925A9FA8F0063274D /* AddressableCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA85560825A9FA8F0063274D /* AddressableCall.swift */; };
+		CA85564D25AFB9B40063274D /* PermissionsUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA85564C25AFB9B40063274D /* PermissionsUtil.swift */; };
 		CA88420225A39F2700E0D75A /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88420125A39F2700E0D75A /* SignInViewModel.swift */; };
 		CA88420725A3A7D200E0D75A /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88420625A3A7D200E0D75A /* Authorization.swift */; };
 		CA88422925A3D52F00E0D75A /* CustomRefreshableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */; };
@@ -71,6 +72,7 @@
 		CA8555D025A81AF80063274D /* ProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderDelegate.swift; sourceTree = "<group>"; };
 		CA8555D525A81B330063274D /* CallManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
 		CA85560825A9FA8F0063274D /* AddressableCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressableCall.swift; sourceTree = "<group>"; };
+		CA85564C25AFB9B40063274D /* PermissionsUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsUtil.swift; sourceTree = "<group>"; };
 		CA88420125A39F2700E0D75A /* SignInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewModel.swift; sourceTree = "<group>"; };
 		CA88420625A3A7D200E0D75A /* Authorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authorization.swift; sourceTree = "<group>"; };
 		CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomRefreshableScrollView.swift; path = Addressable/Utilities/CustomRefreshableScrollView.swift; sourceTree = SOURCE_ROOT; };
@@ -230,6 +232,7 @@
 			children = (
 				CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */,
 				CAC8B0D4259D347F00D4447F /* JsonUtil.swift */,
+				CA85564C25AFB9B40063274D /* PermissionsUtil.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -410,6 +413,7 @@
 				B370BC872576DE9F0066624A /* SignInView.swift in Sources */,
 				B370BC172576BAC10066624A /* AddressableApp.swift in Sources */,
 				CA88422925A3D52F00E0D75A /* CustomRefreshableScrollView.swift in Sources */,
+				CA85564D25AFB9B40063274D /* PermissionsUtil.swift in Sources */,
 				CA8555D625A81B330063274D /* CallManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

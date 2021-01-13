@@ -11,10 +11,13 @@ import TwilioVoice
 import Combine
 
 class CallManager {
+    var disposables = Set<AnyCancellable>()
     var callsChangedHandler: (() -> Void)?
     private let callController = CXCallController()
 
     private(set) var calls: [AddressableCall] = []
+    // currentActiveCall represents the last connected call
+    var currentActiveCall: Call?
 
     func callWithUUID(uuid: UUID) -> AddressableCall? {
         guard let index = calls.firstIndex(where: { $0.incomingCall?.uuid == uuid || $0.outgoingCall?.uuid == uuid }) else {
@@ -72,8 +75,6 @@ class CallManager {
     }
 
     func fetchToken(tokenReceived: @escaping (_ token: String?) -> Void ) {
-        var disposables = Set<AnyCancellable>()
-
         AddressableDataFetcher().getTwilioAccessToken()
             .sink(
                 receiveCompletion: { value in

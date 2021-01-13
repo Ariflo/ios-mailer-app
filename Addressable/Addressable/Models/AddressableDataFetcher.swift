@@ -65,18 +65,8 @@ extension AddressableDataFetcher: FetchableData {
 
 private extension AddressableDataFetcher {
     struct AddressableAPI {
-        static var scheme: String {
-            #if DEBUG
-            return "https"
-            #endif
-            return "https"
-        }
-        static var host: String {
-            #if DEBUG
-            return "bbd4e1ced737.ngrok.io"
-            #endif
-            return "api.addressable.app"
-        }
+        static let scheme = "https"
+        static let host = "bbd4e1ced737.ngrok.io"
         static let path = "/api/v1"
     }
 
@@ -85,9 +75,6 @@ private extension AddressableDataFetcher {
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        #if DEBUG
-        //        components.port = 3000
-        #endif
         components.path = AddressableAPI.path + "/auth.json"
 
         return components
@@ -98,9 +85,6 @@ private extension AddressableDataFetcher {
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        #if DEBUG
-        //        components.port = 3000
-        #endif
         //        TODO: Send identity with requet for access token
         //        components.queryItems = [
         //            URLQueryItem(name: "identity", value: identity),
@@ -115,9 +99,6 @@ private extension AddressableDataFetcher {
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        #if DEBUG
-        //        components.port = 3000
-        #endif
         components.path = AddressableAPI.path + "/mailings.json"
 
         return components
