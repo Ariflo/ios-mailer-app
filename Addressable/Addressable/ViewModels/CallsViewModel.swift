@@ -1,16 +1,15 @@
 //
-//  MailingsViewModel.swift
+//  CallViewModel.swift
 //  Addressable
 //
-//  Created by Ari on 12/29/20.
+//  Created by Ari on 1/13/21.
 //
 
 import SwiftUI
 import Combine
 
-class MailingsViewModel: ObservableObject, Identifiable {
-    @Published var dataSource: [AddressableMailing] = []
-
+class CallsViewModel: ObservableObject, Identifiable {
+    @Published var dataSource: IncomingLeadsResponse = []
     private let addressableDataFetcher: FetchableData
     private var disposables = Set<AnyCancellable>()
 
@@ -18,11 +17,8 @@ class MailingsViewModel: ObservableObject, Identifiable {
         self.addressableDataFetcher = addressableDataFetcher
     }
 
-    func getMailings() {
-        addressableDataFetcher.getCurrentUserMailings()
-            .map { resp in
-                resp.mailings.map { $0.mailing }
-            }
+    func getLeads() {
+        addressableDataFetcher.getIncomingLeads()
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] value in
@@ -34,9 +30,10 @@ class MailingsViewModel: ObservableObject, Identifiable {
                         break
                     }
                 },
-                receiveValue: { [weak self] mailingsListData in
+                receiveValue: { [weak self] incomingLeads in
+                    print(incomingLeads)
                     guard let self = self else { return }
-                    self.dataSource = mailingsListData
+                    self.dataSource = incomingLeads
                 })
             .store(in: &disposables)
     }

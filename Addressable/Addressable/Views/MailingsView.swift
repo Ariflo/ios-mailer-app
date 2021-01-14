@@ -18,7 +18,7 @@ struct MailingsView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                Text("Addressable Mailings").font(.title)
+                Text("Addressable Campaigns").font(.title)
                 CustomRefreshableScrollView(viewBuilder: {
                     VStack {
                         List(viewModel.dataSource) { mailing in

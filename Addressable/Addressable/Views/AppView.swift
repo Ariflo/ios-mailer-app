@@ -19,14 +19,16 @@ struct AppView: View {
                 .navigationBarHidden(true)
                 .tabItem {
                     Image(systemName: "mail")
-                    Text("Mailings")
+                    Text("Campaigns")
                 }
-                CallsView()
-                    .navigationBarHidden(true)
-                    .tabItem {
-                        Image(systemName: "phone")
-                        Text("Calls")
-                    }
+                CallsView(
+                    viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher())
+                )
+                .navigationBarHidden(true)
+                .tabItem {
+                    Image(systemName: "phone")
+                    Text("Calls")
+                }
                 MessagesView()
                     .navigationBarHidden(true)
                     .tabItem {

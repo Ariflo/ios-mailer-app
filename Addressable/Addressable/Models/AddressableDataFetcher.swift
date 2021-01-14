@@ -12,6 +12,7 @@ protocol FetchableData {
     func getCurrentUserMailings() -> AnyPublisher<MailingsResponse, ApiError>
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError>
     func getTwilioAccessToken() -> AnyPublisher<TwilioAccessToken, ApiError>
+    func getIncomingLeads() -> AnyPublisher<IncomingLeadsResponse, ApiError>
 }
 
 class AddressableDataFetcher {
@@ -23,6 +24,10 @@ class AddressableDataFetcher {
 }
 
 extension AddressableDataFetcher: FetchableData {
+    func getIncomingLeads() -> AnyPublisher<IncomingLeadsResponse, ApiError> {
+        return makeApiRequest(with: getIncomingLeadsRequestComponents())
+    }
+
     func getTwilioAccessToken() -> AnyPublisher<TwilioAccessToken, ApiError> {
         return makeApiRequest(with: getTwilioAccessTokenRequestComponents())
     }
@@ -100,6 +105,16 @@ private extension AddressableDataFetcher {
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
         components.path = AddressableAPI.path + "/mailings.json"
+
+        return components
+    }
+
+    func getIncomingLeadsRequestComponents() -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/incoming_leads"
 
         return components
     }
