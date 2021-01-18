@@ -31,7 +31,6 @@ class CallsViewModel: ObservableObject, Identifiable {
                     }
                 },
                 receiveValue: { [weak self] incomingLeads in
-                    print(incomingLeads)
                     guard let self = self else { return }
                     self.dataSource = incomingLeads
                 })

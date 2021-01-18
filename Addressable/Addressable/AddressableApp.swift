@@ -16,12 +16,14 @@ protocol PushKitEventDelegate: AnyObject {
     func incomingPushReceived(payload: PKPushPayload, completion: @escaping () -> Void)
 }
 
-class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
-    var pushKitEventDelegate: PushKitEventDelegate?
+class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, ObservableObject {
+    var callkitProviderDelegate: ProviderDelegate?
+    var callManager: CallManager?
     lazy var voipRegistry = PKPushRegistry.init(queue: DispatchQueue.main)
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        pushKitEventDelegate = ProviderDelegate(callManager: CallManager())
+        callManager = CallManager()
+        callkitProviderDelegate = ProviderDelegate(callManager: callManager!)
 
         voipRegistry.delegate = self
         voipRegistry.desiredPushTypes = Set([PKPushType.voIP])
@@ -32,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
         print("pushRegistry:didUpdatePushCredentials:forType:")
 
-        if let delegate = pushKitEventDelegate {
+        if let delegate = callkitProviderDelegate {
             delegate.credentialsUpdated(credentials: pushCredentials)
         }
     }
@@ -40,7 +42,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
         print("pushRegistry:didInvalidatePushTokenForType:")
 
-        if let delegate = self.pushKitEventDelegate {
+        if let delegate = callkitProviderDelegate {
             delegate.credentialsInvalidated()
         }
     }
@@ -50,11 +52,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate {
      * notification payload is passed to the `TwilioVoice.handleNotification()` method.
      */
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
+        print("pushRegistry:didReceiveIncomingPushWithPayload:forType:completion:")
+
         checkRecordPermission { micPermissionGranted in
             guard !micPermissionGranted else {
-                print("pushRegistry:didReceiveIncomingPushWithPayload:forType:completion:")
-
-                if let delegate = self.pushKitEventDelegate {
+                if let delegate = self.callkitProviderDelegate {
                     delegate.incomingPushReceived(payload: payload, completion: completion)
                 }
 
@@ -109,12 +111,10 @@ struct AddressableApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     @Environment(\.scenePhase) var scenePhase
 
-    @State var showPermissionsAlert = false
-
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                AppView()
+                AppView().environmentObject(appDelegate)
             }
         }.onChange(of: scenePhase) { phase in
             switch phase {

@@ -54,6 +54,15 @@ class CallManager {
         requestTransaction(transaction)
     }
 
+
+    func startCall(to: String) {
+        let callHandle = CXHandle(type: .generic, value: to)
+        let startCallAction = CXStartCallAction(call: UUID(), handle: callHandle)
+        let transaction = CXTransaction(action: startCallAction)
+
+        requestTransaction(transaction)
+    }
+
     private func requestTransaction(_ transaction: CXTransaction) {
         callController.request(transaction) { error in
             if let error = error {
@@ -62,16 +71,6 @@ class CallManager {
                 print("Requested transaction successfully")
             }
         }
-    }
-
-    func startCall(handle: String, videoEnabled: Bool) {
-        let handle = CXHandle(type: .phoneNumber, value: handle)
-        let startCallAction = CXStartCallAction(call: UUID(), handle: handle)
-
-        startCallAction.isVideo = videoEnabled
-        let transaction = CXTransaction(action: startCallAction)
-
-        requestTransaction(transaction)
     }
 
     func fetchToken(tokenReceived: @escaping (_ token: String?) -> Void ) {

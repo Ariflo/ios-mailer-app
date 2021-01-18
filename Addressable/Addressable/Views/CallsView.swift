@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CallsView: View {
+    @EnvironmentObject var appDelegate: AppDelegate
     @ObservedObject var viewModel: CallsViewModel
     var refreshControl = UIRefreshControl()
 
@@ -22,7 +23,13 @@ struct CallsView: View {
                 CustomRefreshableScrollView(viewBuilder: {
                     VStack {
                         List(viewModel.dataSource) { lead in
-                            Text(lead.first_name ?? "UNKNOWN")
+                            Button(action: {
+                                // call number
+                                appDelegate.callManager?.startCall(to: lead.from_number ?? "")
+                            }) {
+                                Text(lead.first_name ?? "UNKNOWN")
+                                Text(lead.from_number ?? "")
+                            }
                         }
                     }
                 }, size: geometry.size) {

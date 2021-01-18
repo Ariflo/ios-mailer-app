@@ -29,12 +29,14 @@ struct AppView: View {
                     Image(systemName: "phone")
                     Text("Calls")
                 }
-                MessagesView()
-                    .navigationBarHidden(true)
-                    .tabItem {
-                        Image(systemName: "message")
-                        Text("Messages")
-                    }
+                MessageListView(
+                    viewModel: MessagesViewModel(addressableDataFetcher: AddressableDataFetcher())
+                )
+                .navigationBarHidden(true)
+                .tabItem {
+                    Image(systemName: "message")
+                    Text("Messages")
+                }
                 ProfileView()
                     .navigationBarHidden(true)
                     .tabItem {

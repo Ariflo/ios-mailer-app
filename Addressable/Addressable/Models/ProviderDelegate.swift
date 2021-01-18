@@ -15,6 +15,7 @@ let kRegistrationTTLInDays = 365
 
 let kCachedDeviceToken = "CachedDeviceToken"
 let kCachedBindingDate = "CachedBindingDate"
+let twimlParamTo = "to"
 
 class ProviderDelegate: NSObject {
     private var callManager: CallManager
@@ -85,6 +86,11 @@ extension ProviderDelegate: CXProviderDelegate {
         audioDevice.isEnabled = true
     }
 
+    func provider(_ provider: CXProvider, didDeactivate audioSession: AVAudioSession) {
+        print("provider:didDeactivateAudioSession:")
+        audioDevice.isEnabled = false
+    }
+
     func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
         print("provider:performEndCallAction:")
         guard let addressableCall = callManager.callWithUUID(uuid: action.callUUID) else {
@@ -104,6 +110,23 @@ extension ProviderDelegate: CXProviderDelegate {
         action.fulfill()
     }
 
+    func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
+        print("provider:performStartCallAction:")
+
+        provider.reportOutgoingCall(with: action.callUUID, startedConnectingAt: Date())
+
+        performVoiceCall(uuid: action.callUUID, to: action.handle.value) { success in
+            if success {
+                print("performVoiceCall() successful")
+                provider.reportOutgoingCall(with: action.callUUID, connectedAt: Date())
+            } else {
+                print("performVoiceCall() failed")
+            }
+        }
+
+        action.fulfill()
+    }
+
     func reportIncomingCall(
         callInvite: CallInvite,
         from: String,
@@ -111,7 +134,7 @@ extension ProviderDelegate: CXProviderDelegate {
         completion: ((Error?) -> Void)?
     ) {
         let update = CXCallUpdate()
-        update.remoteHandle = CXHandle(type: .phoneNumber, value: from)
+        update.remoteHandle = CXHandle(type: .generic, value: from)
         update.hasVideo = hasVideo
 
         provider.reportNewIncomingCall(with: callInvite.uuid, update: update) { error in
@@ -144,6 +167,22 @@ extension ProviderDelegate: CXProviderDelegate {
         guard #available(iOS 13, *) else {
             incomingPushHandled()
             return
+        }
+    }
+
+    func performVoiceCall(uuid: UUID, to: String?, completionHandler: @escaping (Bool) -> Void) {
+        callManager.fetchToken { token in
+            guard let accessToken = token, let to = to else { return }
+
+            let connectOptions = ConnectOptions(accessToken: accessToken) { builder in
+                builder.params = [twimlParamTo: to]
+                builder.uuid = uuid
+            }
+
+            let call = TwilioVoice.connect(options: connectOptions, delegate: self)
+            self.callManager.currentActiveCall = call
+            self.callManager.add(AddressableCall(incomingCall: nil, outgoingCall: call))
+            self.callKitCompletionCallback = completionHandler
         }
     }
 }
