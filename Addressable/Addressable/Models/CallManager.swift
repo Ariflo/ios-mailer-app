@@ -85,7 +85,7 @@ class CallManager {
                     }
                 },
                 receiveValue: { tokenData in
-                    tokenReceived(tokenData.jwt_token)
+                    tokenReceived(tokenData.jwtToken)
                 })
             .store(in: &disposables)
     }
@@ -93,5 +93,10 @@ class CallManager {
 
 struct TwilioAccessToken: Codable {
     let success: Bool
-    let jwt_token: String
+    let jwtToken: String
+
+    enum CodingKeys: String, CodingKey {
+        case success
+        case jwtToken = "jwt_token"
+    }
 }

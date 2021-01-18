@@ -8,6 +8,11 @@
 import Foundation
 
 struct AuthorizedUserResponse: Codable {
-    let first_name: String
-    let last_name: String
+    let firstName: String
+    let lastName: String
+
+    enum CodingKeys: String, CodingKey {
+        case firstName = "first_name"
+        case lastName = "last_name"
+    }
 }

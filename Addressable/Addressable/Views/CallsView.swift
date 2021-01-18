@@ -25,10 +25,10 @@ struct CallsView: View {
                         List(viewModel.dataSource) { lead in
                             Button(action: {
                                 // call number
-                                appDelegate.callManager?.startCall(to: lead.from_number ?? "")
+                                appDelegate.callManager?.startCall(to: lead.fromNumber ?? "")
                             }) {
-                                Text(lead.first_name ?? "UNKNOWN")
-                                Text(lead.from_number ?? "")
+                                Text(lead.firstName ?? "UNKNOWN")
+                                Text(lead.fromNumber ?? "")
                             }
                         }
                     }

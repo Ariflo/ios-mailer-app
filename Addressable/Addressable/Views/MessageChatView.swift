@@ -41,7 +41,7 @@ struct MessageChatView: View {
             }.frame(minHeight: CGFloat(50)).padding()
         }.onAppear {
             viewModel.getMessages(for: lead.id)
-        }.navigationBarTitle(Text(lead.first_name ?? "UNKNOWN"), displayMode: .inline)
+        }.navigationBarTitle(Text(lead.firstName ?? "UNKNOWN"), displayMode: .inline)
     }
 }
 
@@ -92,6 +92,6 @@ struct HideRowSeparatorModifier: ViewModifier {
 
 struct MessageChatView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageChatView(viewModel: MessagesViewModel(addressableDataFetcher: AddressableDataFetcher()), lead: IncomingLead(id: 1, md5: nil, from_number: nil, first_name: "Foo", last_name: "Bar", street_line_1: nil, street_line_2: nil, city: nil, state: nil, zipcode: nil, crm_id: nil))
+        MessageChatView(viewModel: MessagesViewModel(addressableDataFetcher: AddressableDataFetcher()), lead: IncomingLead(id: 1, md5: nil, fromNumber: nil, firstName: "Foo", lastName: "Bar", streetLine1: nil, streetLine2: nil, city: nil, state: nil, zipcode: nil, crmID: nil))
     }
 }

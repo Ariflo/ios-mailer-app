@@ -24,8 +24,8 @@ struct MessageListView: View {
                         viewModel: viewModel,
                         lead: lead
                     )) {
-                        Text(lead.first_name ?? "UNKNOWN")
-                        Text(lead.from_number ?? "")
+                        Text(lead.firstName ?? "UNKNOWN")
+                        Text(lead.fromNumber ?? "")
                     }
                 }
             }

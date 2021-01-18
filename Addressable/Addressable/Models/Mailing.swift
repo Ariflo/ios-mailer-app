@@ -9,10 +9,18 @@ import Foundation
 
 struct MailingsResponse: Codable {
     let mailings: [MailingElement]
+
+    enum CodingKeys: String, CodingKey {
+        case mailings
+    }
 }
 
 struct MailingElement: Codable {
     let mailing: AddressableMailing
+
+    enum CodingKeys: String, CodingKey {
+        case mailing
+    }
 }
 
 struct AddressableMailing: Codable, Identifiable {
