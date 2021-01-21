@@ -7,10 +7,10 @@
 
 import SwiftUI
 import PushKit
-import UIKit
+import UserNotifications
 
 protocol PushKitEventDelegate: AnyObject {
-    func credentialsUpdated(credentials: PKPushCredentials)
+    func credentialsUpdated(credentials: PKPushCredentials, deviceID: String)
     func credentialsInvalidated()
     func incomingPushReceived(payload: PKPushPayload)
     func incomingPushReceived(payload: PKPushPayload, completion: @escaping () -> Void)
@@ -19,6 +19,7 @@ protocol PushKitEventDelegate: AnyObject {
 class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, ObservableObject {
     var callkitProviderDelegate: ProviderDelegate?
     var callManager: CallManager?
+    var latestPushCredentials: PKPushCredentials?
     lazy var voipRegistry = PKPushRegistry.init(queue: DispatchQueue.main)
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
@@ -31,12 +32,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
         return true
     }
 
+    func application(
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
+        let token = tokenParts.joined()
+
+        if let delegate = callkitProviderDelegate, let credentials = latestPushCredentials {
+            delegate.credentialsUpdated(credentials: credentials, deviceID: token)
+        }
+    }
+
+    func application(
+        _ application: UIApplication,
+        didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        print("Failed to register APN: \(error)")
+    }
+
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
         print("pushRegistry:didUpdatePushCredentials:forType:")
-
-        if let delegate = callkitProviderDelegate {
-            delegate.credentialsUpdated(credentials: pushCredentials)
-        }
+        latestPushCredentials = pushCredentials
     }
 
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
@@ -54,38 +71,62 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
         print("pushRegistry:didReceiveIncomingPushWithPayload:forType:completion:")
 
-        checkRecordPermission { micPermissionGranted in
-            guard !micPermissionGranted else {
-                if let delegate = self.callkitProviderDelegate {
-                    delegate.incomingPushReceived(payload: payload, completion: completion)
-                }
+        if let delegate = self.callkitProviderDelegate {
+            delegate.incomingPushReceived(payload: payload, completion: completion)
+        }
 
-                if let version = Float(UIDevice.current.systemVersion), version >= 13.0 {
-                    /**
-                     * The Voice SDK processes the call notification and returns the call invite synchronously. Report the incoming call to
-                     * CallKit and fulfill the completion before exiting this callback method.
-                     */
-                    completion()
+        completion()
+    }
+
+    func verifyPermissions(completion: @escaping () -> Void) {
+        /**
+         * Both microphone and push notification access are required for in app phone calls on Addressable.
+         */
+        checkPushNotificationsPermission {[weak self] pushNotificationPermissionGranted in
+            guard pushNotificationPermissionGranted else {
+                DispatchQueue.main.async {
+                    self?.displayPermissionsChangeAlert(message: "Push notification permissions are required to recieve in-app phone calls")
                 }
                 return
             }
 
-            let alertController = UIAlertController(title: "Addressable",
-                                                    message: "Microphone permission required for phone call",
-                                                    preferredStyle: .alert)
+            UNUserNotificationCenter.current().getNotificationSettings {[weak self] settings in
+                guard settings.authorizationStatus == .authorized else {
+                    DispatchQueue.main.async {
+                        self?.displayPermissionsChangeAlert(message: "Push notification permissions are required to recieve in-app phone calls")
+                    }
+                    return
+                }
 
-            let goToSettings = UIAlertAction(title: "Open Privacy Settings", style: .default) { _ in
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
-                                          options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: false],
-                                          completionHandler: nil)
+                checkRecordPermission {[weak self] micPermissionGranted in
+                    guard micPermissionGranted else {
+                        DispatchQueue.main.async {
+                            self?.displayPermissionsChangeAlert(message: "Microphone permissions are required for in-app phone calls")
+                        }
+                        return
+                    }
+                    completion()
+                }
             }
-
-            let cancel = UIAlertAction(title: "cancel", style: .cancel)
-
-            [goToSettings, cancel].forEach { alertController.addAction($0) }
-
-            UIApplication.topViewController()?.present(alertController, animated: true, completion: nil)
         }
+    }
+
+    func displayPermissionsChangeAlert(message: String) {
+        let alertController = UIAlertController(title: "Addressable",
+                                                message: message,
+                                                preferredStyle: .alert)
+
+        let goToSettings = UIAlertAction(title: "Open Privacy Settings", style: .default) { _ in
+            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
+                                      options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: false],
+                                      completionHandler: nil)
+        }
+
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+
+        [goToSettings, cancel].forEach { alertController.addAction($0) }
+
+        UIApplication.topViewController()?.present(alertController, animated: true, completion: nil)
     }
 }
 

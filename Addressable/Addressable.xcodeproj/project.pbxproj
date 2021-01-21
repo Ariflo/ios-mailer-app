@@ -30,6 +30,7 @@
 		CA88420225A39F2700E0D75A /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88420125A39F2700E0D75A /* SignInViewModel.swift */; };
 		CA88420725A3A7D200E0D75A /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88420625A3A7D200E0D75A /* Authorization.swift */; };
 		CA88422925A3D52F00E0D75A /* CustomRefreshableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */; };
+		CAB80CA425B8EFF4005E868D /* ringtone.wav in Resources */ = {isa = PBXBuildFile; fileRef = CAB80CA325B8EFF4005E868D /* ringtone.wav */; };
 		CAC8B086259BE6D400D4447F /* KeychainServiceUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */; };
 		CAC8B0A0259CFBC800D4447F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B09F259CFBC800D4447F /* AppView.swift */; };
 		CAC8B0AB259D017E00D4447F /* CallsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0AA259D017E00D4447F /* CallsView.swift */; };
@@ -90,6 +91,7 @@
 		CA88420125A39F2700E0D75A /* SignInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewModel.swift; sourceTree = "<group>"; };
 		CA88420625A3A7D200E0D75A /* Authorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authorization.swift; sourceTree = "<group>"; };
 		CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomRefreshableScrollView.swift; path = Addressable/Utilities/CustomRefreshableScrollView.swift; sourceTree = SOURCE_ROOT; };
+		CAB80CA325B8EFF4005E868D /* ringtone.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ringtone.wav; sourceTree = "<group>"; };
 		CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceUtil.swift; sourceTree = "<group>"; };
 		CAC8B09F259CFBC800D4447F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		CAC8B0AA259D017E00D4447F /* CallsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallsView.swift; sourceTree = "<group>"; };
@@ -129,6 +131,7 @@
 			children = (
 				CA3CE825259BCA3B00A230E1 /* Production */,
 				CA3CE823259BCA1C00A230E1 /* Development */,
+				CAB80C9725B7867A005E868D /* Ringtone */,
 				B370BC152576BAC10066624A /* Addressable */,
 				B370BC272576BAC20066624A /* AddressableTests */,
 				B370BC322576BAC20066624A /* AddressableUITests */,
@@ -266,6 +269,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		CAB80C9725B7867A005E868D /* Ringtone */ = {
+			isa = PBXGroup;
+			children = (
+				CAB80CA325B8EFF4005E868D /* ringtone.wav */,
+			);
+			path = Ringtone;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -372,6 +383,7 @@
 			files = (
 				B370BC1E2576BAC10066624A /* Preview Assets.xcassets in Resources */,
 				B370BC1B2576BAC10066624A /* Assets.xcassets in Resources */,
+				CAB80CA425B8EFF4005E868D /* ringtone.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -16,3 +16,11 @@ struct AuthorizedUserResponse: Codable {
         case lastName = "last_name"
     }
 }
+
+struct DeviceIDWrapper: Codable {
+    let deviceID: String
+
+    enum CodingKeys: String, CodingKey {
+        case deviceID = "device_id"
+    }
+}

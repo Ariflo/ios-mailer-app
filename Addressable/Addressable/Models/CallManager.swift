@@ -55,8 +55,8 @@ class CallManager {
     }
 
 
-    func startCall(to: String) {
-        let callHandle = CXHandle(type: .generic, value: to)
+    func startCall(to incomingLead: IncomingLead) {
+        let callHandle = CXHandle(type: .generic, value: String(data: encode(incomingLead)!, encoding: .utf8) ?? "")
         let startCallAction = CXStartCallAction(call: UUID(), handle: callHandle)
         let transaction = CXTransaction(action: startCallAction)
 
@@ -73,12 +73,14 @@ class CallManager {
         }
     }
 
-    func fetchToken(tokenReceived: @escaping (_ token: String?) -> Void ) {
-        AddressableDataFetcher().getTwilioAccessToken()
+    func fetchToken(deviceID: String? = nil, tokenReceived: @escaping (_ token: String?) -> Void ) {
+        let encodedDeviceId = (deviceID != nil) ? encode(DeviceIDWrapper(deviceID: deviceID!)) : nil
+        AddressableDataFetcher().getTwilioAccessToken(encodedDeviceId)
             .sink(
                 receiveCompletion: { value in
                     switch value {
-                    case .failure:
+                    case .failure(let error):
+                        print("fetchToken() receiveCompletion error: \(error)")
                         tokenReceived(nil)
                     case .finished:
                         break

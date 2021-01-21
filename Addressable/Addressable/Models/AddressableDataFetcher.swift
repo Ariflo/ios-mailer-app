@@ -11,7 +11,7 @@ import Combine
 protocol FetchableData {
     func getCurrentUserMailings() -> AnyPublisher<MailingsResponse, ApiError>
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError>
-    func getTwilioAccessToken() -> AnyPublisher<TwilioAccessToken, ApiError>
+    func getTwilioAccessToken(_ deviceIdData: Data?) -> AnyPublisher<TwilioAccessToken, ApiError>
     func getIncomingLeads() -> AnyPublisher<IncomingLeadsResponse, ApiError>
     func getIncomingLeadsWithMessages() -> AnyPublisher<IncomingLeadsResponse, ApiError>
     func getLeadMessages(for leadId: Int) -> AnyPublisher<MessagesResponse, ApiError>
@@ -43,8 +43,8 @@ extension AddressableDataFetcher: FetchableData {
         return makeApiRequest(with: getIncomingLeadsRequestComponents())
     }
 
-    func getTwilioAccessToken() -> AnyPublisher<TwilioAccessToken, ApiError> {
-        return makeApiRequest(with: getTwilioAccessTokenRequestComponents())
+    func getTwilioAccessToken(_ deviceIdData: Data?) -> AnyPublisher<TwilioAccessToken, ApiError> {
+        return makeApiRequest(with: getTwilioAccessTokenRequestComponents(newLogin: deviceIdData != nil), postRequestBodyData: deviceIdData)
     }
 
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError> {
@@ -107,16 +107,12 @@ private extension AddressableDataFetcher {
         return components
     }
 
-    func getTwilioAccessTokenRequestComponents() -> URLComponents {
+    func getTwilioAccessTokenRequestComponents(newLogin: Bool) -> URLComponents {
         var components = URLComponents()
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        //        TODO: Send identity with requet for access token
-        //        components.queryItems = [
-        //            URLQueryItem(name: "identity", value: identity),
-        //        ]
-        components.path = AddressableAPI.path + "/auth/mobile_login"
+        components.path = AddressableAPI.path + "/auth/\(newLogin ? "mobile_login_new" : "mobile_login_refresh")"
 
         return components
     }

@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
-import UIKit
 
 struct AppView: View {
+    @EnvironmentObject var appDelegate: AppDelegate
+
     var body: some View {
         /// User Authenticaton Check
         if KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] != nil {
@@ -44,8 +45,10 @@ struct AppView: View {
                         Text("Profile")
                     }
             }.onAppear {
-                checkRecordPermission { micPermissionGranted in
-                    guard !micPermissionGranted else { return }
+                appDelegate.verifyPermissions {
+                    DispatchQueue.main.async {
+                        UIApplication.shared.registerForRemoteNotifications()
+                    }
                 }
             }
         } else {

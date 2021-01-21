@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 class CallsViewModel: ObservableObject, Identifiable {
-    @Published var dataSource: IncomingLeadsResponse = []
+    @Published var incomingLeads: IncomingLeadsResponse = []
     private let addressableDataFetcher: FetchableData
     private var disposables = Set<AnyCancellable>()
 
@@ -24,15 +24,16 @@ class CallsViewModel: ObservableObject, Identifiable {
                 receiveCompletion: { [weak self] value in
                     guard let self = self else { return }
                     switch value {
-                    case .failure:
-                        self.dataSource = []
+                    case .failure(let error):
+                        print("getLeads() receiveCompletion error: \(error)")
+                        self.incomingLeads = []
                     case .finished:
                         break
                     }
                 },
                 receiveValue: { [weak self] incomingLeads in
                     guard let self = self else { return }
-                    self.dataSource = incomingLeads
+                    self.incomingLeads = incomingLeads
                 })
             .store(in: &disposables)
     }

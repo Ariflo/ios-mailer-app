@@ -23,7 +23,8 @@ class SignInViewModel: ObservableObject, Identifiable {
                 receiveCompletion: { [weak self] value in
                     guard self != nil else { return }
                     switch value {
-                    case .failure:
+                    case .failure(let error):
+                        print("login() receiveCompletion error: \(error)")
                         onAuthenticationCompletion(nil)
                     case .finished:
                         break

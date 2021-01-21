@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import UIKit
 
 public struct CustomRefreshableScrollView<Content: View>: UIViewRepresentable {
     var size: CGSize

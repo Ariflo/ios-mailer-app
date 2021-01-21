@@ -15,11 +15,21 @@ let kRegistrationTTLInDays = 365
 
 let kCachedDeviceToken = "CachedDeviceToken"
 let kCachedBindingDate = "CachedBindingDate"
-let twimlParamTo = "to"
+let twimlParamFrom = "From"
+let twimlParamTo = "To"
 
 class ProviderDelegate: NSObject {
     private var callManager: CallManager
     private let provider: CXProvider
+
+    /*
+     Custom ringback will be played when this flag is enabled.
+     When [answerOnBridge](https://www.twilio.com/docs/voice/twiml/dial#answeronbridge) is enabled in
+     the <Dial> TwiML verb, the caller will not hear the ringback while the call is ringing and awaiting
+     to be accepted on the callee's side. Configure this flag based on the TwiML application.
+     */
+    var playCustomRingback = false
+    var ringtonePlayer: AVAudioPlayer?
 
     var audioDevice = DefaultAudioDevice()
     var callKitCompletionCallback: ((Bool) -> Void)?
@@ -114,8 +124,9 @@ extension ProviderDelegate: CXProviderDelegate {
         print("provider:performStartCallAction:")
 
         provider.reportOutgoingCall(with: action.callUUID, startedConnectingAt: Date())
+        let lead = try? JSONDecoder().decode(IncomingLead.self, from: action.handle.value.data(using: .utf8)!)
 
-        performVoiceCall(uuid: action.callUUID, to: action.handle.value) { success in
+        performVoiceCall(uuid: action.callUUID, lead: lead!) { success in
             if success {
                 print("performVoiceCall() successful")
                 provider.reportOutgoingCall(with: action.callUUID, connectedAt: Date())
@@ -125,6 +136,7 @@ extension ProviderDelegate: CXProviderDelegate {
         }
 
         action.fulfill()
+        playCustomRingback = true
     }
 
     func reportIncomingCall(
@@ -170,12 +182,12 @@ extension ProviderDelegate: CXProviderDelegate {
         }
     }
 
-    func performVoiceCall(uuid: UUID, to: String?, completionHandler: @escaping (Bool) -> Void) {
+    func performVoiceCall(uuid: UUID, lead: IncomingLead, completionHandler: @escaping (Bool) -> Void) {
         callManager.fetchToken { token in
-            guard let accessToken = token, let to = to else { return }
+            guard let accessToken = token, let to = lead.fromNumber, let from = lead.toNumber else { return }
 
             let connectOptions = ConnectOptions(accessToken: accessToken) { builder in
-                builder.params = [twimlParamTo: to]
+                builder.params = [twimlParamFrom: from, twimlParamTo: to]
                 builder.uuid = uuid
             }
 
@@ -190,8 +202,48 @@ extension ProviderDelegate: CXProviderDelegate {
 // MARK: - TVOCallDelegate
 
 extension ProviderDelegate: CallDelegate {
+    func callDidStartRinging(call: Call) {
+        print("callDidStartRinging:")
+
+        /*
+         When [answerOnBridge](https://www.twilio.com/docs/voice/twiml/dial#answeronbridge) is enabled in the
+         <Dial> TwiML verb, the caller will not hear the ringback while the call is ringing and awaiting to be
+         accepted on the callee's side. The application can use the `AVAudioPlayer` to play custom audio files
+         between the `[TVOCallDelegate callDidStartRinging:]` and the `[TVOCallDelegate callDidConnect:]` callbacks.
+         */
+        if playCustomRingback {
+            playRingback()
+        }
+    }
+
+    // MARK: Ringtone
+    func playRingback() {
+        let ringtonePath = URL(fileURLWithPath: Bundle.main.path(forResource: "ringtone", ofType: "wav")!)
+
+        do {
+            ringtonePlayer = try AVAudioPlayer(contentsOf: ringtonePath)
+            ringtonePlayer?.delegate = self
+            ringtonePlayer?.numberOfLoops = -1
+
+            ringtonePlayer?.volume = 1.0
+            ringtonePlayer?.play()
+        } catch {
+            print("Failed to initialize audio player")
+        }
+    }
+
+    func stopRingback() {
+        guard let ringtonePlayer = ringtonePlayer, ringtonePlayer.isPlaying else { return }
+
+        ringtonePlayer.stop()
+    }
+
     func callDidConnect(call: Call) {
         print("callDidConnect:")
+
+        if playCustomRingback {
+            stopRingback()
+        }
 
         if let callKitCompletionCallback = callKitCompletionCallback {
             callKitCompletionCallback(true)
@@ -204,6 +256,9 @@ extension ProviderDelegate: CallDelegate {
         if let completion = callKitCompletionCallback {
             completion(false)
         }
+        if playCustomRingback {
+            stopRingback()
+        }
 
         provider.reportCall(with: call.uuid!, endedAt: Date(), reason: CXCallEndedReason.failed)
 
@@ -215,6 +270,10 @@ extension ProviderDelegate: CallDelegate {
             print("Call failed: \(error.localizedDescription)")
         } else {
             print("Call disconnected")
+        }
+
+        if playCustomRingback {
+            stopRingback()
         }
 
         if !userInitiatedDisconnect {
@@ -242,15 +301,19 @@ extension ProviderDelegate: CallDelegate {
         callManager.remove(call: addressableCall)
 
         userInitiatedDisconnect = false
+
+        if playCustomRingback {
+            stopRingback()
+        }
     }
 }
 
 // MARK: - PushKitEventDelegate
 
 extension ProviderDelegate: PushKitEventDelegate {
-    func credentialsUpdated(credentials: PKPushCredentials) {
+    func credentialsUpdated(credentials: PKPushCredentials, deviceID: String) {
         if registrationRequired() || UserDefaults.standard.data(forKey: kCachedDeviceToken) != credentials.token {
-            callManager.fetchToken { token in
+            callManager.fetchToken(deviceID: deviceID) { token in
                 guard let accessToken = token else { return }
 
                 let cachedDeviceToken = credentials.token
@@ -385,6 +448,24 @@ extension ProviderDelegate: NotificationDelegate {
         guard let index = callManager.calls.firstIndex(where: { $0.incomingCall?.callSid == cancelledCallInvite.callSid }) else { return }
 
         callManager.end(call: callManager.calls[index])
+    }
+}
+
+// MARK: - AVAudioPlayerDelegate
+
+extension ProviderDelegate: AVAudioPlayerDelegate {
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        if flag {
+            print("Audio player finished playing successfully")
+        } else {
+            print("Audio player finished playing with some error")
+        }
+    }
+
+    func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+        if let error = error {
+            print("Decode error occurred: \(error.localizedDescription)")
+        }
     }
 }
 

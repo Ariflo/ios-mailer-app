@@ -5,6 +5,7 @@
 //  Created by Ari on 1/13/21.
 //
 import TwilioVoice
+import UserNotifications
 
 func checkRecordPermission(completion: @escaping (_ permissionGranted: Bool) -> Void) {
     let permissionStatus = AVAudioSession.sharedInstance().recordPermission
@@ -23,4 +24,11 @@ func checkRecordPermission(completion: @escaping (_ permissionGranted: Bool) -> 
     default:
         completion(false)
     }
+}
+
+func checkPushNotificationsPermission(completion: @escaping (_ permissionGranted: Bool) -> Void) {
+    UNUserNotificationCenter.current()
+        .requestAuthorization(options: [.alert, .sound, .badge, .carPlay]) { permissionGranted, _ in
+            completion(permissionGranted)
+        }
 }

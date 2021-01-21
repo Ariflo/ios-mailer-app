@@ -92,6 +92,6 @@ struct HideRowSeparatorModifier: ViewModifier {
 
 struct MessageChatView_Previews: PreviewProvider {
     static var previews: some View {
-        MessageChatView(viewModel: MessagesViewModel(addressableDataFetcher: AddressableDataFetcher()), lead: IncomingLead(id: 1, md5: nil, fromNumber: nil, firstName: "Foo", lastName: "Bar", streetLine1: nil, streetLine2: nil, city: nil, state: nil, zipcode: nil, crmID: nil))
+        MessageChatView(viewModel: MessagesViewModel(addressableDataFetcher: AddressableDataFetcher()), lead: IncomingLead(id: 1, md5: nil, fromNumber: nil, toNumber: nil, firstName: "Foo", lastName: "Bar", streetLine1: nil, streetLine2: nil, city: nil, state: nil, zipcode: nil, crmID: nil))
     }
 }

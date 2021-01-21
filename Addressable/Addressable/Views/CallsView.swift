@@ -22,10 +22,17 @@ struct CallsView: View {
                 Text("Addressable Leads").font(.title)
                 CustomRefreshableScrollView(viewBuilder: {
                     VStack {
-                        List(viewModel.dataSource) { lead in
+                        List(viewModel.incomingLeads) { lead in
                             Button(action: {
-                                // call number
-                                appDelegate.callManager?.startCall(to: lead.fromNumber ?? "")
+                                appDelegate.verifyPermissions {
+                                    // In the case a user disallowed PN permissions on initial launch
+                                    // register for remote PN + Twilio here
+                                    DispatchQueue.main.async {
+                                        UIApplication.shared.registerForRemoteNotifications()
+                                    }
+                                    // Make outgoing call
+                                    appDelegate.callManager?.startCall(to: lead)
+                                }
                             }) {
                                 Text(lead.firstName ?? "UNKNOWN")
                                 Text(lead.fromNumber ?? "")

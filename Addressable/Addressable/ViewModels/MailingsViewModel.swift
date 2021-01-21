@@ -28,7 +28,8 @@ class MailingsViewModel: ObservableObject, Identifiable {
                 receiveCompletion: { [weak self] value in
                     guard let self = self else { return }
                     switch value {
-                    case .failure:
+                    case .failure(let error):
+                        print("getMailings() receiveCompletion error: \(error)")
                         self.dataSource = []
                     case .finished:
                         break

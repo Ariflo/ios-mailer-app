@@ -29,7 +29,7 @@ class MessagesViewModel: ObservableObject, Identifiable {
                     guard let self = self else { return }
                     switch value {
                     case .failure(let error):
-                        print(error)
+                        print("getIncomingLeadsWithMessages() receiveCompletion error: \(error)")
                         self.incomingLeadsWithMessages = []
                     case .finished:
                         break
@@ -54,7 +54,7 @@ class MessagesViewModel: ObservableObject, Identifiable {
                     guard let self = self else { return }
                     switch value {
                     case .failure(let error):
-                        print(error)
+                        print("getMessages() receiveCompletion error: \(error)")
                         self.messages = []
                     case .finished:
                         break
@@ -84,7 +84,7 @@ class MessagesViewModel: ObservableObject, Identifiable {
                     guard let self = self else { return }
                     switch value {
                     case .failure(let error):
-                        print(error)
+                        print("sendMessage() receiveCompletion error: \(error)")
                         self.messages = []
                     case .finished:
                         break

@@ -16,3 +16,7 @@ func decode<T: Decodable>(_ data: Data) -> AnyPublisher<T, ApiError> {
         }
         .eraseToAnyPublisher()
 }
+
+func encode<T: Encodable>(_ model: T) -> Data? {
+    return try? JSONEncoder().encode(model)
+}

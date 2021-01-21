@@ -9,13 +9,14 @@ import Foundation
 
 struct IncomingLead: Codable, Identifiable {
     let id: Int
-    let md5, fromNumber, firstName, lastName: String?
+    let md5, fromNumber, toNumber, firstName, lastName: String?
     let streetLine1, streetLine2, city, state: String?
     let zipcode, crmID: String?
 
     enum CodingKeys: String, CodingKey {
         case id, md5
         case fromNumber = "from_number"
+        case toNumber = "to_number"
         case firstName = "first_name"
         case lastName = "last_name"
         case streetLine1 = "street_line_1"
