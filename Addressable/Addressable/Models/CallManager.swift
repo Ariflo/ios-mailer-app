@@ -73,23 +73,24 @@ class CallManager {
         }
     }
 
-    func fetchToken(deviceID: String? = nil, tokenReceived: @escaping (_ token: String?) -> Void ) {
-        let encodedDeviceId = (deviceID != nil) ? encode(DeviceIDWrapper(deviceID: deviceID!)) : nil
-        AddressableDataFetcher().getTwilioAccessToken(encodedDeviceId)
-            .sink(
-                receiveCompletion: { value in
-                    switch value {
-                    case .failure(let error):
-                        print("fetchToken() receiveCompletion error: \(error)")
-                        tokenReceived(nil)
-                    case .finished:
-                        break
-                    }
-                },
-                receiveValue: { tokenData in
-                    tokenReceived(tokenData.jwtToken)
-                })
-            .store(in: &disposables)
+    func fetchToken(deviceID: String = "", tokenReceived: @escaping (_ token: String?) -> Void ) {
+        AddressableDataFetcher().getTwilioAccessToken(
+            encode(DeviceIDWrapper(deviceID: deviceID))
+        )
+        .sink(
+            receiveCompletion: { value in
+                switch value {
+                case .failure(let error):
+                    print("fetchToken() receiveCompletion error: \(error)")
+                    tokenReceived(nil)
+                case .finished:
+                    break
+                }
+            },
+            receiveValue: { tokenData in
+                tokenReceived(tokenData.jwtToken)
+            })
+        .store(in: &disposables)
     }
 }
 

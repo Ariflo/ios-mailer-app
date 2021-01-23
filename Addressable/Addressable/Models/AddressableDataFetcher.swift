@@ -44,7 +44,7 @@ extension AddressableDataFetcher: FetchableData {
     }
 
     func getTwilioAccessToken(_ deviceIdData: Data?) -> AnyPublisher<TwilioAccessToken, ApiError> {
-        return makeApiRequest(with: getTwilioAccessTokenRequestComponents(newLogin: deviceIdData != nil), postRequestBodyData: deviceIdData)
+        return makeApiRequest(with: getTwilioAccessTokenRequestComponents(), postRequestBodyData: deviceIdData)
     }
 
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError> {
@@ -102,17 +102,17 @@ private extension AddressableDataFetcher {
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/auth.json"
+        components.path = AddressableAPI.path + "/auth"
 
         return components
     }
 
-    func getTwilioAccessTokenRequestComponents(newLogin: Bool) -> URLComponents {
+    func getTwilioAccessTokenRequestComponents() -> URLComponents {
         var components = URLComponents()
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/auth/\(newLogin ? "mobile_login_new" : "mobile_login_refresh")"
+        components.path = AddressableAPI.path + "/auth/mobile_login"
 
         return components
     }

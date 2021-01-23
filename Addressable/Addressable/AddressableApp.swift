@@ -52,12 +52,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
     }
 
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
-        print("pushRegistry:didUpdatePushCredentials:forType:")
+        print("pushRegistry:didUpdatePushCredentials:forType: \(type)")
         latestPushCredentials = pushCredentials
     }
 
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
-        print("pushRegistry:didInvalidatePushTokenForType:")
+        print("pushRegistry:didInvalidatePushTokenForType: \(type)")
 
         if let delegate = callkitProviderDelegate {
             delegate.credentialsInvalidated()
@@ -69,7 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
      * notification payload is passed to the `TwilioVoice.handleNotification()` method.
      */
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
-        print("pushRegistry:didReceiveIncomingPushWithPayload:forType:completion:")
+        print("pushRegistry:didReceiveIncomingPushWithPayload:forType:\(type) completion:")
 
         if let delegate = self.callkitProviderDelegate {
             delegate.incomingPushReceived(payload: payload, completion: completion)
