@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - IncomingLead
 struct IncomingLead: Codable, Identifiable {
     let id: Int
     let md5, fromNumber, toNumber, firstName, lastName: String?
@@ -26,4 +27,5 @@ struct IncomingLead: Codable, Identifiable {
     }
 }
 
+// MARK: - IncomingLeadsResponse
 typealias IncomingLeadsResponse = [IncomingLead]

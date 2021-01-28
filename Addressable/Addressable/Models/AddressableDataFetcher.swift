@@ -10,12 +10,22 @@ import Combine
 
 protocol FetchableData {
     func getCurrentUserMailings() -> AnyPublisher<MailingsResponse, ApiError>
+    func getCurrentUserCustomNotes() -> AnyPublisher<CustomNotesResponse, ApiError>
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError>
     func getTwilioAccessToken(_ deviceIdData: Data?) -> AnyPublisher<TwilioAccessToken, ApiError>
     func getIncomingLeads() -> AnyPublisher<IncomingLeadsResponse, ApiError>
     func getIncomingLeadsWithMessages() -> AnyPublisher<IncomingLeadsResponse, ApiError>
     func getLeadMessages(for leadId: Int) -> AnyPublisher<MessagesResponse, ApiError>
     func sendLeadMessage(_ message: Data?) -> AnyPublisher<MessagesResponse, ApiError>
+    func getMailingCoverArt() -> AnyPublisher<MailingCoverArtResponse, ApiError>
+    func getMailingReturnAddress() -> AnyPublisher<ReturnAddress, ApiError>
+    func sendCustomMailing(_ mailing: Data?) -> AnyPublisher<OutGoingCustomNoteWrapper, ApiError>
+    func getMessageTemplates() -> AnyPublisher<MessageTemplatesResponse, ApiError>
+}
+
+enum ApiError: Error {
+    case parsing(description: String)
+    case network(description: String)
 }
 
 class AddressableDataFetcher {
@@ -27,6 +37,26 @@ class AddressableDataFetcher {
 }
 
 extension AddressableDataFetcher: FetchableData {
+    func getMessageTemplates() -> AnyPublisher<MessageTemplatesResponse, ApiError> {
+        return makeApiRequest(with: getMessageTemplatesRequestComponents())
+    }
+
+    func sendCustomMailing(_ mailing: Data?) -> AnyPublisher<OutGoingCustomNoteWrapper, ApiError> {
+        return makeApiRequest(with: getCustomNotesRequestComponents(), postRequestBodyData: mailing)
+    }
+
+    func getMailingReturnAddress() -> AnyPublisher<ReturnAddress, ApiError> {
+        return makeApiRequest(with: getMailingReturnAddressRequestComponents())
+    }
+
+    func getMailingCoverArt() -> AnyPublisher<MailingCoverArtResponse, ApiError> {
+        return makeApiRequest(with: getMailingCoverArtRequestComponents())
+    }
+
+    func getCurrentUserCustomNotes() -> AnyPublisher<CustomNotesResponse, ApiError> {
+        return makeApiRequest(with: getCustomNotesRequestComponents())
+    }
+
     func sendLeadMessage(_ messageData: Data?) -> AnyPublisher<MessagesResponse, ApiError> {
         return makeApiRequest(with: sendLeadMessageRequestComponents(), postRequestBodyData: messageData)
     }
@@ -127,6 +157,16 @@ private extension AddressableDataFetcher {
         return components
     }
 
+    func getCustomNotesRequestComponents() -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/custom_notes"
+
+        return components
+    }
+
     func getIncomingLeadsRequestComponents() -> URLComponents {
         var components = URLComponents()
 
@@ -166,10 +206,34 @@ private extension AddressableDataFetcher {
 
         return components
     }
-}
 
+    func getMailingCoverArtRequestComponents() -> URLComponents {
+        var components = URLComponents()
 
-enum ApiError: Error {
-    case parsing(description: String)
-    case network(description: String)
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/layout_templates"
+
+        return components
+    }
+
+    func getMailingReturnAddressRequestComponents() -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/return_addresses"
+
+        return components
+    }
+
+    func getMessageTemplatesRequestComponents() -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/message_templates"
+
+        return components
+    }
 }

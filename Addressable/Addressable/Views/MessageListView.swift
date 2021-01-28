@@ -16,21 +16,29 @@ struct MessageListView: View {
     }
 
     var body: some View {
-        VStack {
-            Text("Addressable Messages").font(.title)
-            VStack {
-                List(viewModel.incomingLeadsWithMessages) { lead in
-                    NavigationLink(destination: MessageChatView(
-                        viewModel: viewModel,
-                        lead: lead
-                    )) {
-                        Text(lead.firstName ?? "UNKNOWN")
-                        Text(lead.fromNumber ?? "")
+        NavigationView {
+            GeometryReader { geometry in
+                CustomRefreshableScrollView(viewBuilder: {
+                    List(viewModel.incomingLeadsWithMessages) { lead in
+                        NavigationLink(destination: MessageChatView(
+                            viewModel: viewModel,
+                            lead: lead
+                        )) {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(lead.firstName ?? "UNKNOWN").font(.title2)
+                                Text(lead.fromNumber ?? "").font(.subheadline)
+                            }.padding(.vertical, 8)
+                        }
                     }
+                    .listStyle(PlainListStyle())
+                }, size: geometry.size) {
+                    viewModel.getIncomingLeadsWithMessages()
                 }
             }
-        }.onAppear {
-            viewModel.getIncomingLeadsWithMessages()
+            .onAppear {
+                viewModel.getIncomingLeadsWithMessages()
+            }
+            .navigationBarTitle("Messages")
         }
     }
 }

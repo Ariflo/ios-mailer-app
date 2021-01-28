@@ -7,6 +7,7 @@
 
 import Foundation
 
+// MARK: - AuthorizedUserResponse
 struct AuthorizedUserResponse: Codable {
     let firstName: String
     let lastName: String
@@ -17,6 +18,7 @@ struct AuthorizedUserResponse: Codable {
     }
 }
 
+// MARK: - DeviceIDWrapper
 struct DeviceIDWrapper: Codable {
     let deviceID: String
 

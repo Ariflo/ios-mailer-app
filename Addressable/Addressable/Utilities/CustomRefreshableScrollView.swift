@@ -37,6 +37,8 @@ public struct CustomRefreshableScrollView<Content: View>: UIViewRepresentable {
         }
 
         let child = UIHostingController(rootView: viewBuilder())
+        // TODO: Setting Height to the size of the container here is making it
+        // hard to see the bottom of views with lists, need alternative solution
         child.view.frame = CGRect(x: 0, y: 0, width: size.width, height: size.height)
         control.addSubview(child.view)
         context.coordinator.child = child

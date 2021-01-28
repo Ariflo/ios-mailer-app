@@ -5,6 +5,7 @@
 //  Created by Ari on 1/14/21.
 //
 
+// MARK: - MessagesResponse
 struct MessagesResponse: Codable {
     let leadMessages: [String]
     let status: String
@@ -14,6 +15,8 @@ struct MessagesResponse: Codable {
         case status
     }
 }
+
+// MARK: - Message
 struct Message: Codable, Identifiable {
     let id, incomingLeadID: Int
     let body: String
@@ -31,6 +34,7 @@ struct Message: Codable, Identifiable {
     }
 }
 
+// MARK: - OutgoingMessageWrapper
 struct OutgoingMessageWrapper: Codable {
     let leadMessage: OutgoingMessage
 
@@ -43,6 +47,7 @@ struct OutgoingMessageWrapper: Codable {
     }
 }
 
+// MARK: - OutgoingMessage
 struct OutgoingMessage: Codable {
     let incomingLeadID: Int
     let body: String

@@ -9,7 +9,8 @@ import SwiftUI
 import Combine
 
 class MailingsViewModel: ObservableObject, Identifiable {
-    @Published var dataSource: [AddressableMailing] = []
+    @Published var mailings: [AddressableMailing] = []
+    @Published var customNotes: [CustomNote] = []
 
     private let addressableDataFetcher: FetchableData
     private var disposables = Set<AnyCancellable>()
@@ -30,14 +31,38 @@ class MailingsViewModel: ObservableObject, Identifiable {
                     switch value {
                     case .failure(let error):
                         print("getMailings() receiveCompletion error: \(error)")
-                        self.dataSource = []
+                        self.mailings = []
                     case .finished:
                         break
                     }
                 },
-                receiveValue: { [weak self] mailingsListData in
+                receiveValue: { [weak self] mailingsData in
                     guard let self = self else { return }
-                    self.dataSource = mailingsListData
+                    self.mailings = mailingsData
+                })
+            .store(in: &disposables)
+    }
+
+    func getCustomNotes() {
+        addressableDataFetcher.getCurrentUserCustomNotes()
+            .map { resp in
+                resp.customNotes.map { $0.customNote }
+            }
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] value in
+                    guard let self = self else { return }
+                    switch value {
+                    case .failure(let error):
+                        print("getCustomNotes() receiveCompletion error: \(error)")
+                        self.customNotes = []
+                    case .finished:
+                        break
+                    }
+                },
+                receiveValue: { [weak self] customNotesData in
+                    guard let self = self else { return }
+                    self.customNotes = customNotesData
                 })
             .store(in: &disposables)
     }

@@ -62,6 +62,6 @@ struct AppView: View {
 
 struct AppView_Previews: PreviewProvider {
     static var previews: some View {
-        AppView()
+        AppView().environmentObject(AppDelegate())
     }
 }

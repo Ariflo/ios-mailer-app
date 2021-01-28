@@ -17,34 +17,34 @@ struct CallsView: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            VStack {
-                Text("Addressable Leads").font(.title)
+        NavigationView {
+            GeometryReader { geometry in
                 CustomRefreshableScrollView(viewBuilder: {
-                    VStack {
-                        List(viewModel.incomingLeads) { lead in
-                            Button(action: {
-                                appDelegate.verifyPermissions {
-                                    // In the case a user disallowed PN permissions on initial launch
-                                    // register for remote PN + Twilio here
-                                    DispatchQueue.main.async {
-                                        UIApplication.shared.registerForRemoteNotifications()
-                                    }
-                                    // Make outgoing call
-                                    appDelegate.callManager?.startCall(to: lead)
+                    List(viewModel.incomingLeads) { lead in
+                        Button(action: {
+                            appDelegate.verifyPermissions {
+                                // In the case a user disallowed PN permissions on initial launch
+                                // register for remote PN + Twilio here
+                                DispatchQueue.main.async {
+                                    UIApplication.shared.registerForRemoteNotifications()
                                 }
-                            }) {
-                                Text(lead.firstName ?? "UNKNOWN")
-                                Text(lead.fromNumber ?? "")
+                                // Make outgoing call
+                                appDelegate.callManager?.startCall(to: lead)
                             }
+                        }) {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(lead.firstName ?? "UNKNOWN").font(.title2)
+                                Text(lead.fromNumber ?? "").font(.subheadline)
+                            }.padding(.vertical, 8)
                         }
-                    }
+                    }.listStyle(PlainListStyle())
                 }, size: geometry.size) {
                     viewModel.getLeads()
                 }
+            }.onAppear {
+                viewModel.getLeads()
             }
-        }.onAppear {
-            viewModel.getLeads()
+            .navigationBarTitle("Calls")
         }
     }
 }

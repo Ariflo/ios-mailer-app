@@ -14,7 +14,7 @@
 		B370BC342576BAC20066624A /* AddressableUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370BC332576BAC20066624A /* AddressableUITests.swift */; };
 		B370BC872576DE9F0066624A /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370BC862576DE9F0066624A /* SignInView.swift */; };
 		B3DB527F257992F8004196A6 /* MailingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB527E257992F8004196A6 /* MailingsView.swift */; };
-		B3DB52872579A84B004196A6 /* Mailing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB52862579A84B004196A6 /* Mailing.swift */; };
+		B3DB52872579A84B004196A6 /* Mailings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB52862579A84B004196A6 /* Mailings.swift */; };
 		CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */; };
 		CA8555D125A81AF80063274D /* ProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8555D025A81AF80063274D /* ProviderDelegate.swift */; };
 		CA8555D625A81B330063274D /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8555D525A81B330063274D /* CallManager.swift */; };
@@ -38,6 +38,10 @@
 		CAC8B0BD259D020500D4447F /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0BC259D020500D4447F /* ProfileView.swift */; };
 		CAC8B0D5259D347F00D4447F /* JsonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0D4259D347F00D4447F /* JsonUtil.swift */; };
 		CAC8B0DD259D36AF00D4447F /* AddressableDataFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0DC259D36AF00D4447F /* AddressableDataFetcher.swift */; };
+		CADA000325BF8FE200004B4B /* ComposeMailingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADA000225BF8FE200004B4B /* ComposeMailingView.swift */; };
+		CADA001425C0A22800004B4B /* ComposeMailingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADA001325C0A22800004B4B /* ComposeMailingViewModel.swift */; };
+		CADA001C25C0D09000004B4B /* EnumUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADA001B25C0D09000004B4B /* EnumUtil.swift */; };
+		CADA002D25C0F20C00004B4B /* ImageUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADA002C25C0F20C00004B4B /* ImageUtil.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -72,7 +76,7 @@
 		B370BC4C2576C2860066624A /* Addressable.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Addressable.entitlements; sourceTree = "<group>"; };
 		B370BC862576DE9F0066624A /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		B3DB527E257992F8004196A6 /* MailingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsView.swift; sourceTree = "<group>"; };
-		B3DB52862579A84B004196A6 /* Mailing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailing.swift; sourceTree = "<group>"; };
+		B3DB52862579A84B004196A6 /* Mailings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailings.swift; sourceTree = "<group>"; };
 		CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsViewModel.swift; sourceTree = "<group>"; };
 		CA3CE821259BC9E000A230E1 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
 		CA3CE822259BC9FA00A230E1 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
@@ -99,6 +103,10 @@
 		CAC8B0BC259D020500D4447F /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		CAC8B0D4259D347F00D4447F /* JsonUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonUtil.swift; sourceTree = "<group>"; };
 		CAC8B0DC259D36AF00D4447F /* AddressableDataFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressableDataFetcher.swift; sourceTree = "<group>"; };
+		CADA000225BF8FE200004B4B /* ComposeMailingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeMailingView.swift; sourceTree = "<group>"; };
+		CADA001325C0A22800004B4B /* ComposeMailingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeMailingViewModel.swift; sourceTree = "<group>"; };
+		CADA001B25C0D09000004B4B /* EnumUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumUtil.swift; sourceTree = "<group>"; };
+		CADA002C25C0F20C00004B4B /* ImageUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtil.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -205,6 +213,7 @@
 				CA85568025B0E6400063274D /* ContentMessageView.swift */,
 				CA85568525B0E7330063274D /* MessageView.swift */,
 				CA85568D25B0EB230063274D /* MessageChatView.swift */,
+				CADA000225BF8FE200004B4B /* ComposeMailingView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -212,7 +221,7 @@
 		CA3CE7F6259BBA1900A230E1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				B3DB52862579A84B004196A6 /* Mailing.swift */,
+				B3DB52862579A84B004196A6 /* Mailings.swift */,
 				CAC8B0DC259D36AF00D4447F /* AddressableDataFetcher.swift */,
 				CA88420625A3A7D200E0D75A /* Authorization.swift */,
 				CA8555D025A81AF80063274D /* ProviderDelegate.swift */,
@@ -231,6 +240,7 @@
 				CA88420125A39F2700E0D75A /* SignInViewModel.swift */,
 				CA85565C25AFC5ED0063274D /* CallsViewModel.swift */,
 				CA85567625B0E34F0063274D /* MessagesViewModel.swift */,
+				CADA001325C0A22800004B4B /* ComposeMailingViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -257,6 +267,8 @@
 				CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */,
 				CAC8B0D4259D347F00D4447F /* JsonUtil.swift */,
 				CA85564C25AFB9B40063274D /* PermissionsUtil.swift */,
+				CADA001B25C0D09000004B4B /* EnumUtil.swift */,
+				CADA002C25C0F20C00004B4B /* ImageUtil.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -294,6 +306,8 @@
 			dependencies = (
 			);
 			name = Addressable;
+			packageProductDependencies = (
+			);
 			productName = Addressable;
 			productReference = B370BC132576BAC10066624A /* Addressable.app */;
 			productType = "com.apple.product-type.application";
@@ -365,6 +379,8 @@
 				Base,
 			);
 			mainGroup = B370BC0A2576BAC10066624A;
+			packageReferences = (
+			);
 			productRefGroup = B370BC142576BAC10066624A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -438,15 +454,19 @@
 				CA85568125B0E6400063274D /* ContentMessageView.swift in Sources */,
 				CAC8B0A0259CFBC800D4447F /* AppView.swift in Sources */,
 				CA85568E25B0EB230063274D /* MessageChatView.swift in Sources */,
+				CADA002D25C0F20C00004B4B /* ImageUtil.swift in Sources */,
 				CA88420225A39F2700E0D75A /* SignInViewModel.swift in Sources */,
+				CADA000325BF8FE200004B4B /* ComposeMailingView.swift in Sources */,
 				CA85565D25AFC5ED0063274D /* CallsViewModel.swift in Sources */,
 				CA88420725A3A7D200E0D75A /* Authorization.swift in Sources */,
 				CA85565825AFC4910063274D /* IncomingLead.swift in Sources */,
 				B3DB527F257992F8004196A6 /* MailingsView.swift in Sources */,
+				CADA001C25C0D09000004B4B /* EnumUtil.swift in Sources */,
 				CA8555D125A81AF80063274D /* ProviderDelegate.swift in Sources */,
 				CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */,
-				B3DB52872579A84B004196A6 /* Mailing.swift in Sources */,
+				B3DB52872579A84B004196A6 /* Mailings.swift in Sources */,
 				CAC8B0AB259D017E00D4447F /* CallsView.swift in Sources */,
+				CADA001425C0A22800004B4B /* ComposeMailingViewModel.swift in Sources */,
 				CAC8B0B0259D01C300D4447F /* MessageListView.swift in Sources */,
 				CAC8B0BD259D020500D4447F /* ProfileView.swift in Sources */,
 				B370BC872576DE9F0066624A /* SignInView.swift in Sources */,
