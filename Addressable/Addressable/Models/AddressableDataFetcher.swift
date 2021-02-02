@@ -19,7 +19,7 @@ protocol FetchableData {
     func sendLeadMessage(_ message: Data?) -> AnyPublisher<MessagesResponse, ApiError>
     func getMailingCoverArt() -> AnyPublisher<MailingCoverArtResponse, ApiError>
     func getMailingReturnAddress() -> AnyPublisher<ReturnAddress, ApiError>
-    func sendCustomMailing(_ mailing: Data?) -> AnyPublisher<OutGoingCustomNoteWrapper, ApiError>
+    func sendCustomMailing(_ mailing: Data?) -> AnyPublisher<OutgoingCustomNoteResponse, ApiError>
     func getMessageTemplates() -> AnyPublisher<MessageTemplatesResponse, ApiError>
 }
 
@@ -41,7 +41,7 @@ extension AddressableDataFetcher: FetchableData {
         return makeApiRequest(with: getMessageTemplatesRequestComponents())
     }
 
-    func sendCustomMailing(_ mailing: Data?) -> AnyPublisher<OutGoingCustomNoteWrapper, ApiError> {
+    func sendCustomMailing(_ mailing: Data?) -> AnyPublisher<OutgoingCustomNoteResponse, ApiError> {
         return makeApiRequest(with: getCustomNotesRequestComponents(), postRequestBodyData: mailing)
     }
 
@@ -123,7 +123,7 @@ extension AddressableDataFetcher: FetchableData {
 private extension AddressableDataFetcher {
     struct AddressableAPI {
         static let scheme = "https"
-        static let host = "9b3875ee9d1a.ngrok.io"
+        static let host = "bfa6f6d72a2f.ngrok.io"
         static let path = "/api/v1"
     }
 

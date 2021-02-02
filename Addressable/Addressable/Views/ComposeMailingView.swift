@@ -17,7 +17,7 @@ enum ComposeMailingSteps: String, CaseIterable {
 }
 // MARK: - ComposeMailingAlerts
 enum ComposeMailingAlerts {
-    case requiredFieldsEmpty, confirmMailing
+    case requiredFieldsEmpty, confirmMailing, outgoingMailingFailed
 }
 
 // MARK: - ComposeMailingView
@@ -60,9 +60,17 @@ struct ComposeMailingView: View {
                         title: Text("Send Mailing?"), message: Text("You are about to send a personalized note in the mail"),
                         primaryButton: .default(Text("Confirm")) {
                             viewModel.updateCustomNote()
-                            viewModel.sendMailing()
-                            viewModel.step.next()
+                            viewModel.sendMailing() { outgoingMailingStatus in
+                                if (outgoingMailingStatus != nil) {
+                                    viewModel.step.next()
+                                } else {
+                                    alertType = .outgoingMailingFailed
+                                    showingAlert = true
+                                }
+                            }
                         }, secondaryButton: .cancel())
+                case .outgoingMailingFailed:
+                    return Alert(title: Text("We're sorry something went wrong, please try again."))
                 }
             }
             .toolbar {

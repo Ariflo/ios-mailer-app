@@ -68,7 +68,7 @@ class ComposeMailingViewModel: ObservableObject, Identifiable {
         )
     }
 
-    func sendMailing() {
+    func sendMailing(completion: @escaping (String?) -> Void) {
         guard let encodedMailing = try? JSONEncoder().encode(OutGoingCustomNoteWrapper(customNote: customNote!)) else {
             print("Custom Note Encoding Error")
             return
@@ -80,12 +80,13 @@ class ComposeMailingViewModel: ObservableObject, Identifiable {
                     switch value {
                     case .failure(let error):
                         print("sendCustomMailing() receiveCompletion error: \(error)")
+                        completion(nil)
                     case .finished:
                         break
                     }
                 },
-                receiveValue: { mailingSent in
-                    print("MAILING SENT >>> \(mailingSent)")
+                receiveValue: {mailingSent in
+                    completion(mailingSent.status)
                 })
             .store(in: &disposables)
     }

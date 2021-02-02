@@ -46,6 +46,18 @@ struct CustomNotesResponse: Codable {
     }
 }
 
+// MARK: - OutgoingCustomNoteResponse
+struct OutgoingCustomNoteResponse: Codable {
+    let customNote: CustomNote
+    let id: Int
+    let status: String
+
+    enum CodingKeys: String, CodingKey {
+        case customNote = "custom_note"
+        case id, status
+    }
+}
+
 // MARK: - CustomNotes
 struct CustomNotes: Codable {
     let customNote: CustomNote
