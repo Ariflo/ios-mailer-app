@@ -10,13 +10,12 @@ import SwiftUI
 struct MessageChatView: View {
     @ObservedObject var viewModel: MessagesViewModel
     @State var typingMessage: String = ""
+    let lead: IncomingLead
 
     init(viewModel: MessagesViewModel, lead: IncomingLead) {
         self.viewModel = viewModel
         self.lead = lead
     }
-
-    let lead: IncomingLead
 
     var body: some View {
         VStack {
@@ -41,7 +40,7 @@ struct MessageChatView: View {
             }.frame(minHeight: CGFloat(50)).padding()
         }.onAppear {
             viewModel.getMessages(for: lead.id)
-        }.navigationBarTitle(Text(lead.firstName ?? "UNKNOWN"), displayMode: .inline)
+        }.navigationBarTitle(Text("\(lead.firstName != nil || lead.firstName!.contains("unknown")  ? "Unknown Name" : lead.firstName!)"), displayMode: .inline)
     }
 }
 

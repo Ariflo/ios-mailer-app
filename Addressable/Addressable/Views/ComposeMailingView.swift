@@ -60,8 +60,8 @@ struct ComposeMailingView: View {
                         title: Text("Send Mailing?"), message: Text("You are about to send a personalized note in the mail"),
                         primaryButton: .default(Text("Confirm")) {
                             viewModel.updateCustomNote()
-                            viewModel.sendMailing() { outgoingMailingStatus in
-                                if (outgoingMailingStatus != nil) {
+                            viewModel.sendMailing { outgoingMailingStatus in
+                                if outgoingMailingStatus != nil {
                                     viewModel.step.next()
                                 } else {
                                     alertType = .outgoingMailingFailed

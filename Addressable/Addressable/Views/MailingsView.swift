@@ -19,7 +19,6 @@ struct MailingsView: View {
         NavigationView {
             GeometryReader { geometry in
                 CustomRefreshableScrollView(viewBuilder: {
-                    // TODO: Integrate Listing Radius Mailing
                     List {
                         Section(
                             header:
@@ -30,10 +29,22 @@ struct MailingsView: View {
                                 )
                         ) {
                             ForEach(viewModel.customNotes) { customNote in
-                                Text("\((customNote.toFirstName == nil || customNote.toFirstName!.isEmpty)  ? "Batch of \(customNote.batchSize) Notes" : customNote.toFirstName!)").padding()
+                                Text("\((customNote.toFirstName == nil || customNote.toFirstName!.isEmpty)  ? "Batch of \(customNote.batchSize) Notes" : customNote.toFirstName!) \(customNote.toLastName ?? "Unknown Surname")").padding()
                             }
                         }
                         .listRowInsets(.init())
+                        //                        TODO: Integrate Listing Radius Mailing
+                        //                        Section(
+                        //                            header:
+                        //                                CustomHeader(
+                        //                                    name: "Radius Mailings",
+                        //                                    image: Image(systemName: "mappin.and.ellipse"),
+                        //                                    backgroundColor: Color(red: 78 / 255, green: 71 / 255, blue: 210 / 255)
+                        //                                )
+                        //                        ) {
+                        //                            Text("Beverly Hills Radius").padding()
+                        //                        }
+                        //                        .listRowInsets(.init())
                     }
                     .listStyle(PlainListStyle())
                 }, size: geometry.size) {

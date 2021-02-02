@@ -9,7 +9,8 @@ import SwiftUI
 
 struct MessageListView: View {
     @ObservedObject var viewModel: MessagesViewModel
-    @State var navigateToChat: Int?
+    @State var navigateToChat = false
+    @State var selectedLead = IncomingLead(id: 0, md5: "", fromNumber: "", toNumber: "", firstName: "", lastName: "", streetLine1: "", streetLine2: "", city: "", state: "", zipcode: "", crmID: "")
 
     init(viewModel: MessagesViewModel) {
         self.viewModel = viewModel
@@ -20,13 +21,13 @@ struct MessageListView: View {
             GeometryReader { geometry in
                 CustomRefreshableScrollView(viewBuilder: {
                     List(viewModel.incomingLeadsWithMessages) { lead in
-                        NavigationLink(destination: MessageChatView(
-                            viewModel: viewModel,
-                            lead: lead
-                        )) {
+                        Button(action: {
+                            selectedLead = lead
+                            navigateToChat = true
+                        }) {
                             VStack(alignment: .leading, spacing: 6) {
-                                Text(lead.firstName ?? "UNKNOWN").font(.title2)
-                                Text(lead.fromNumber ?? "").font(.subheadline)
+                                Text("\(lead.firstName != nil || lead.firstName!.contains("unknown")  ? "Unknown Name" : lead.firstName!)").font(.title2)
+                                Text(lead.fromNumber ?? "Unknown Number").font(.subheadline)
                             }.padding(.vertical, 8)
                         }
                     }
@@ -35,6 +36,13 @@ struct MessageListView: View {
                     viewModel.getIncomingLeadsWithMessages()
                 }
             }
+            .background(
+                NavigationLink(destination: MessageChatView(
+                    viewModel: viewModel,
+                    lead: selectedLead
+                ),
+                isActive: $navigateToChat) {}
+            )
             .onAppear {
                 viewModel.getIncomingLeadsWithMessages()
             }
