@@ -1,5 +1,5 @@
 //
-//  CallsView.swift
+//  CallListView.swift
 //  Addressable
 //
 //  Created by Ari on 12/30/20.
@@ -7,10 +7,9 @@
 
 import SwiftUI
 
-struct CallsView: View {
+struct CallListView: View {
     @EnvironmentObject var appDelegate: AppDelegate
     @ObservedObject var viewModel: CallsViewModel
-    var refreshControl = UIRefreshControl()
 
     init(viewModel: CallsViewModel) {
         self.viewModel = viewModel
@@ -28,6 +27,10 @@ struct CallsView: View {
                                 DispatchQueue.main.async {
                                     UIApplication.shared.registerForRemoteNotifications()
                                 }
+                                // Display Outgoing Call View
+                                DispatchQueue.main.async {
+                                    appDelegate.displayCallView = true
+                                }
                                 // Make outgoing call
                                 appDelegate.callManager?.startCall(to: lead)
                             }
@@ -41,16 +44,34 @@ struct CallsView: View {
                 }, size: geometry.size) {
                     viewModel.getLeads()
                 }
-            }.onAppear {
+            }
+            .onAppear {
                 viewModel.getLeads()
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button(
+                        action: {
+                            // Display Outgoing Call View
+                            DispatchQueue.main.async {
+                                appDelegate.displayCallView = true
+                            }
+                        }
+                    ) {
+                        Image(systemName: appDelegate.callManager?.currentActiveCall != nil ? "phone" : "")
+                            .font(.system(size: 60))
+                            .foregroundColor(Color(red: 78 / 255, green: 71 / 255, blue: 210 / 255))
+                            .padding(.top, 8)
+                    }
+                }
             }
             .navigationBarTitle("Calls")
         }
     }
 }
 
-struct CallsView_Previews: PreviewProvider {
+struct CallListView_Previews: PreviewProvider {
     static var previews: some View {
-        CallsView(viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher()))
+        CallListView(viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher()))
     }
 }

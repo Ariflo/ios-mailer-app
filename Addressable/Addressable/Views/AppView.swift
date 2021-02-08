@@ -13,41 +13,45 @@ struct AppView: View {
     var body: some View {
         /// User Authenticaton Check
         if KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] != nil {
-            TabView {
-                MailingsView(
-                    viewModel: MailingsViewModel(addressableDataFetcher: AddressableDataFetcher())
-                )
-                .navigationBarHidden(true)
-                .tabItem {
-                    Image(systemName: "mail")
-                    Text("Campaigns")
-                }
-                CallsView(
-                    viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher())
-                )
-                .navigationBarHidden(true)
-                .tabItem {
-                    Image(systemName: "phone")
-                    Text("Calls")
-                }
-                MessageListView(
-                    viewModel: MessagesViewModel(addressableDataFetcher: AddressableDataFetcher())
-                )
-                .navigationBarHidden(true)
-                .tabItem {
-                    Image(systemName: "message")
-                    Text("Messages")
-                }
-                ProfileView()
+            if appDelegate.displayCallView {
+                AddressableCallView(viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher())).navigationBarHidden(true)
+            } else {
+                TabView {
+                    MailingsView(
+                        viewModel: MailingsViewModel(addressableDataFetcher: AddressableDataFetcher())
+                    )
                     .navigationBarHidden(true)
                     .tabItem {
-                        Image(systemName: "person")
-                        Text("Profile")
+                        Image(systemName: "mail")
+                        Text("Campaigns")
                     }
-            }.onAppear {
-                appDelegate.verifyPermissions {
-                    DispatchQueue.main.async {
-                        UIApplication.shared.registerForRemoteNotifications()
+                    CallListView(
+                        viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher())
+                    )
+                    .navigationBarHidden(true)
+                    .tabItem {
+                        Image(systemName: "phone")
+                        Text("Calls")
+                    }
+                    MessageListView(
+                        viewModel: MessagesViewModel(addressableDataFetcher: AddressableDataFetcher())
+                    )
+                    .navigationBarHidden(true)
+                    .tabItem {
+                        Image(systemName: "message")
+                        Text("Messages")
+                    }
+                    ProfileView()
+                        .navigationBarHidden(true)
+                        .tabItem {
+                            Image(systemName: "person")
+                            Text("Profile")
+                        }
+                }.onAppear {
+                    appDelegate.verifyPermissions {
+                        DispatchQueue.main.async {
+                            UIApplication.shared.registerForRemoteNotifications()
+                        }
                     }
                 }
             }

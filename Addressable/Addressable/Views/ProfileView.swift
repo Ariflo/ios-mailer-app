@@ -26,6 +26,7 @@ struct ProfileView: View {
                     title: .init("Sign Out of Addressable?"),
                     primaryButton: .destructive(.init("Sign Out")) {
                         KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] = nil
+                        KeyChainServiceUtil.shared[USER_MOBILE_CLIENT_IDENTITY] = nil
                         successfullyLoggedOut = 1
                     },
                     secondaryButton: .cancel()

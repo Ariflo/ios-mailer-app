@@ -7,6 +7,7 @@
 
 import SwiftUI
 import PushKit
+import Combine
 import UserNotifications
 
 protocol PushKitEventDelegate: AnyObject {
@@ -17,6 +18,9 @@ protocol PushKitEventDelegate: AnyObject {
 }
 
 class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, ObservableObject {
+    @Published var displayCallView: Bool = false
+    @Published var callStatusText: String = ""
+
     var callkitProviderDelegate: ProviderDelegate?
     var callManager: CallManager?
     var latestPushCredentials: PKPushCredentials?
@@ -24,7 +28,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         callManager = CallManager()
-        callkitProviderDelegate = ProviderDelegate(callManager: callManager!)
+        callkitProviderDelegate = ProviderDelegate(application: self, callManager: callManager!)
 
         voipRegistry.delegate = self
         voipRegistry.desiredPushTypes = Set([PKPushType.voIP])
@@ -75,7 +79,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
             delegate.incomingPushReceived(payload: payload, completion: completion)
         }
 
-        completion()
+        DispatchQueue.main.async {
+            completion()
+        }
     }
 
     func verifyPermissions(completion: @escaping () -> Void) {

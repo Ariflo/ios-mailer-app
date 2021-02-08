@@ -37,4 +37,34 @@ class CallsViewModel: ObservableObject, Identifiable {
                 })
             .store(in: &disposables)
     }
+
+    func addCallParticipant(addNumber: String, fromNumber: String) {
+        guard let sessionID = KeyChainServiceUtil.shared[USER_MOBILE_CLIENT_IDENTITY] else {
+            print("No Session ID to Add Participant")
+            return
+        }
+        guard let encodedCallData = try? JSONEncoder().encode(
+            NewCaller(
+                sessionID: sessionID,
+                addNumber: addNumber,
+                fromNumber: fromNumber
+            )
+        ) else {
+            print("Add Caller Encoding Error")
+            return
+        }
+        addressableDataFetcher.addCallParticipant(encodedCallData)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { value in
+                    switch value {
+                    case .failure(let error):
+                        print("addCallParticipant() receiveCompletion error: \(error)")
+                    case .finished:
+                        break
+                    }
+                },
+                receiveValue: { _ in })
+            .store(in: &disposables)
+    }
 }

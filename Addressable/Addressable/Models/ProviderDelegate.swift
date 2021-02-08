@@ -17,8 +17,10 @@ let kCachedDeviceToken = "CachedDeviceToken"
 let kCachedBindingDate = "CachedBindingDate"
 let twimlParamFrom = "From"
 let twimlParamTo = "To"
+let addressableParamSessionID = "SessionId"
 
 class ProviderDelegate: NSObject {
+    private var appDelegate: AppDelegate
     private var callManager: CallManager
     private let provider: CXProvider
 
@@ -37,7 +39,8 @@ class ProviderDelegate: NSObject {
     var incomingPushCompletionCallback: (() -> Void)?
     var userInitiatedDisconnect: Bool = false
 
-    init(callManager: CallManager) {
+    init(application: AppDelegate, callManager: CallManager) {
+        self.appDelegate = application
         self.callManager = callManager
 
         provider = CXProvider(configuration: ProviderDelegate.providerConfiguration)
@@ -79,16 +82,44 @@ extension ProviderDelegate: CXProviderDelegate {
     func provider(_ provider: CXProvider, perform action: CXAnswerCallAction) {
         print("provider:performAnswerCallAction:")
 
-        performAnswerVoiceCall(uuid: action.callUUID) { success in
+        performAnswerVoiceCall(uuid: action.callUUID) {[weak self] success in
             if success {
                 print("performAnswerVoiceCall() successful")
+                // Display Incoming Call View while In-App
+                self?.appDelegate.displayCallView = true
             } else {
                 print("performAnswerVoiceCall() failed")
                 action.fail()
             }
         }
 
+        configureAudioSession()
+
         action.fulfill()
+    }
+
+    func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
+        print("provider:performSetHeldAction:")
+
+        if let call = callManager.currentActiveCall {
+            call.isOnHold = action.isOnHold
+            appDelegate.callStatusText = action.isOnHold ? CallState.held.rawValue : CallState.active.rawValue
+            action.fulfill()
+        } else {
+            action.fail()
+        }
+    }
+
+    func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
+        print("provider:performSetMutedAction:")
+
+        if let call = callManager.currentActiveCall {
+            call.isMuted = action.isMuted
+            appDelegate.callStatusText = action.isMuted ? CallState.muted.rawValue : CallState.active.rawValue
+            action.fulfill()
+        } else {
+            action.fail()
+        }
     }
 
     func provider(_ provider: CXProvider, didActivate audioSession: AVAudioSession) {
@@ -108,6 +139,11 @@ extension ProviderDelegate: CXProviderDelegate {
             return
         }
         print("Stopping audio")
+        if appDelegate.displayCallView {
+            DispatchQueue.main.async {
+                self.appDelegate.displayCallView = false
+            }
+        }
 
         if let invite = addressableCall.incomingCall {
             invite.reject()
@@ -122,6 +158,8 @@ extension ProviderDelegate: CXProviderDelegate {
 
     func provider(_ provider: CXProvider, perform action: CXStartCallAction) {
         print("provider:performStartCallAction:")
+
+        configureAudioSession()
 
         provider.reportOutgoingCall(with: action.callUUID, startedConnectingAt: Date())
         let lead = try? JSONDecoder().decode(IncomingLead.self, from: action.handle.value.data(using: .utf8)!)
@@ -183,18 +221,21 @@ extension ProviderDelegate: CXProviderDelegate {
     }
 
     func performVoiceCall(uuid: UUID, lead: IncomingLead, completionHandler: @escaping (Bool) -> Void) {
-        callManager.fetchToken { token in
-            guard let accessToken = token, let to = lead.fromNumber, let from = lead.toNumber else { return }
+        callManager.fetchToken {[weak self] tokenData in
+            guard let accessToken = tokenData?.jwtToken, let to = lead.fromNumber, let from = lead.toNumber else { return }
+            guard let userClientIdentity = tokenData?.twilioClientIdentity else { return }
+
+            self?.callManager.currentActiveCallFrom = from
 
             let connectOptions = ConnectOptions(accessToken: accessToken) { builder in
-                builder.params = [twimlParamFrom: from, twimlParamTo: to]
+                builder.params = [twimlParamFrom: from, twimlParamTo: to, addressableParamSessionID: userClientIdentity]
                 builder.uuid = uuid
             }
 
-            let call = TwilioVoice.connect(options: connectOptions, delegate: self)
-            self.callManager.currentActiveCall = call
-            self.callManager.add(AddressableCall(incomingCall: nil, outgoingCall: call))
-            self.callKitCompletionCallback = completionHandler
+            let call = TwilioVoice.connect(options: connectOptions, delegate: self!)
+            self?.callManager.currentActiveCall = call
+            self?.callManager.add(AddressableCall(incomingCall: nil, outgoingCall: call))
+            self?.callKitCompletionCallback = completionHandler
         }
     }
 }
@@ -214,6 +255,7 @@ extension ProviderDelegate: CallDelegate {
         if playCustomRingback {
             playRingback()
         }
+        appDelegate.callStatusText = CallState.connecting.rawValue
     }
 
     // MARK: Ringtone
@@ -248,6 +290,8 @@ extension ProviderDelegate: CallDelegate {
         if let callKitCompletionCallback = callKitCompletionCallback {
             callKitCompletionCallback(true)
         }
+
+        appDelegate.callStatusText = CallState.active.rawValue
     }
 
     func callDidFailToConnect(call: Call, error: Error) {
@@ -256,8 +300,15 @@ extension ProviderDelegate: CallDelegate {
         if let completion = callKitCompletionCallback {
             completion(false)
         }
+
         if playCustomRingback {
             stopRingback()
+        }
+
+        if appDelegate.displayCallView {
+            DispatchQueue.main.async {
+                self.appDelegate.displayCallView = false
+            }
         }
 
         provider.reportCall(with: call.uuid!, endedAt: Date(), reason: CXCallEndedReason.failed)
@@ -274,6 +325,12 @@ extension ProviderDelegate: CallDelegate {
 
         if playCustomRingback {
             stopRingback()
+        }
+
+        if appDelegate.displayCallView {
+            DispatchQueue.main.async {
+                self.appDelegate.displayCallView = false
+            }
         }
 
         if !userInitiatedDisconnect {
@@ -305,6 +362,12 @@ extension ProviderDelegate: CallDelegate {
         if playCustomRingback {
             stopRingback()
         }
+
+        if appDelegate.displayCallView {
+            DispatchQueue.main.async {
+                self.appDelegate.displayCallView = false
+            }
+        }
     }
 }
 
@@ -313,9 +376,11 @@ extension ProviderDelegate: CallDelegate {
 extension ProviderDelegate: PushKitEventDelegate {
     func credentialsUpdated(credentials: PKPushCredentials, deviceID: String) {
         if registrationRequired() || UserDefaults.standard.data(forKey: kCachedDeviceToken) != credentials.token {
-            callManager.fetchToken(deviceID: deviceID) { token in
-                guard let accessToken = token else { return }
+            callManager.fetchToken(deviceID: deviceID) { tokenData in
+                guard let accessToken = tokenData?.jwtToken else { return }
+                guard let userClientIdentity = tokenData?.twilioClientIdentity else { return }
 
+                KeyChainServiceUtil.shared[USER_MOBILE_CLIENT_IDENTITY] = userClientIdentity
                 let cachedDeviceToken = credentials.token
                 /*
                  * Perform registration if a new device token is detected.
@@ -366,8 +431,8 @@ extension ProviderDelegate: PushKitEventDelegate {
     }
 
     func credentialsInvalidated() {
-        callManager.fetchToken { token in
-            guard let accessToken = token, let deviceToken = UserDefaults.standard.data(forKey: kCachedDeviceToken) else { return }
+        callManager.fetchToken { tokenData in
+            guard let accessToken = tokenData?.jwtToken, let deviceToken = UserDefaults.standard.data(forKey: kCachedDeviceToken) else { return }
 
 
             TwilioVoice.unregister(accessToken: accessToken, deviceToken: deviceToken) { error in

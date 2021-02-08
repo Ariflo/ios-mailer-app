@@ -12,7 +12,7 @@ protocol FetchableData {
     func getCurrentUserMailings() -> AnyPublisher<MailingsResponse, ApiError>
     func getCurrentUserCustomNotes() -> AnyPublisher<CustomNotesResponse, ApiError>
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError>
-    func getTwilioAccessToken(_ deviceIdData: Data?) -> AnyPublisher<TwilioAccessToken, ApiError>
+    func getTwilioAccessToken(_ deviceIdData: Data?) -> AnyPublisher<TwilioAccessTokenData, ApiError>
     func getIncomingLeads() -> AnyPublisher<IncomingLeadsResponse, ApiError>
     func getIncomingLeadsWithMessages() -> AnyPublisher<IncomingLeadsResponse, ApiError>
     func getLeadMessages(for leadId: Int) -> AnyPublisher<MessagesResponse, ApiError>
@@ -21,6 +21,7 @@ protocol FetchableData {
     func getMailingReturnAddress() -> AnyPublisher<ReturnAddress, ApiError>
     func sendCustomMailing(_ mailing: Data?) -> AnyPublisher<OutgoingCustomNoteResponse, ApiError>
     func getMessageTemplates() -> AnyPublisher<MessageTemplatesResponse, ApiError>
+    func addCallParticipant(_ newCallData: Data?) -> AnyPublisher<CallParticipantResponse, ApiError>
 }
 
 enum ApiError: Error {
@@ -37,6 +38,10 @@ class AddressableDataFetcher {
 }
 
 extension AddressableDataFetcher: FetchableData {
+    func addCallParticipant(_ newCallData: Data?) -> AnyPublisher<CallParticipantResponse, ApiError> {
+        return makeApiRequest(with: addParticipantToCall(), postRequestBodyData: newCallData)
+    }
+
     func getMessageTemplates() -> AnyPublisher<MessageTemplatesResponse, ApiError> {
         return makeApiRequest(with: getMessageTemplatesRequestComponents())
     }
@@ -73,7 +78,7 @@ extension AddressableDataFetcher: FetchableData {
         return makeApiRequest(with: getIncomingLeadsRequestComponents())
     }
 
-    func getTwilioAccessToken(_ deviceIdData: Data?) -> AnyPublisher<TwilioAccessToken, ApiError> {
+    func getTwilioAccessToken(_ deviceIdData: Data?) -> AnyPublisher<TwilioAccessTokenData, ApiError> {
         return makeApiRequest(with: getTwilioAccessTokenRequestComponents(), postRequestBodyData: deviceIdData)
     }
 
@@ -123,7 +128,7 @@ extension AddressableDataFetcher: FetchableData {
 private extension AddressableDataFetcher {
     struct AddressableAPI {
         static let scheme = "https"
-        static let host = "bfa6f6d72a2f.ngrok.io"
+        static let host = "live.addressable.app"
         static let path = "/api/v1"
     }
 
@@ -233,6 +238,16 @@ private extension AddressableDataFetcher {
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
         components.path = AddressableAPI.path + "/message_templates"
+
+        return components
+    }
+
+    func addParticipantToCall() -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/outgoing_calls/add_caller"
 
         return components
     }

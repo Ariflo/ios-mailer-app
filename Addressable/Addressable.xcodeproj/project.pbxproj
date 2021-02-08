@@ -16,6 +16,7 @@
 		B3DB527F257992F8004196A6 /* MailingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB527E257992F8004196A6 /* MailingsView.swift */; };
 		B3DB52872579A84B004196A6 /* Mailings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB52862579A84B004196A6 /* Mailings.swift */; };
 		CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */; };
+		CA4AE34125CD95E8003B6CE8 /* KeyPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */; };
 		CA8555D125A81AF80063274D /* ProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8555D025A81AF80063274D /* ProviderDelegate.swift */; };
 		CA8555D625A81B330063274D /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8555D525A81B330063274D /* CallManager.swift */; };
 		CA85560925A9FA8F0063274D /* AddressableCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA85560825A9FA8F0063274D /* AddressableCall.swift */; };
@@ -30,10 +31,11 @@
 		CA88420225A39F2700E0D75A /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88420125A39F2700E0D75A /* SignInViewModel.swift */; };
 		CA88420725A3A7D200E0D75A /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88420625A3A7D200E0D75A /* Authorization.swift */; };
 		CA88422925A3D52F00E0D75A /* CustomRefreshableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */; };
+		CA93F49E25C9E41000271404 /* AddressableCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93F49D25C9E41000271404 /* AddressableCallView.swift */; };
 		CAB80CA425B8EFF4005E868D /* ringtone.wav in Resources */ = {isa = PBXBuildFile; fileRef = CAB80CA325B8EFF4005E868D /* ringtone.wav */; };
 		CAC8B086259BE6D400D4447F /* KeychainServiceUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */; };
 		CAC8B0A0259CFBC800D4447F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B09F259CFBC800D4447F /* AppView.swift */; };
-		CAC8B0AB259D017E00D4447F /* CallsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0AA259D017E00D4447F /* CallsView.swift */; };
+		CAC8B0AB259D017E00D4447F /* CallListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0AA259D017E00D4447F /* CallListView.swift */; };
 		CAC8B0B0259D01C300D4447F /* MessageListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0AF259D01C300D4447F /* MessageListView.swift */; };
 		CAC8B0BD259D020500D4447F /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0BC259D020500D4447F /* ProfileView.swift */; };
 		CAC8B0D5259D347F00D4447F /* JsonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0D4259D347F00D4447F /* JsonUtil.swift */; };
@@ -80,6 +82,7 @@
 		CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsViewModel.swift; sourceTree = "<group>"; };
 		CA3CE821259BC9E000A230E1 /* Development.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Development.xcconfig; sourceTree = "<group>"; };
 		CA3CE822259BC9FA00A230E1 /* Production.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Production.xcconfig; sourceTree = "<group>"; };
+		CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPadView.swift; sourceTree = "<group>"; };
 		CA8555C025A648FB0063274D /* TwilioVoice.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwilioVoice.framework; path = Carthage/Build/iOS/TwilioVoice.framework; sourceTree = "<group>"; };
 		CA8555D025A81AF80063274D /* ProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderDelegate.swift; sourceTree = "<group>"; };
 		CA8555D525A81B330063274D /* CallManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
@@ -95,10 +98,11 @@
 		CA88420125A39F2700E0D75A /* SignInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewModel.swift; sourceTree = "<group>"; };
 		CA88420625A3A7D200E0D75A /* Authorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authorization.swift; sourceTree = "<group>"; };
 		CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomRefreshableScrollView.swift; path = Addressable/Utilities/CustomRefreshableScrollView.swift; sourceTree = SOURCE_ROOT; };
+		CA93F49D25C9E41000271404 /* AddressableCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressableCallView.swift; sourceTree = "<group>"; };
 		CAB80CA325B8EFF4005E868D /* ringtone.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ringtone.wav; sourceTree = "<group>"; };
 		CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceUtil.swift; sourceTree = "<group>"; };
 		CAC8B09F259CFBC800D4447F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
-		CAC8B0AA259D017E00D4447F /* CallsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallsView.swift; sourceTree = "<group>"; };
+		CAC8B0AA259D017E00D4447F /* CallListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallListView.swift; sourceTree = "<group>"; };
 		CAC8B0AF259D01C300D4447F /* MessageListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListView.swift; sourceTree = "<group>"; };
 		CAC8B0BC259D020500D4447F /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		CAC8B0D4259D347F00D4447F /* JsonUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonUtil.swift; sourceTree = "<group>"; };
@@ -207,13 +211,15 @@
 				B3DB527E257992F8004196A6 /* MailingsView.swift */,
 				B370BC862576DE9F0066624A /* SignInView.swift */,
 				CAC8B09F259CFBC800D4447F /* AppView.swift */,
-				CAC8B0AA259D017E00D4447F /* CallsView.swift */,
+				CAC8B0AA259D017E00D4447F /* CallListView.swift */,
 				CAC8B0AF259D01C300D4447F /* MessageListView.swift */,
 				CAC8B0BC259D020500D4447F /* ProfileView.swift */,
 				CA85568025B0E6400063274D /* ContentMessageView.swift */,
 				CA85568525B0E7330063274D /* MessageView.swift */,
 				CA85568D25B0EB230063274D /* MessageChatView.swift */,
 				CADA000225BF8FE200004B4B /* ComposeMailingView.swift */,
+				CA93F49D25C9E41000271404 /* AddressableCallView.swift */,
+				CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -449,6 +455,7 @@
 				CA85567C25B0E5C50063274D /* Messages.swift in Sources */,
 				CAC8B086259BE6D400D4447F /* KeychainServiceUtil.swift in Sources */,
 				CA85560925A9FA8F0063274D /* AddressableCall.swift in Sources */,
+				CA4AE34125CD95E8003B6CE8 /* KeyPadView.swift in Sources */,
 				CAC8B0D5259D347F00D4447F /* JsonUtil.swift in Sources */,
 				CAC8B0DD259D36AF00D4447F /* AddressableDataFetcher.swift in Sources */,
 				CA85568125B0E6400063274D /* ContentMessageView.swift in Sources */,
@@ -465,7 +472,8 @@
 				CA8555D125A81AF80063274D /* ProviderDelegate.swift in Sources */,
 				CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */,
 				B3DB52872579A84B004196A6 /* Mailings.swift in Sources */,
-				CAC8B0AB259D017E00D4447F /* CallsView.swift in Sources */,
+				CAC8B0AB259D017E00D4447F /* CallListView.swift in Sources */,
+				CA93F49E25C9E41000271404 /* AddressableCallView.swift in Sources */,
 				CADA001425C0A22800004B4B /* ComposeMailingViewModel.swift in Sources */,
 				CAC8B0B0259D01C300D4447F /* MessageListView.swift in Sources */,
 				CAC8B0BD259D020500D4447F /* ProfileView.swift in Sources */,

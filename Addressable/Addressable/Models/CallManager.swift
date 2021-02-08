@@ -18,12 +18,35 @@ class CallManager {
     private(set) var calls: [AddressableCall] = []
     // currentActiveCall represents the last connected call
     var currentActiveCall: Call?
+    var currentActiveCallFrom: String = ""
 
     func callWithUUID(uuid: UUID) -> AddressableCall? {
         guard let index = calls.firstIndex(where: { $0.incomingCall?.uuid == uuid || $0.outgoingCall?.uuid == uuid }) else {
             return nil
         }
         return calls[index]
+    }
+
+    func getCurrentAddressableCall() -> AddressableCall? {
+        guard let currentActiveCall = currentActiveCall else {
+            print("No currentActiveCall avaliable to end")
+            return nil
+        }
+
+        guard let index = calls.firstIndex(where: { $0.incomingCall?.uuid == currentActiveCall.uuid || $0.outgoingCall?.uuid == currentActiveCall.uuid }) else { return nil }
+
+        return calls[index]
+    }
+
+    func getIsCurrentCallIncoming() -> Bool {
+        guard let currentActiveCall = currentActiveCall else {
+            print("No currentActiveCall avaliable to end")
+            return false
+        }
+
+        guard let index = calls.firstIndex(where: { $0.incomingCall?.uuid == currentActiveCall.uuid || $0.outgoingCall?.uuid == currentActiveCall.uuid }) else { return false }
+
+        return ((calls[index].outgoingCall?.to?.contains("client")) != nil)
     }
 
     func add(_ call: AddressableCall) {
@@ -48,7 +71,11 @@ class CallManager {
 
     func end(call: AddressableCall) {
         let uuid = call.incomingCall?.uuid ?? call.outgoingCall?.uuid
-        let endCallAction = CXEndCallAction(call: uuid!)
+        guard let callId = uuid else {
+            print("No Call UUID to end call")
+            return
+        }
+        let endCallAction = CXEndCallAction(call: callId)
         let transaction = CXTransaction(action: endCallAction)
 
         requestTransaction(transaction)
@@ -63,6 +90,42 @@ class CallManager {
         requestTransaction(transaction)
     }
 
+    func setHeld(call: Call, onHold: Bool) {
+        guard let callUUID = call.uuid else {
+            print("No UUID Avaliable to Hold Call")
+            return
+        }
+        let setHeldCallAction = CXSetHeldCallAction(call: callUUID, onHold: onHold)
+
+        let transaction = CXTransaction()
+        transaction.addAction(setHeldCallAction)
+
+        requestTransaction(transaction)
+    }
+
+    func setMuted(call: Call, isMuted: Bool) {
+        guard let callUUID = call.uuid else {
+            print("No UUID Avaliable to Hold Call")
+            return
+        }
+        let setHeldCallAction = CXSetMutedCallAction(call: callUUID, muted: isMuted)
+
+        let transaction = CXTransaction()
+        transaction.addAction(setHeldCallAction)
+
+        requestTransaction(transaction)
+    }
+
+    func toggleAudioToSpeaker(isSpeakerOn: Bool) {
+        let session = AVAudioSession.sharedInstance()
+        do {
+            let audioOption = isSpeakerOn ? AVAudioSession.PortOverride.speaker : AVAudioSession.PortOverride.none
+            try session.overrideOutputAudioPort(audioOption)
+        } catch let error {
+            print("Error while configuring speaker audio session: \(error)")
+        }
+    }
+
     private func requestTransaction(_ transaction: CXTransaction) {
         callController.request(transaction) { error in
             if let error = error {
@@ -73,7 +136,7 @@ class CallManager {
         }
     }
 
-    func fetchToken(deviceID: String = "", tokenReceived: @escaping (_ token: String?) -> Void ) {
+    func fetchToken(deviceID: String = "", tokenReceived: @escaping (_ tokenData: TwilioAccessTokenData?) -> Void ) {
         AddressableDataFetcher().getTwilioAccessToken(
             encode(DeviceIDWrapper(deviceID: deviceID))
         )
@@ -88,18 +151,20 @@ class CallManager {
                 }
             },
             receiveValue: { tokenData in
-                tokenReceived(tokenData.jwtToken)
+                tokenReceived(tokenData)
             })
         .store(in: &disposables)
     }
 }
 
-struct TwilioAccessToken: Codable {
+struct TwilioAccessTokenData: Codable {
     let success: Bool
     let jwtToken: String
+    let twilioClientIdentity: String
 
     enum CodingKeys: String, CodingKey {
         case success
         case jwtToken = "jwt_token"
+        case twilioClientIdentity = "twilio_client_identity"
     }
 }

@@ -8,16 +8,12 @@
 import Foundation
 import TwilioVoice
 
-enum CallState {
-    case connecting
-    case active
-    case held
-    case ended
-}
-
-enum ConnectedState {
-    case pending
-    case complete
+enum CallState: String {
+    case connecting = "Connecting..."
+    case active = "Active"
+    case held = "On Hold"
+    case muted = "On Mute"
+    case ended = ""
 }
 
 class AddressableCall {
@@ -27,12 +23,6 @@ class AddressableCall {
     var state: CallState = .ended {
         didSet {
             stateChanged?()
-        }
-    }
-
-    var connectedState: ConnectedState = .pending {
-        didSet {
-            connectedStateChanged?()
         }
     }
 
@@ -47,13 +37,11 @@ class AddressableCall {
     func start(completion: ((_ success: Bool) -> Void)?) {
         completion?(true)
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        DispatchQueue.main.async {
             self.state = .connecting
-            self.connectedState = .pending
 
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            DispatchQueue.main.async {
                 self.state = .active
-                self.connectedState = .complete
             }
         }
     }
@@ -62,9 +50,43 @@ class AddressableCall {
         state = .active
     }
 
+    func muted() {
+        state = .muted
+    }
+
+    func hold() {
+        state = .held
+    }
+
+    func connecting() {
+        state = .connecting
+    }
+
     func end() {
         state = .ended
         outgoingCall?.disconnect()
         incomingCall?.reject()
+    }
+}
+
+// MARK: - CallParticipantResponse
+struct CallParticipantResponse: Codable {
+    let status: String
+
+    enum CodingKeys: String, CodingKey {
+        case status
+    }
+}
+
+// MARK: - NewCaller
+struct NewCaller: Codable {
+    let sessionID: String
+    let addNumber: String
+    let fromNumber: String
+
+    enum CodingKeys: String, CodingKey {
+        case sessionID = "session_id"
+        case addNumber = "add_number"
+        case fromNumber = "from_number"
     }
 }
