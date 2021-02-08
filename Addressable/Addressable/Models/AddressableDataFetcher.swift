@@ -128,7 +128,7 @@ extension AddressableDataFetcher: FetchableData {
 private extension AddressableDataFetcher {
     struct AddressableAPI {
         static let scheme = "https"
-        static let host = "live.addressable.app"
+        static let host = "sandbox.addressable.app"
         static let path = "/api/v1"
     }
 
