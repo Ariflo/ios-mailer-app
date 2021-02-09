@@ -82,7 +82,6 @@
 		B3DB52862579A84B004196A6 /* Mailings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailings.swift; sourceTree = "<group>"; };
 		CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsViewModel.swift; sourceTree = "<group>"; };
 		CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPadView.swift; sourceTree = "<group>"; };
-		CA8555C025A648FB0063274D /* TwilioVoice.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TwilioVoice.framework; path = Carthage/Build/iOS/TwilioVoice.framework; sourceTree = "<group>"; };
 		CA8555D025A81AF80063274D /* ProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderDelegate.swift; sourceTree = "<group>"; };
 		CA8555D525A81B330063274D /* CallManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
 		CA85560825A9FA8F0063274D /* AddressableCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressableCall.swift; sourceTree = "<group>"; };
@@ -264,7 +263,6 @@
 		CA8555BF25A648FB0063274D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CA8555C025A648FB0063274D /* TwilioVoice.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
