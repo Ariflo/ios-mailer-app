@@ -202,7 +202,6 @@ extension CustomNote {
         let size: CGFloat
         let cornerRadius: CGFloat
 
-
         init(withURL url: String, size: CGFloat, cornerRadius: CGFloat) {
             imageLoader = ImageLoader(urlString: url)
             self.size = size

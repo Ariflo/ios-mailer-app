@@ -28,7 +28,6 @@ struct ComposeMailingView: View {
     @State var showingAlert: Bool = false
     @State private var alertType: ComposeMailingAlerts = .requiredFieldsEmpty
 
-
     init(viewModel: ComposeMailingViewModel) {
         self.viewModel = viewModel
     }
@@ -108,7 +107,6 @@ struct ComposeMailingView: View {
                                 showingAlert = true
                                 return
                             }
-
 
                             guard viewModel.step == .confirmation else {
                                 viewModel.updateCustomNote()
@@ -296,7 +294,6 @@ private struct MailingCoverArtRow: View {
     var coverImage: MailingCoverArt
     var coverImageName: String
 
-
     init(viewModel: ComposeMailingViewModel, coverImage: MailingCoverArt) {
         self.viewModel = viewModel
         self.coverImage = coverImage
@@ -361,7 +358,6 @@ private struct MessageTemplateRow: View {
     @State private var showingAlert: Bool = false
 
     var messageTemplate: MessageTemplate
-
 
     init(viewModel: ComposeMailingViewModel, messageTemplate: MessageTemplate) {
         self.viewModel = viewModel

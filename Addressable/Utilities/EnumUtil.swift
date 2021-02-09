@@ -5,7 +5,6 @@
 //  Created by Ari on 1/26/21.
 //
 
-
 extension CaseIterable where Self: Equatable, AllCases: BidirectionalCollection {
     mutating func next() {
         let allCases = Self.allCases

@@ -81,7 +81,6 @@ class CallManager {
         requestTransaction(transaction)
     }
 
-
     func startCall(to incomingLead: IncomingLead) {
         let callHandle = CXHandle(type: .generic, value: String(data: encode(incomingLead)!, encoding: .utf8) ?? "")
         let startCallAction = CXStartCallAction(call: UUID(), handle: callHandle)
