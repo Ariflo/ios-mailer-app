@@ -32,6 +32,7 @@ struct SignInView: View {
             TextField("Username", text: $username)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .textContentType(.username)
+                .keyboardType(.emailAddress)
                 .autocapitalization(.none)
                 .disableAutocorrection(true)
 

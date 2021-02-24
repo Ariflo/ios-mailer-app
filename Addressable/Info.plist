@@ -47,6 +47,8 @@
 	</dict>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>$(EXECUTABLE_NAME) would like to access your microphone to make phone calls</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>$(EXECUTABLE_NAME) would like to access your location to send Radius Mailings</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

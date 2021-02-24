@@ -6,10 +6,12 @@
 //
 
 import SwiftUI
+import GooglePlaces
 
 struct MailingsView: View {
     @ObservedObject var viewModel: MailingsViewModel
     @State var navigateToComposeMail = false
+    @State var navigateToComposeRadiusMailing = false
 
     init(viewModel: MailingsViewModel) {
         self.viewModel = viewModel
@@ -29,26 +31,39 @@ struct MailingsView: View {
                                 )
                         ) {
                             ForEach(viewModel.customNotes) { customNote in
-                                Text("\((customNote.toFirstName == nil || customNote.toFirstName!.isEmpty)  ? "Batch of \(customNote.batchSize) Notes" : customNote.toFirstName!) \(customNote.toLastName ?? "Unknown Surname")").padding()
+                                Text("\(customNote.toFirstName.isEmpty  ? "Batch of \(customNote.batchSize) Notes" : customNote.toFirstName) \(customNote.toLastName)").padding()
                             }
                         }
                         .listRowInsets(.init())
-                        //                        TODO: Integrate Listing Radius Mailing
-                        //                        Section(
-                        //                            header:
-                        //                                CustomHeader(
-                        //                                    name: "Radius Mailings",
-                        //                                    image: Image(systemName: "mappin.and.ellipse"),
-                        //                                    backgroundColor: Color(red: 78 / 255, green: 71 / 255, blue: 210 / 255)
-                        //                                )
-                        //                        ) {
-                        //                            Text("Beverly Hills Radius").padding()
-                        //                        }
-                        //                        .listRowInsets(.init())
+                        Section(
+                            header:
+                                CustomHeader(
+                                    name: "Radius Mailings",
+                                    image: Image(systemName: "mappin.and.ellipse"),
+                                    backgroundColor: Color(red: 78 / 255, green: 71 / 255, blue: 210 / 255)
+                                )
+                        ) {
+                            ForEach(viewModel.radiusMailings, id: \.parentMailingID) { radiusMailing in
+                                Button(action: {
+                                    guard radiusMailing.listCount > 0 else { return }
+                                    viewModel.selectedRadiusMailing = radiusMailing
+                                    navigateToComposeRadiusMailing = true
+                                }) {
+                                    HStack(alignment: .top) {
+                                        Text("\(radiusMailing.name)")
+                                            .padding()
+                                        Spacer()
+                                        Text("\(getRadiusMailingListStatus(radiusMailing))")
+                                            .padding()
+                                    }
+                                }
+                            }
+                        }
+                        .listRowInsets(.init())
                     }
                     .listStyle(PlainListStyle())
                 }, size: geometry.size) {
-                    viewModel.getCustomNotes()
+                    viewModel.getAllMailingCampaigns()
                 }
             }
             .background(
@@ -56,8 +71,14 @@ struct MailingsView: View {
                                 viewModel: ComposeMailingViewModel(addressableDataFetcher: AddressableDataFetcher())).navigationBarHidden(true),
                                isActive: $navigateToComposeMail) {}
             )
+            .background(
+                NavigationLink(destination: ComposeRadiusMailingView(viewModel:
+                                                                        ComposeRadiusMailingViewModel(selectedRadiusMailing: viewModel.selectedRadiusMailing)
+                ).navigationBarHidden(true),
+                isActive: $navigateToComposeRadiusMailing) {}
+            )
             .onAppear {
-                viewModel.getCustomNotes()
+                viewModel.getAllMailingCampaigns()
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -72,9 +93,35 @@ struct MailingsView: View {
                             .padding(.top, 8)
                     }
                 }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(
+                        action: {
+                            if viewModel.selectedRadiusMailing != nil {
+                                viewModel.selectedRadiusMailing = nil
+                            }
+                            navigateToComposeRadiusMailing = true
+                        }
+                    ) {
+                        Image(systemName: "mappin.and.ellipse")
+                            .font(.system(size: 60))
+                            .foregroundColor(Color(red: 78 / 255, green: 71 / 255, blue: 210 / 255))
+                            .padding(.top, 8)
+                    }
+                }
             }
             .navigationBarTitle("Campaigns")
         }
+    }
+
+    private func getRadiusMailingListStatus(_ mailing: RadiusMailing) -> String {
+        if mailing.listCount > 0 {
+            if mailing.targetQuantity > mailing.activeRecipientCount {
+                return "\(mailing.activeRecipientCount) (missing \(mailing.targetQuantity - mailing.activeRecipientCount))"
+            } else if mailing.targetQuantity < mailing.activeRecipientCount {
+                return "surplus of \(mailing.activeRecipientCount - mailing.targetQuantity)!"
+            }
+        }
+        return "List Pending"
     }
 }
 

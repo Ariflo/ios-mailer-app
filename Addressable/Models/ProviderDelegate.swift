@@ -434,7 +434,6 @@ extension ProviderDelegate: PushKitEventDelegate {
         callManager.fetchToken { tokenData in
             guard let accessToken = tokenData?.jwtToken, let deviceToken = UserDefaults.standard.data(forKey: kCachedDeviceToken) else { return }
 
-
             TwilioVoiceSDK.unregister(accessToken: accessToken, deviceToken: deviceToken) { error in
                 if let error = error {
                     print("An error occurred while unregistering: \(error.localizedDescription)")
@@ -533,7 +532,6 @@ extension ProviderDelegate: AVAudioPlayerDelegate {
         }
     }
 }
-
 
 func configureAudioSession() {
     print("Configuring audio session")

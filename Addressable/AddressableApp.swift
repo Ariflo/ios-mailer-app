@@ -9,6 +9,11 @@ import SwiftUI
 import PushKit
 import Combine
 import UserNotifications
+import GoogleMaps
+import GooglePlaces
+
+// API Key Restrictions set on Google Cloud, safe to keep this key here for now
+let GOOGLE_MAPS_API_KEY = "AIzaSyDKJ7-97nKoAeFrCeb1yPfoVDbrS8RttKM"
 
 protocol PushKitEventDelegate: AnyObject {
     func credentialsUpdated(credentials: PKPushCredentials, deviceID: String)
@@ -27,6 +32,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
     lazy var voipRegistry = PKPushRegistry.init(queue: DispatchQueue.main)
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        GMSServices.provideAPIKey(GOOGLE_MAPS_API_KEY)
+        GMSPlacesClient.provideAPIKey(GOOGLE_MAPS_API_KEY)
+
         callManager = CallManager()
         callkitProviderDelegate = ProviderDelegate(application: self, callManager: callManager!)
 

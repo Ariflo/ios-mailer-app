@@ -62,26 +62,26 @@ struct AddressableCallView: View {
                             .font(.callout)
                             .foregroundColor(.white)
                     }
-                    // MARK: - Display KeyPad
-                    VStack(spacing: 8) {
-                        Button(action: {
-                            displayKeyPad = true
-                        }) {
-                            Image(systemName: "circle.grid.3x3")
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundColor(.white)
-                                .frame(width: 50, height: 50)
-                                .padding()
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .stroke(Color.white, lineWidth: 4)
-                                )
-                        }
-                        Text("Keypad")
-                            .font(.callout)
-                            .foregroundColor(.white)
-                    }
+//                    // MARK: - Display KeyPad
+//                    VStack(spacing: 8) {
+//                        Button(action: {
+//                            displayKeyPad = true
+//                        }) {
+//                            Image(systemName: "circle.grid.3x3")
+//                                .resizable()
+//                                .scaledToFit()
+//                                .foregroundColor(.white)
+//                                .frame(width: 50, height: 50)
+//                                .padding()
+//                                .overlay(
+//                                    RoundedRectangle(cornerRadius: 16)
+//                                        .stroke(Color.white, lineWidth: 4)
+//                                )
+//                        }
+//                        Text("Keypad")
+//                            .font(.callout)
+//                            .foregroundColor(.white)
+//                    }
                     // MARK: - Speaker
                     VStack(spacing: 8) {
                         Button(action: {

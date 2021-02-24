@@ -8,41 +8,339 @@
 import SwiftUI
 import Combine
 
-// MARK: - MailingsResponse
-struct MailingsResponse: Codable {
-    let mailings: [MailingElement]
+// MARK: - CampaignsResponse
+struct CampaignsResponse: Codable {
+    let campaigns: [Campaign]
+}
+
+// MARK: - Campaign
+struct Campaign: Codable {
+    let customNote: CustomNote?
+    let radiusMailing: RadiusMailing?
 
     enum CodingKeys: String, CodingKey {
-        case mailings
+        case customNote = "custom_note"
+        case radiusMailing = "radius_mailing"
+    }
+}
+// MARK: - RadiusMailingWrapper
+struct RadiusMailingWrapper: Codable {
+    let radiusMailing: RadiusMailing
+
+    enum CodingKeys: String, CodingKey {
+        case radiusMailing = "radius_mailing"
     }
 }
 
-// MARK: - MailingElement
-struct MailingElement: Codable {
-    let mailing: AddressableMailing
+// MARK: - RadiusMailing
+struct RadiusMailing: Codable {
+    let account: Account
+    let user: User
+    let name, status: String
+    let listCount: Int
+    let recipients: [SubjectListEntry]
+    let targetQuantity, activeRecipientCount: Int
+    let layoutTemplate: LayoutTemplate?
+    let parentMailingID: Int
+    let radiusTemplateID: Int?
+    let subjectListEntry: SubjectListEntry
 
     enum CodingKeys: String, CodingKey {
-        case mailing
+        case account, user, name, status
+        case listCount = "list_count"
+        case recipients
+        case targetQuantity = "target_quantity"
+        case activeRecipientCount = "active_recipient_count"
+        case layoutTemplate = "layout_template"
+        case parentMailingID = "parent_mailing_id"
+        case radiusTemplateID = "radius_template_id"
+        case subjectListEntry = "subject_list_entry"
     }
 }
 
-// MARK: - AddressableMailing
-struct AddressableMailing: Codable, Identifiable {
+// MARK: - OutgoingRadiusMailingWrapper
+struct OutgoingRadiusMailingWrapper: Codable {
+    let radiusMailing: OutgoingRadiusMailing
+
+    enum CodingKeys: String, CodingKey {
+        case radiusMailing = "radius_mailing"
+    }
+}
+
+// MARK: - OutgoingRadiusMailing
+struct OutgoingRadiusMailing: Codable {
+    let layoutTemplateID: Int?
+    let multiTouchTopicID: Int?
+    let templateOneBody: String?
+    let templateTwoBody: String?
+    let mergeVars: [String: String]?
+    let touchDuration: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case layoutTemplateID = "layout_template_id"
+        case multiTouchTopicID = "multi_touch_topic_id"
+        case templateOneBody = "template_one_body"
+        case templateTwoBody = "template_two_body"
+        case mergeVars = "merge_vars"
+        case touchDuration = "touch_duration"
+    }
+}
+
+// MARK: - Account
+struct Account: Codable {
     let id: Int
     let name: String
-    let phone, email: String?
+    let createdAt, updatedAt: String
+    let stripeCustomerID: String?
+    let tokenCount: Int
+    let realEstate, hasAddons: Bool
+    let csManagerID, crmName, crmID: Int?
+    let status: String
+    let isVerified: Bool
+    let ttfm, primaryUserID: Int
+    let accountManagerID: Int?
+    let accountType: String
+    let referrerUserID, apiUid, apiName, leadsListUploadID: Int?
+    let removalsListUploadID: Int?
+    let vertical: String
 
     enum CodingKeys: String, CodingKey {
-        case id, name, phone, email
+        case id, name
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case stripeCustomerID = "stripe_customer_id"
+        case tokenCount = "token_count"
+        case realEstate = "real_estate"
+        case hasAddons = "has_addons"
+        case csManagerID = "cs_manager_id"
+        case crmName = "crm_name"
+        case crmID = "crm_id"
+        case status
+        case isVerified = "is_verified"
+        case ttfm
+        case primaryUserID = "primary_user_id"
+        case accountManagerID = "account_manager_id"
+        case accountType = "account_type"
+        case referrerUserID = "referrer_user_id"
+        case apiUid = "api_uid"
+        case apiName = "api_name"
+        case leadsListUploadID = "leads_list_upload_id"
+        case removalsListUploadID = "removals_list_upload_id"
+        case vertical
     }
 }
 
-// MARK: - CustomNotesResponse
-struct CustomNotesResponse: Codable {
-    let customNotes: [CustomNotes]
+// MARK: - User
+struct User: Codable {
+    let id: Int
+    let email, createdAt, updatedAt: String
+    let accountID: Int
+    let admin: Bool
+    let firstName: String
+    let lastName: String
+    let dre, phone: String
+    let companyName: String
+    let photo: String?
+    let addressLine1: String
+    let addressLine2: String
+    let city: String
+    let state: String
+    let zipcode, currentWizardStep, authenticationToken, lastSeenAt: String
+    let handwritingID, messageTemplateID, cardStyleID: Int?
+    let termsAgree: Bool
+    let termsAgreeDate: String
+    let isCSManager: String?
+    let stripeCustomerID: String
+    let superAdmin: Bool
+    let status: String
+    let isAccountManager: Bool
+    let hubspotContactID, apiUid, apiName: String?
+    let showCompany: Bool
 
     enum CodingKeys: String, CodingKey {
-        case customNotes = "custom_notes"
+        case id, email
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case accountID = "account_id"
+        case admin
+        case firstName = "first_name"
+        case lastName = "last_name"
+        case dre, phone
+        case companyName = "company_name"
+        case photo
+        case addressLine1 = "address_line_1"
+        case addressLine2 = "address_line_2"
+        case city, state, zipcode
+        case currentWizardStep = "current_wizard_step"
+        case authenticationToken = "authentication_token"
+        case lastSeenAt = "last_seen_at"
+        case handwritingID = "handwriting_id"
+        case messageTemplateID = "message_template_id"
+        case cardStyleID = "card_style_id"
+        case termsAgree = "terms_agree"
+        case termsAgreeDate = "terms_agree_date"
+        case isCSManager = "is_cs_manager"
+        case stripeCustomerID = "stripe_customer_id"
+        case superAdmin = "super_admin"
+        case status
+        case isAccountManager = "is_account_manager"
+        case hubspotContactID = "hubspot_contact_id"
+        case apiUid = "api_uid"
+        case apiName = "api_name"
+        case showCompany = "show_company"
+    }
+}
+
+// MARK: - LayoutTemplate
+struct LayoutTemplate: Codable {
+    let id: Int
+
+    enum CodingKeys: String, CodingKey {
+        case id
+    }
+}
+
+// MARK: - RawDatum
+struct RawDatum: Codable {
+    let city, email, phone, state: String
+    let date: String
+    let zipcode: String
+    let version: Int
+    let lastName, firstName, companyName, streetAddress: String
+    let streetAddressLine2: String
+
+    enum CodingKeys: String, CodingKey {
+        case city, email, phone, state
+        case date = "__date"
+        case zipcode
+        case version = "__version"
+        case lastName = "last_name"
+        case firstName = "first_name"
+        case companyName = "company_name"
+        case streetAddress = "street_address"
+        case streetAddressLine2 = "street_address_line_2"
+    }
+}
+
+// MARK: - SubjectListEntry
+struct SubjectListEntry: Codable, Identifiable {
+    let id: Int
+    let apn: String?
+    let listUploadID: Int?
+    let firstName, lastName, phone, email: String?
+    let secondFirstName, secondLastName: String?
+    let rawNames: String?
+    let secondPhone, secondEmail, companyName, mailingAddressLine1: String?
+    let mailingAddressLine2, mailingCity, mailingState, mailingZipcode: String?
+    let rawMailingAddress: String?
+    let siteAddressLine1, siteAddressLine2: String
+    let siteCity: String
+    let siteState: String
+    let siteZipcode: String
+    let rawSiteAddress: String?
+    let yearBuilt, lastSold: String?
+    let latitude, longitude: Double?
+    let createdAt, updatedAt: String
+    let confidenceScore, deliverabilityScore, rawFirst, rawLast: String?
+    let flag: Bool
+    let reviewStatus: String
+    let linkedinURL: String?
+    let neighborhood, bedCount, bathCount, sqft: String?
+    let parcel, errorCodes, returnCodes, searchLink: String?
+    let searchOutput: String?
+    let status: String?
+    let rawData: [RawDatum]?
+    let isFirstNameVerified, isSecondNameVerified, isMailingAddressVerified, isSiteAddressVerified: Bool
+    let isFirstNameAutoUpdated, isSecondNameAutoUpdated, isMailingAddressAutoUpdated, isSiteAddressAutoUpdated: Bool
+    let nameOptionsFromAPI, mailingAddressOptionsFromAPI, siteAddressOptionsFromAPI, mailingAddressAssociatedNames: String?
+    let siteAddressAssociatedNames, mailingToLine, mailingAttnLine: String?
+    let greeting, address: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, apn
+        case listUploadID = "list_upload_id"
+        case firstName = "first_name"
+        case lastName = "last_name"
+        case phone, email
+        case secondFirstName = "second_first_name"
+        case secondLastName = "second_last_name"
+        case rawNames = "raw_names"
+        case secondPhone = "second_phone"
+        case secondEmail = "second_email"
+        case companyName = "company_name"
+        case mailingAddressLine1 = "mailing_address_line_1"
+        case mailingAddressLine2 = "mailing_address_line_2"
+        case mailingCity = "mailing_city"
+        case mailingState = "mailing_state"
+        case mailingZipcode = "mailing_zipcode"
+        case rawMailingAddress = "raw_mailing_address"
+        case siteAddressLine1 = "site_address_line_1"
+        case siteAddressLine2 = "site_address_line_2"
+        case siteCity = "site_city"
+        case siteState = "site_state"
+        case siteZipcode = "site_zipcode"
+        case rawSiteAddress = "raw_site_address"
+        case yearBuilt = "year_built"
+        case lastSold = "last_sold"
+        case latitude, longitude
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case confidenceScore = "confidence_score"
+        case deliverabilityScore = "deliverability_score"
+        case rawFirst = "raw_first"
+        case rawLast = "raw_last"
+        case flag
+        case reviewStatus = "review_status"
+        case linkedinURL = "linkedin_url"
+        case neighborhood
+        case bedCount = "bed_count"
+        case bathCount = "bath_count"
+        case sqft, parcel
+        case errorCodes = "error_codes"
+        case returnCodes = "return_codes"
+        case searchLink = "search_link"
+        case searchOutput = "search_output"
+        case status
+        case rawData = "raw_data"
+        case isFirstNameVerified = "is_first_name_verified"
+        case isSecondNameVerified = "is_second_name_verified"
+        case isMailingAddressVerified = "is_mailing_address_verified"
+        case isSiteAddressVerified = "is_site_address_verified"
+        case isFirstNameAutoUpdated = "is_first_name_auto_updated"
+        case isSecondNameAutoUpdated = "is_second_name_auto_updated"
+        case isMailingAddressAutoUpdated = "is_mailing_address_auto_updated"
+        case isSiteAddressAutoUpdated = "is_site_address_auto_updated"
+        case nameOptionsFromAPI = "name_options_from_api"
+        case mailingAddressOptionsFromAPI = "mailing_address_options_from_api"
+        case siteAddressOptionsFromAPI = "site_address_options_from_api"
+        case mailingAddressAssociatedNames = "mailing_address_associated_names"
+        case siteAddressAssociatedNames = "site_address_associated_names"
+        case mailingToLine = "mailing_to_line"
+        case mailingAttnLine = "mailing_attn_line"
+        case greeting, address
+    }
+}
+// MARK: - OutgoingSubjectListEntryWrapper
+struct OutgoingSubjectListEntryWrapper: Codable {
+    let subjectListEntry: OutgoingSubjectListEntry
+
+    enum CodingKeys: String, CodingKey {
+        case subjectListEntry = "subject_list_entry"
+    }
+}
+
+// MARK: - OutgoingSubjectListEntry
+struct OutgoingSubjectListEntry: Codable {
+    let siteAddressLine1, siteAddressLine2, siteCity, siteState: String
+    let siteZipcode, latitude, longitude, status: String
+
+    enum CodingKeys: String, CodingKey {
+        case siteAddressLine1 = "site_address_line_1"
+        case siteAddressLine2 = "site_address_line_2"
+        case siteCity = "site_city"
+        case siteState = "site_state"
+        case siteZipcode = "site_zipcode"
+        case latitude, longitude, status
     }
 }
 
@@ -70,17 +368,17 @@ struct CustomNotes: Codable {
 // MARK: - CustomNote
 struct CustomNote: Codable, Identifiable {
     let id: Int
-    let body, toFirstName, toLastName, toBusinessName: String?
+    let body: String?
+    let toFirstName, toLastName, toBusinessName: String
     let toToLine, toAttnLine: String?
-    let toAddressLine1, toAddressLine2, toCity, toState: String?
-    let toZipcode, fromFirstName, fromLastName, fromBusinessName: String?
+    let toAddressLine1, toAddressLine2, toCity, toState: String
+    let toZipcode, fromFirstName, fromLastName, fromBusinessName: String
     let fromToLine, fromAttnLine: String?
-    let fromAddressLine1, fromAddressLine2, fromCity, fromState: String?
-    let fromZipcode: String?
-    let handwritingID: Int?
-    let status: String?
-    let cardType, format, mediaSize: String?
-    let messageTemplateID: Int?
+    let fromAddressLine1, fromAddressLine2, fromCity, fromState: String
+    let fromZipcode: String
+    let handwritingID: Int
+    let status: String
+    let cardType, format, mediaSize, messageTemplateID: String?
     let batchSize: Int
 
     enum CodingKeys: String, CodingKey {
@@ -114,6 +412,7 @@ struct CustomNote: Codable, Identifiable {
         case batchSize = "batch_size"
     }
 }
+
 // MARK: - OutGoingCustomNoteWrapper
 struct OutGoingCustomNoteWrapper: Codable {
     let customNote: OutgoingCustomNote
@@ -201,22 +500,28 @@ extension CustomNote {
         @State var image = UIImage()
         let size: CGFloat
         let cornerRadius: CGFloat
+        var setAsCardLayout: Bool
 
-        init(withURL url: String, size: CGFloat, cornerRadius: CGFloat) {
+        init(withURL url: String, size: CGFloat, cornerRadius: CGFloat, setAsCardLayout: Bool = false) {
             imageLoader = ImageLoader(urlString: url)
             self.size = size
-            self.cornerRadius = cornerRadius
+            self.cornerRadius = !setAsCardLayout ? cornerRadius : 0
+            self.setAsCardLayout = setAsCardLayout
         }
 
         var body: some View {
             Image(uiImage: image)
                 .resizable()
                 .scaledToFill()
-                .frame(width: size, height: size)
+                .frame(width: getImageWidth(), height: size)
                 .cornerRadius(cornerRadius)
                 .onReceive(imageLoader.didChange) { data in
                     self.image = UIImage(data: data) ?? UIImage(systemName: "exclamationmark.triangle")!
                 }
+        }
+
+        private func getImageWidth() -> CGFloat {
+            return !setAsCardLayout ? size : size * 2
         }
     }
 }
@@ -253,16 +558,66 @@ struct MessageTemplateElement: Codable {
     }
 }
 
-// MARK: - MessageTemplateMessageTemplate
+// MARK: - MessageTemplate
 struct MessageTemplate: Codable, Identifiable {
     let id: Int
     let title, body: String
-    let mergeVars: [String]
-    let owned: Bool
+    let mergeVars: [String: String]
+    let owned: Bool?
 
     enum CodingKeys: String, CodingKey {
         case id, title, body
         case mergeVars = "merge_vars"
         case owned
+    }
+}
+
+// MARK: - MultiTouchTopicResponse
+struct MultiTouchTopicResponse: Codable {
+    let multiTouchTopics: [MultiTouchTopicWrapper]
+
+    enum CodingKeys: String, CodingKey {
+        case multiTouchTopics = "multi_touch_topics"
+    }
+}
+
+// MARK: - MultiTouchTopicWrapper
+struct MultiTouchTopicWrapper: Codable {
+    let multiTouchTopic: MultiTouchTopic
+
+    enum CodingKeys: String, CodingKey {
+        case multiTouchTopic = "multi_touch_topic"
+    }
+}
+
+// MARK: - MultiTouchTopic
+struct MultiTouchTopic: Codable, Identifiable {
+    let id: Int
+    let name: String
+    let touchOneTemplateID: Int
+    let touchTwoTemplateID: Int
+    let touchDuration: Int
+
+    enum CodingKeys: String, CodingKey {
+        case id, name
+        case touchOneTemplateID = "touch_one_template_id"
+        case touchTwoTemplateID = "touch_two_template_id"
+        case touchDuration = "touch_two_weeks"
+    }
+}
+// MARK: - OutgoingRecipientStatus
+struct OutgoingRecipientStatus: Codable {
+    let status: String
+
+    enum CodingKeys: String, CodingKey {
+        case status
+    }
+}
+
+struct ListEntryResponse: Codable {
+    let message: String
+
+    enum CodingKeys: String, CodingKey {
+        case message
     }
 }

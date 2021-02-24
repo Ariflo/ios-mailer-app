@@ -71,6 +71,8 @@ struct ComposeMailingView: View {
                 case .outgoingMailingFailed:
                     return Alert(title: Text("We're sorry something went wrong, please try again."))
                 }
+            }.onAppear {
+                viewModel.getMailingCoverArtOptions()
             }
             .toolbar {
                 // MARK: - Wizard Back Button
@@ -121,7 +123,7 @@ struct ComposeMailingView: View {
                                 : Text("Campaigns")
                             viewModel.step != .fromForm && viewModel.step != .confirmation  ? Image(systemName: "chevron.right") : nil
                         }
-                    }
+                    }.disabled(viewModel.mailingArt.filter({ $0.imageUrl != nil && $0.id != nil }).count < 1 && viewModel.step == .selectCard)
                 }
             }
             .navigationBarTitle(Text(viewModel.step.rawValue), displayMode: .inline)
@@ -280,11 +282,13 @@ struct ComposeMailingCoverArtSelectionView: View {
     }
 
     var body: some View {
-        List(viewModel.mailingArt.filter { $0.imageUrl != nil && $0.id != nil }) { coverArt in
-            MailingCoverArtRow(viewModel: viewModel, coverImage: coverArt)
-        }.onAppear {
-            viewModel.getMailingCoverArtOptions()
-        }.listStyle(PlainListStyle())
+        if (viewModel.mailingArt.filter({ $0.imageUrl != nil && $0.id != nil }).count < 1) {
+            EmptyListView(message: "No stationary avaliable, Please visit Addressable.app to upload cover art and continue.")
+        } else {
+            List(viewModel.mailingArt.filter { $0.imageUrl != nil && $0.id != nil }) { coverArt in
+                MailingCoverArtRow(viewModel: viewModel, coverImage: coverArt)
+            }.listStyle(PlainListStyle())
+        }
     }
 }
 // MARK: - MailingCoverArtRow
