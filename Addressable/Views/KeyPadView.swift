@@ -30,7 +30,7 @@ struct KeyPadView: View {
 }
 
 struct KeyPad: View {
-    @EnvironmentObject var appDelegate: AppDelegate
+    @EnvironmentObject var app: Application
     @Binding var number: String
     @ObservedObject var viewModel: CallsViewModel
 
@@ -58,7 +58,7 @@ struct KeyPad: View {
     }
 
     private func addCallParticipant() {
-        guard let fromNumber = appDelegate.callManager?.currentActiveCallFrom else {
+        guard let fromNumber = app.callManager?.currentActiveCallFrom else {
             print("No from number to add participant")
             return
         }

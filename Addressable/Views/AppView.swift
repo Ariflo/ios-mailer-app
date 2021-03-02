@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct AppView: View {
-    @EnvironmentObject var appDelegate: AppDelegate
+    @EnvironmentObject var app: Application
 
     var body: some View {
         /// User Authenticaton Check
-        if KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] != nil {
-            if appDelegate.displayCallView {
+        if KeyChainServiceUtil.shared[userBasicAuthToken] != nil {
+            if app.displayCallView {
                 AddressableCallView(viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher())).navigationBarHidden(true)
             } else {
                 TabView {
@@ -48,7 +48,7 @@ struct AppView: View {
                             Text("Profile")
                         }
                 }.onAppear {
-                    appDelegate.verifyPermissions {
+                    app.verifyPermissions {
                         DispatchQueue.main.async {
                             UIApplication.shared.registerForRemoteNotifications()
                         }
@@ -65,6 +65,6 @@ struct AppView: View {
 
 struct AppView_Previews: PreviewProvider {
     static var previews: some View {
-        AppView().environmentObject(AppDelegate())
+        AppView().environmentObject(Application())
     }
 }

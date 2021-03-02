@@ -39,7 +39,7 @@ class CallsViewModel: ObservableObject, Identifiable {
     }
 
     func addCallParticipant(addNumber: String, fromNumber: String) {
-        guard let sessionID = KeyChainServiceUtil.shared[USER_MOBILE_CLIENT_IDENTITY] else {
+        guard let sessionID = KeyChainServiceUtil.shared[userMobileClientIdentity] else {
             print("No Session ID to Add Participant")
             return
         }

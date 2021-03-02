@@ -82,7 +82,7 @@ struct ComposeRadiusMailingView: View {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(
                         action: {
-                            guard viewModel.step == .selectLocation else {
+                            guard viewModel.step == .selectLocation || viewModel.step == .confirmAudience else {
                                 viewModel.step.back()
                                 return
                             }
@@ -90,10 +90,12 @@ struct ComposeRadiusMailingView: View {
                         }
                     ) {
                         if viewModel.step != .radiusSent {
-                            viewModel.step != .confirmAudience ? HStack(spacing: 6) {
+                            if viewModel.step != .confirmAudience {
                                 Image(systemName: "chevron.left")
                                 Text("Back")
-                            } : nil
+                            } else {
+                                Text("Campaigns")
+                            }
                         }
                     }
                 }
@@ -107,19 +109,24 @@ struct ComposeRadiusMailingView: View {
                                 return
                             }
                             if viewModel.step == .selectLocation {
-                                viewModel.createRadiusMailing()
+                                viewModel.createRadiusMailing { newMailing in
+                                    guard newMailing != nil else { return }
+                                }
                             }
 
                             if viewModel.step == .selectCard {
-                                viewModel.updateRadiusMailing(with:
-                                                                OutgoingRadiusMailing(
-                                                                    layoutTemplateID: viewModel.selectedCoverArtID,
-                                                                    multiTouchTopicID: nil,
-                                                                    templateOneBody: nil,
-                                                                    templateTwoBody: nil,
-                                                                    mergeVars: nil,
-                                                                    touchDuration: nil
-                                                                ))
+                                viewModel.updateRadiusMailingData(for: .cover, with:
+                                                                    OutgoingRadiusMailing(
+                                                                        layoutTemplateID: viewModel.selectedCoverArtID,
+                                                                        multiTouchTopicID: nil,
+                                                                        templateOneBody: nil,
+                                                                        templateTwoBody: nil,
+                                                                        mergeVars: nil,
+                                                                        touchDuration: nil,
+                                                                        touchDurationConfirmation: nil
+                                                                    )) { updatedMailing in
+                                    guard updatedMailing != nil else { return }
+                                }
                             }
 
                             guard noMissingMergeVars() else {
@@ -131,14 +138,31 @@ struct ComposeRadiusMailingView: View {
                             if viewModel.step == .chooseTopic {
                                 let mergeVars = viewModel.touch1MergeVars.merging(viewModel.touch2MergeVars, uniquingKeysWith: { (first, _) in first })
 
-                                viewModel.updateRadiusMailing(with:
-                                                                OutgoingRadiusMailing(
-                                                                    layoutTemplateID: nil,
-                                                                    multiTouchTopicID: viewModel.topicSelectionID,
-                                                                    templateOneBody: viewModel.touch1Body,
-                                                                    templateTwoBody: viewModel.touch2Body,
-                                                                    mergeVars: mergeVars,
-                                                                    touchDuration: viewModel.numOfWeeksSelection))
+                                viewModel.updateRadiusMailingData(for: .topic, with:
+                                                                    OutgoingRadiusMailing(
+                                                                        layoutTemplateID: nil,
+                                                                        multiTouchTopicID: viewModel.topicSelectionID,
+                                                                        templateOneBody: viewModel.touch1Body,
+                                                                        templateTwoBody: viewModel.touch2Body,
+                                                                        mergeVars: mergeVars,
+                                                                        touchDuration: viewModel.numOfWeeksSelection,
+                                                                        touchDurationConfirmation: nil)) { updatedMailing in
+                                    guard updatedMailing != nil else { return }
+                                }
+                            }
+
+                            if viewModel.step == .confirmSend {
+                                viewModel.updateRadiusMailingData(for: .list, with:
+                                                                    OutgoingRadiusMailing(
+                                                                        layoutTemplateID: nil,
+                                                                        multiTouchTopicID: nil,
+                                                                        templateOneBody: nil,
+                                                                        templateTwoBody: nil,
+                                                                        mergeVars: nil,
+                                                                        touchDuration: nil,
+                                                                        touchDurationConfirmation: viewModel.numOfWeeksSelection)) { updatedMailing in
+                                    guard updatedMailing != nil else { return }
+                                }
                             }
 
                             guard viewModel.step == .audienceProcessing || viewModel.step == .radiusSent  else {
@@ -156,7 +180,7 @@ struct ComposeRadiusMailingView: View {
                             } else {
                                 viewModel.step == .confirmAudience ? Text("Confirm Listing") :
                                     viewModel.step != .audienceProcessing ? Text(viewModel.step == .confirmAndProcess ? "Confirm" : "Next") : Text("Campaigns")
-                                viewModel.step != .confirmAndProcess && viewModel.step != .audienceProcessing && viewModel.step != .confirmAudience ? Image(systemName: "chevron.right") : nil
+                                viewModel.step != .confirmAndProcess && viewModel.step != .audienceProcessing ? Image(systemName: "chevron.right") : nil
                             }
                         }
                     }.disabled(viewModel.mailingArt.filter({ $0.imageUrl != nil && $0.id != nil }).count < 1 && viewModel.step == .selectCard)
@@ -513,8 +537,11 @@ struct ComposeRadiusMailingConfirmationView: View {
                         Spacer()
                         VStack(alignment: .leading, spacing: 10) {
                             Text("What happens now?").font(.title).fontWeight(.bold).padding()
-                            Text("After you confirm this order and make a payment we will have one of our experts compile the most suitable 350 recipients for your campaign.").font(.body).padding()
-                            Text("Within 48 hours we will notify you and offer you the ability to amend the list. You are then ready to send the campaign.").font(.body).padding()
+                            Text("After you confirm this order and make a payment" +
+                                    " we will have one of our experts compile the most" +
+                                    " suitable 350 recipients for your campaign.").font(.body).padding()
+                            Text("Within 48 hours we will notify you and offer you" +
+                                    " the ability to amend the list. You are then ready to send the campaign.").font(.body).padding()
                         }
                         .padding()
                         .background(Color(red: 126/255, green: 0, blue: 181/255, opacity: 0.1))
@@ -528,7 +555,14 @@ struct ComposeRadiusMailingConfirmationView: View {
     }
 
     private func getSelectedImageURL() -> String {
-        guard let index = viewModel.mailingArt.firstIndex(where: { $0.id == viewModel.selectedRadiusMailing?.layoutTemplate?.id }), let imageUrl = viewModel.mailingArt[index].imageUrl else { return "https://static.wixstatic.com/media/d20312_54a7d91bc5f54232952540769b5e5f4c~mv2.png/v1/fill/w_560,h_452,al_c,q_85,usm_0.66_1.00_0.01/enterprise2.webp" }
+        guard let index = viewModel.mailingArt
+                .firstIndex(where: {
+                    $0.id == viewModel.selectedCoverArtID
+                }),
+              let imageUrl = viewModel.mailingArt[index].imageUrl
+        else {
+            return "https://static.wixstatic.com/media/d20312_54a7d91bc5f54232952540769b5e5f4c~mv2.png/v1/fill/w_560,h_452,al_c,q_85,usm_0.66_1.00_0.01/enterprise2.webp"
+        }
         return imageUrl
     }
 }
@@ -573,6 +607,7 @@ struct ComposeRadiusMailingAudienceConfirmationView: View {
             Text("Feel free to remove any that you feel aren't suitable. They will be replaced with alternatives to ensure you get the same reach")
                 .padding()
                 .foregroundColor(Color(red: 0, green: 0, blue: 0, opacity: 0.5))
+                .multilineTextAlignment(.center)
 
             List(viewModel.selectedRadiusMailing!.recipients.filter { $0.status == ListEntryStatus.active.rawValue }) { recipient in
                 HStack {
@@ -603,12 +638,23 @@ struct ComposeRadiusMailingAudienceConfirmationView: View {
 struct ComposeRadiusMailingConfirmSendView: View {
     @ObservedObject var viewModel: ComposeRadiusMailingViewModel
     @State private var date = Date()
+    @State private var displayDurationPicker: Bool = false
+    @State private var durationEdited: Bool = false
 
     init(viewModel: ComposeRadiusMailingViewModel) {
         self.viewModel = viewModel
     }
 
     var body: some View {
+        let topicDurationSelectionBinding = Binding<Int>(
+            get: {
+                viewModel.numOfWeeksSelection
+            }, set: { selectedDuration in
+                viewModel.numOfWeeksSelection = selectedDuration
+                displayDurationPicker = false
+                durationEdited = true
+            })
+
         GeometryReader { geometry in
             ScrollView {
                 VStack(alignment: .leading) {
@@ -624,14 +670,21 @@ struct ComposeRadiusMailingConfirmSendView: View {
                     }.padding()
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Touch 1").font(.title).fontWeight(.bold).foregroundColor(Color(red: 126/255, green: 0, blue: 181/255))
-                        Text("Choose Ideal Arrival Date").font(.body)
-                        DatePicker(
-                            "",
-                            selection: $date,
-                            displayedComponents: [.date]
-                        )
-                        Text("Will send 350 recipients in the vicinity of your selected address").font(.body)
+                        Text("Touch 1").font(.title).fontWeight(.bold)
+                        Text("We will send " +
+                                "\(viewModel.selectedRadiusMailing!.activeRecipientCount) " +
+                                "cards to \(viewModel.selectedRadiusMailing!.activeRecipientCount) " +
+                                "recipients in the vicinity of ")
+                            .font(.subheadline)
+                            .foregroundColor(Color(red: 0, green: 0, blue: 0, opacity: 0.5))
+                            + Text(
+                                "\(viewModel.selectedRadiusMailing!.subjectListEntry.siteAddressLine1), " +
+                                    "\(viewModel.selectedRadiusMailing!.subjectListEntry.siteAddressLine2) " +
+                                    "\(viewModel.selectedRadiusMailing!.subjectListEntry.siteCity), " +
+                                    "\(viewModel.selectedRadiusMailing!.subjectListEntry.siteState)"
+                            )
+                            .font(.subheadline)
+                            .foregroundColor(Color(red: 0, green: 0, blue: 0, opacity: 0.5))
                     }.padding()
 
                     HStack(alignment: .center) {
@@ -646,12 +699,46 @@ struct ComposeRadiusMailingConfirmSendView: View {
                     }.padding()
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Touch 2").font(.title).fontWeight(.bold).foregroundColor(Color(red: 126/255, green: 0, blue: 181/255))
-                        //                        HStack {
-                        //                            Text("FUTURE DATE").font(.body)
-                        //                            Text("# of weeks later").font(.body)
-                        //                        }
-                        Text("Will send 350 recipients in the vicinity of your selected address").font(.body)
+                        Text("Touch 2").font(.title).fontWeight(.bold)
+                        HStack(spacing: 24) {
+                            if let duration = viewModel.selectedRadiusMailing!.topicDuration {
+                                if !displayDurationPicker {
+                                    Text("\(durationEdited ? viewModel.numOfWeeksSelection : duration) weeks later").font(.subheadline).foregroundColor(Color(red: 0, green: 0, blue: 0, opacity: 0.3))
+                                    Button(action: {
+                                        // Display Duration Picker
+                                        viewModel.numOfWeeksSelection = duration
+                                        displayDurationPicker = true
+                                    }) {
+                                        Text("Edit").font(.subheadline).underline().foregroundColor(Color(red: 0, green: 0, blue: 0, opacity: 0.5))
+                                    }
+                                } else {
+                                    VStack(alignment: .center) {
+                                        Picker("Time", selection: topicDurationSelectionBinding) {
+                                            ForEach(viewModel.weekOptions, id: \.1) { durationSelection in
+                                                Text(durationSelection.0.replacingOccurrences(of: "Weeks", with: "")).tag(durationSelection.1)
+                                            }
+                                        }.pickerStyle(SegmentedPickerStyle())
+                                        .frame(maxWidth: geometry.size.width / 1.5)
+                                        .clipped()
+                                        Text("(Weeks)").font(.subheadline)
+                                    }
+                                }
+                            }
+                        }
+                        Text("We will send " +
+                                "\(viewModel.selectedRadiusMailing!.activeRecipientCount) " +
+                                "cards to \(viewModel.selectedRadiusMailing!.activeRecipientCount) " +
+                                "recipients in the vicinity of ")
+                            .font(.subheadline)
+                            .foregroundColor(Color(red: 0, green: 0, blue: 0, opacity: 0.5))
+                            + Text(
+                                "\(viewModel.selectedRadiusMailing!.subjectListEntry.siteAddressLine1), " +
+                                    "\(viewModel.selectedRadiusMailing!.subjectListEntry.siteAddressLine2) " +
+                                    "\(viewModel.selectedRadiusMailing!.subjectListEntry.siteCity)," +
+                                    " \(viewModel.selectedRadiusMailing!.subjectListEntry.siteState)"
+                            )
+                            .font(.subheadline)
+                            .foregroundColor(Color(red: 0, green: 0, blue: 0, opacity: 0.5))
                     }.padding()
                 }
             }
@@ -659,7 +746,12 @@ struct ComposeRadiusMailingConfirmSendView: View {
     }
 
     private func getSelectedImageURL() -> String {
-        guard let index = viewModel.mailingArt.firstIndex(where: { $0.id == viewModel.selectedRadiusMailing?.layoutTemplate?.id }), let imageUrl = viewModel.mailingArt[index].imageUrl else { return "https://static.wixstatic.com/media/d20312_54a7d91bc5f54232952540769b5e5f4c~mv2.png/v1/fill/w_560,h_452,al_c,q_85,usm_0.66_1.00_0.01/enterprise2.webp" }
+        guard let index = viewModel.mailingArt
+                .firstIndex(where: { $0.id == viewModel.selectedRadiusMailing?.layoutTemplate?.id }),
+              let imageUrl = viewModel.mailingArt[index].imageUrl
+        else {
+            return "https://static.wixstatic.com/media/d20312_54a7d91bc5f54232952540769b5e5f4c~mv2.png/v1/fill/w_560,h_452,al_c,q_85,usm_0.66_1.00_0.01/enterprise2.webp"
+        }
         return imageUrl
     }
 }
@@ -672,7 +764,7 @@ struct ComposeRadiusMailingSentView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 250, height: 250)
-            Text("Your mailing is being prepared and will mail in the next 1-2 days.")
+            Text("Your Radius mailing is completed. You will receive a notification when the mailing is sent in the next 1-2 days.")
                 .padding(25)
                 .multilineTextAlignment(.center)
         }

@@ -24,9 +24,13 @@ protocol FetchableData {
     func getMultiTouchTopics() -> AnyPublisher<MultiTouchTopicResponse, ApiError>
     func getMessageTemplate(for id: Int) -> AnyPublisher<MessageTemplateElement, ApiError>
     func createNewRadiusMailing(_ newRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingWrapper, ApiError>
-    func updateRadiusMailing(for id: Int, _ updateRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingWrapper, ApiError>
+    func updateRadiusMailing(for component: RadiusMailingComponent, with id: Int, _ updateRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingWrapper, ApiError>
     func updateRadiusListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<ListEntryResponse, ApiError>
     func getSelectedRadiusMailing(for id: Int) -> AnyPublisher<RadiusMailingWrapper, ApiError>
+}
+
+enum RadiusMailingComponent {
+    case cover, topic, list
 }
 
 enum ApiError: Error {
@@ -43,20 +47,31 @@ class AddressableDataFetcher {
 }
 
 extension AddressableDataFetcher: FetchableData {
+    func updateRadiusMailing(for component: RadiusMailingComponent, with id: Int, _ updateRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingWrapper, ApiError> {
+        switch component {
+        case .cover:
+            return makeApiRequest(with: updateRadiusMailingCoverRequestComponents(for: id),
+                                  postRequestBodyData: nil,
+                                  patchRequestBodyData: updateRadiusMailingData)
+        case .topic:
+            return makeApiRequest(with: updateRadiusMailingTopicRequestComponents(for: id),
+                                  postRequestBodyData: nil,
+                                  patchRequestBodyData: updateRadiusMailingData)
+        case .list:
+            return makeApiRequest(with: updateRadiusMailingListRequestComponents(for: id),
+                                  postRequestBodyData: nil,
+                                  patchRequestBodyData: updateRadiusMailingData)
+        }
+    }
+
     func updateRadiusListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<ListEntryResponse, ApiError> {
         return makeApiRequest(with: updateListEntryRequestComponents(for: id),
                               postRequestBodyData: nil,
                               patchRequestBodyData: updateListEntryData)
     }
 
-    func updateRadiusMailing(for id: Int, _ updateRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingWrapper, ApiError> {
-        return makeApiRequest(with: updateOrGetRadiusMailingRequestComponents(for: id),
-                              postRequestBodyData: nil,
-                              patchRequestBodyData: updateRadiusMailingData)
-    }
-
     func getSelectedRadiusMailing(for id: Int) -> AnyPublisher<RadiusMailingWrapper, ApiError> {
-        return makeApiRequest(with: updateOrGetRadiusMailingRequestComponents(for: id))
+        return makeApiRequest(with: getRadiusMailingRequestComponents(for: id))
     }
 
     func createNewRadiusMailing(_ newRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingWrapper, ApiError> {
@@ -132,7 +147,7 @@ extension AddressableDataFetcher: FetchableData {
         var request = URLRequest(url: url)
         request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
-        if let authToken = token ?? KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] {
+        if let authToken = token ?? KeyChainServiceUtil.shared[userBasicAuthToken] {
             request.setValue("Basic \(authToken)", forHTTPHeaderField: "Authorization")
         } else {
             let error = ApiError.network(description: "Unable to apply authorization token to request")
@@ -317,12 +332,42 @@ private extension AddressableDataFetcher {
         return components
     }
 
-    func updateOrGetRadiusMailingRequestComponents(for id: Int) -> URLComponents {
+    func getRadiusMailingRequestComponents(for id: Int) -> URLComponents {
         var components = URLComponents()
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
         components.path = AddressableAPI.path + "/radius_mailings/\(id)"
+
+        return components
+    }
+
+    func updateRadiusMailingCoverRequestComponents(for id: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/radius_mailings/\(id)/cover"
+
+        return components
+    }
+
+    func updateRadiusMailingTopicRequestComponents(for id: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/radius_mailings/\(id)/topic"
+
+        return components
+    }
+
+    func updateRadiusMailingListRequestComponents(for id: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/radius_mailings/\(id)/list"
 
         return components
     }

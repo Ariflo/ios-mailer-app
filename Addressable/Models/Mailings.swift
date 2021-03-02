@@ -44,6 +44,8 @@ struct RadiusMailing: Codable {
     let parentMailingID: Int
     let radiusTemplateID: Int?
     let subjectListEntry: SubjectListEntry
+    let topicDuration: Int?
+    let radiusTopicID: Int?
 
     enum CodingKeys: String, CodingKey {
         case account, user, name, status
@@ -55,15 +57,67 @@ struct RadiusMailing: Codable {
         case parentMailingID = "parent_mailing_id"
         case radiusTemplateID = "radius_template_id"
         case subjectListEntry = "subject_list_entry"
+        case topicDuration = "topic_duration"
+        case radiusTopicID = "radius_topic_id"
     }
 }
 
-// MARK: - OutgoingRadiusMailingWrapper
-struct OutgoingRadiusMailingWrapper: Codable {
-    let radiusMailing: OutgoingRadiusMailing
+// MARK: - OutgoingRadiusMailingCoverArtWrapper
+struct OutgoingRadiusMailingCoverArtWrapper: Codable {
+    let cover: OutgoingRadiusMailingCoverArtData
 
     enum CodingKeys: String, CodingKey {
-        case radiusMailing = "radius_mailing"
+        case cover
+    }
+}
+
+// MARK: - OutgoingRadiusMailingCoverArtData
+struct OutgoingRadiusMailingCoverArtData: Codable {
+    let layoutTemplateID: Int
+
+    enum CodingKeys: String, CodingKey {
+        case layoutTemplateID = "layout_template_id"
+    }
+}
+
+// MARK: - OutgoingRadiusMailingCoverArtWrapper
+struct OutgoingRadiusMailingTopicWrapper: Codable {
+    let topic: OutgoingRadiusMailingTopicData
+
+    enum CodingKeys: String, CodingKey {
+        case topic
+    }
+}
+// MARK: - OutgoingRadiusMailingTopicData
+struct OutgoingRadiusMailingTopicData: Codable {
+    let multiTouchTopicID: Int
+    let templateOneBody: String
+    let templateTwoBody: String
+    let mergeVars: [String: String]
+    let touchDuration: Int
+
+    enum CodingKeys: String, CodingKey {
+        case multiTouchTopicID = "multi_touch_topic_id"
+        case templateOneBody = "template_one_body"
+        case templateTwoBody = "template_two_body"
+        case mergeVars = "merge_vars"
+        case touchDuration = "touch_two_weeks"
+    }
+}
+// MARK: - OutgoingRadiusMailingListWrapper
+struct OutgoingRadiusMailingListWrapper: Codable {
+    let multiTouchTopic: OutgoingRadiusMailingListData
+
+    enum CodingKeys: String, CodingKey {
+        case multiTouchTopic = "multi_touch_topic"
+    }
+}
+// MARK: - OutgoingRadiusMailingListData
+struct OutgoingRadiusMailingListData: Codable {
+    let touchTwoWeeks: Int
+
+    enum CodingKeys: String, CodingKey {
+        case touchTwoWeeks = "touch_two_weeks"
     }
 }
 
@@ -75,6 +129,7 @@ struct OutgoingRadiusMailing: Codable {
     let templateTwoBody: String?
     let mergeVars: [String: String]?
     let touchDuration: Int?
+    let touchDurationConfirmation: Int?
 
     enum CodingKeys: String, CodingKey {
         case layoutTemplateID = "layout_template_id"
@@ -83,6 +138,7 @@ struct OutgoingRadiusMailing: Codable {
         case templateTwoBody = "template_two_body"
         case mergeVars = "merge_vars"
         case touchDuration = "touch_duration"
+        case touchDurationConfirmation = "touch_duration_confirmation"
     }
 }
 
@@ -368,17 +424,18 @@ struct CustomNotes: Codable {
 // MARK: - CustomNote
 struct CustomNote: Codable, Identifiable {
     let id: Int
-    let body: String?
-    let toFirstName, toLastName, toBusinessName: String
-    let toToLine, toAttnLine: String?
-    let toAddressLine1, toAddressLine2, toCity, toState: String
-    let toZipcode, fromFirstName, fromLastName, fromBusinessName: String
+    let body, toFirstName, toLastName: String
+    let toBusinessName, toToLine, toAttnLine: String?
+    let toAddressLine1: String
+    let toAddressLine2: String?
+    let toCity, toState, toZipcode, fromFirstName: String
+    let fromLastName, fromBusinessName: String
     let fromToLine, fromAttnLine: String?
     let fromAddressLine1, fromAddressLine2, fromCity, fromState: String
     let fromZipcode: String
-    let handwritingID: Int
-    let status: String
-    let cardType, format, mediaSize, messageTemplateID: String?
+    let handwritingID: String?
+    let status, cardType: String
+    let format, mediaSize, messageTemplateID: String?
     let batchSize: Int
 
     enum CodingKeys: String, CodingKey {

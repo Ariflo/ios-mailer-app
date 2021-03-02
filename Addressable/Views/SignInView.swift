@@ -81,7 +81,7 @@ struct SignInView: View {
                             showingAlert = true
                             return
                         }
-                        KeyChainServiceUtil.shared[USER_BASIC_AUTH_TOKEN] = loginData.base64EncodedString()
+                        KeyChainServiceUtil.shared[userBasicAuthToken] = loginData.base64EncodedString()
                         authorizedUser = 1
                     }
                 }) {

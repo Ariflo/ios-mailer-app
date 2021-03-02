@@ -1,5 +1,5 @@
 //
-//  ProviderDelegate.swift
+//  CallProvider.swift
 //  Addressable
 //
 //  Created by Ari on 1/7/21.
@@ -19,8 +19,8 @@ let twimlParamFrom = "From"
 let twimlParamTo = "To"
 let addressableParamSessionID = "SessionId"
 
-class ProviderDelegate: NSObject {
-    private var appDelegate: AppDelegate
+class CallProvider: NSObject {
+    private var app: Application
     private var callManager: CallManager
     private let provider: CXProvider
 
@@ -39,11 +39,11 @@ class ProviderDelegate: NSObject {
     var incomingPushCompletionCallback: (() -> Void)?
     var userInitiatedDisconnect: Bool = false
 
-    init(application: AppDelegate, callManager: CallManager) {
-        self.appDelegate = application
+    init(application: Application, callManager: CallManager) {
+        self.app = application
         self.callManager = callManager
 
-        provider = CXProvider(configuration: ProviderDelegate.providerConfiguration)
+        provider = CXProvider(configuration: CallProvider.providerConfiguration)
 
         super.init()
         provider.setDelegate(self, queue: nil)
@@ -66,8 +66,8 @@ class ProviderDelegate: NSObject {
     }()
 }
 
-// MARK: - CXProviderDelegate
-extension ProviderDelegate: CXProviderDelegate {
+// MARK: - CXCallProvider
+extension CallProvider: CXProviderDelegate {
     func providerDidReset(_ provider: CXProvider) {
         print("Stopping audio")
         audioDevice.isEnabled = false
@@ -86,7 +86,7 @@ extension ProviderDelegate: CXProviderDelegate {
             if success {
                 print("performAnswerVoiceCall() successful")
                 // Display Incoming Call View while In-App
-                self?.appDelegate.displayCallView = true
+                self?.app.displayCallView = true
             } else {
                 print("performAnswerVoiceCall() failed")
                 action.fail()
@@ -103,7 +103,7 @@ extension ProviderDelegate: CXProviderDelegate {
 
         if let call = callManager.currentActiveCall {
             call.isOnHold = action.isOnHold
-            appDelegate.callStatusText = action.isOnHold ? CallState.held.rawValue : CallState.active.rawValue
+            app.callStatusText = action.isOnHold ? CallState.held.rawValue : CallState.active.rawValue
             action.fulfill()
         } else {
             action.fail()
@@ -115,7 +115,7 @@ extension ProviderDelegate: CXProviderDelegate {
 
         if let call = callManager.currentActiveCall {
             call.isMuted = action.isMuted
-            appDelegate.callStatusText = action.isMuted ? CallState.muted.rawValue : CallState.active.rawValue
+            app.callStatusText = action.isMuted ? CallState.muted.rawValue : CallState.active.rawValue
             action.fulfill()
         } else {
             action.fail()
@@ -139,9 +139,9 @@ extension ProviderDelegate: CXProviderDelegate {
             return
         }
         print("Stopping audio")
-        if appDelegate.displayCallView {
+        if app.displayCallView {
             DispatchQueue.main.async {
-                self.appDelegate.displayCallView = false
+                self.app.displayCallView = false
             }
         }
 
@@ -242,7 +242,7 @@ extension ProviderDelegate: CXProviderDelegate {
 
 // MARK: - TVOCallDelegate
 
-extension ProviderDelegate: CallDelegate {
+extension CallProvider: CallDelegate {
     func callDidStartRinging(call: Call) {
         print("callDidStartRinging:")
 
@@ -255,7 +255,7 @@ extension ProviderDelegate: CallDelegate {
         if playCustomRingback {
             playRingback()
         }
-        appDelegate.callStatusText = CallState.connecting.rawValue
+        app.callStatusText = CallState.connecting.rawValue
     }
 
     // MARK: Ringtone
@@ -291,7 +291,7 @@ extension ProviderDelegate: CallDelegate {
             callKitCompletionCallback(true)
         }
 
-        appDelegate.callStatusText = CallState.active.rawValue
+        app.callStatusText = CallState.active.rawValue
     }
 
     func callDidFailToConnect(call: Call, error: Error) {
@@ -305,9 +305,9 @@ extension ProviderDelegate: CallDelegate {
             stopRingback()
         }
 
-        if appDelegate.displayCallView {
+        if app.displayCallView {
             DispatchQueue.main.async {
-                self.appDelegate.displayCallView = false
+                self.app.displayCallView = false
             }
         }
 
@@ -327,9 +327,9 @@ extension ProviderDelegate: CallDelegate {
             stopRingback()
         }
 
-        if appDelegate.displayCallView {
+        if app.displayCallView {
             DispatchQueue.main.async {
-                self.appDelegate.displayCallView = false
+                self.app.displayCallView = false
             }
         }
 
@@ -363,9 +363,9 @@ extension ProviderDelegate: CallDelegate {
             stopRingback()
         }
 
-        if appDelegate.displayCallView {
+        if app.displayCallView {
             DispatchQueue.main.async {
-                self.appDelegate.displayCallView = false
+                self.app.displayCallView = false
             }
         }
     }
@@ -373,14 +373,14 @@ extension ProviderDelegate: CallDelegate {
 
 // MARK: - PushKitEventDelegate
 
-extension ProviderDelegate: PushKitEventDelegate {
+extension CallProvider: PushKitEventDelegate {
     func credentialsUpdated(credentials: PKPushCredentials, deviceID: String) {
         if registrationRequired() || UserDefaults.standard.data(forKey: kCachedDeviceToken) != credentials.token {
             callManager.fetchToken(deviceID: deviceID) { tokenData in
                 guard let accessToken = tokenData?.jwtToken else { return }
                 guard let userClientIdentity = tokenData?.twilioClientIdentity else { return }
 
-                KeyChainServiceUtil.shared[USER_MOBILE_CLIENT_IDENTITY] = userClientIdentity
+                KeyChainServiceUtil.shared[userMobileClientIdentity] = userClientIdentity
                 let cachedDeviceToken = credentials.token
                 /*
                  * Perform registration if a new device token is detected.
@@ -416,15 +416,15 @@ extension ProviderDelegate: PushKitEventDelegate {
      */
     func registrationRequired() -> Bool {
         guard
-            let lastBindingCreated = UserDefaults.standard.object(forKey: kCachedBindingDate)
+            let lastBindingCreated = UserDefaults.standard.object(forKey: kCachedBindingDate) as? Date
         else { return true }
 
         let date = Date()
         var components = DateComponents()
         components.setValue(kRegistrationTTLInDays / 2, for: .day)
-        let expirationDate = Calendar.current.date(byAdding: components, to: lastBindingCreated as! Date)!
+        let expirationDate = Calendar.current.date(byAdding: components, to: lastBindingCreated)
 
-        if expirationDate.compare(date) == ComparisonResult.orderedDescending {
+        if expirationDate?.compare(date) == ComparisonResult.orderedDescending {
             return false
         }
         return true
@@ -469,7 +469,7 @@ extension ProviderDelegate: PushKitEventDelegate {
 
 // MARK: - TVONotificaitonDelegate
 
-extension ProviderDelegate: NotificationDelegate {
+extension CallProvider: NotificationDelegate {
     func callInviteReceived(callInvite: CallInvite) {
         print("callInviteReceived:")
 
@@ -517,7 +517,7 @@ extension ProviderDelegate: NotificationDelegate {
 
 // MARK: - AVAudioPlayerDelegate
 
-extension ProviderDelegate: AVAudioPlayerDelegate {
+extension CallProvider: AVAudioPlayerDelegate {
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         if flag {
             print("Audio player finished playing successfully")

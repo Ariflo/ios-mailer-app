@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AddressableCallView: View {
-    @EnvironmentObject var appDelegate: AppDelegate
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: CallsViewModel
 
     @State var displayKeyPad = false
@@ -27,7 +27,7 @@ struct AddressableCallView: View {
 
             VStack(spacing: 12) {
                 VStack(spacing: 6) {
-                    Text(appDelegate.callStatusText)
+                    Text(app.callStatusText)
                         .font(.title)
                         .foregroundColor(.white)
                     Image("ZippyIcon")
@@ -40,11 +40,11 @@ struct AddressableCallView: View {
                     // MARK: - Mute
                     VStack(spacing: 8) {
                         Button(action: {
-                            guard let currentActiveCall = appDelegate.callManager?.currentActiveCall else {
+                            guard let currentActiveCall = app.callManager?.currentActiveCall else {
                                 print("No currentActiveCall avaliable to mute")
                                 return
                             }
-                            appDelegate.callManager?.setMuted(call: currentActiveCall, isMuted: !callIsMuted)
+                            app.callManager?.setMuted(call: currentActiveCall, isMuted: !callIsMuted)
                             callIsMuted.toggle()
                         }) {
                             Image(systemName: callIsMuted ? "mic.slash.fill" : "mic.slash")
@@ -62,30 +62,30 @@ struct AddressableCallView: View {
                             .font(.callout)
                             .foregroundColor(.white)
                     }
-//                    // MARK: - Display KeyPad
-//                    VStack(spacing: 8) {
-//                        Button(action: {
-//                            displayKeyPad = true
-//                        }) {
-//                            Image(systemName: "circle.grid.3x3")
-//                                .resizable()
-//                                .scaledToFit()
-//                                .foregroundColor(.white)
-//                                .frame(width: 50, height: 50)
-//                                .padding()
-//                                .overlay(
-//                                    RoundedRectangle(cornerRadius: 16)
-//                                        .stroke(Color.white, lineWidth: 4)
-//                                )
-//                        }
-//                        Text("Keypad")
-//                            .font(.callout)
-//                            .foregroundColor(.white)
-//                    }
+                    //                    // MARK: - Display KeyPad
+                    //                    VStack(spacing: 8) {
+                    //                        Button(action: {
+                    //                            displayKeyPad = true
+                    //                        }) {
+                    //                            Image(systemName: "circle.grid.3x3")
+                    //                                .resizable()
+                    //                                .scaledToFit()
+                    //                                .foregroundColor(.white)
+                    //                                .frame(width: 50, height: 50)
+                    //                                .padding()
+                    //                                .overlay(
+                    //                                    RoundedRectangle(cornerRadius: 16)
+                    //                                        .stroke(Color.white, lineWidth: 4)
+                    //                                )
+                    //                        }
+                    //                        Text("Keypad")
+                    //                            .font(.callout)
+                    //                            .foregroundColor(.white)
+                    //                    }
                     // MARK: - Speaker
                     VStack(spacing: 8) {
                         Button(action: {
-                            appDelegate.callManager?.toggleAudioToSpeaker(isSpeakerOn: !callIsOnSpeaker)
+                            app.callManager?.toggleAudioToSpeaker(isSpeakerOn: !callIsOnSpeaker)
                             callIsOnSpeaker.toggle()
                         }) {
                             Image(systemName: callIsOnSpeaker ? "speaker.3.fill" : "speaker.3")
@@ -109,11 +109,11 @@ struct AddressableCallView: View {
                     // MARK: - Hold
                     VStack(spacing: 8) {
                         Button(action: {
-                            guard let currentActiveCall = appDelegate.callManager?.currentActiveCall else {
+                            guard let currentActiveCall = app.callManager?.currentActiveCall else {
                                 print("No currentActiveCall avaliable to hold")
                                 return
                             }
-                            appDelegate.callManager?.setHeld(call: currentActiveCall, onHold: !callOnHold)
+                            app.callManager?.setHeld(call: currentActiveCall, onHold: !callOnHold)
                             callOnHold.toggle()
                         }) {
                             Image(systemName: callOnHold ? "pause.circle.fill": "pause.circle")
@@ -136,7 +136,7 @@ struct AddressableCallView: View {
                         Button(action: {
                             displayKeyPad = true
                         }) {
-                            Image(systemName: appDelegate.callManager?.getIsCurrentCallIncoming() ?? false ? "person.crop.circle.badge.xmark":"person.badge.plus")
+                            Image(systemName: app.callManager?.getIsCurrentCallIncoming() ?? false ? "person.crop.circle.badge.xmark":"person.badge.plus")
                                 .resizable()
                                 .scaledToFit()
                                 .foregroundColor(.white)
@@ -146,7 +146,7 @@ struct AddressableCallView: View {
                                     RoundedRectangle(cornerRadius: 16)
                                         .stroke(Color.white, lineWidth: 4)
                                 )
-                        }.disabled(appDelegate.callManager?.getIsCurrentCallIncoming() ?? false)
+                        }.disabled(app.callManager?.getIsCurrentCallIncoming() ?? false)
                         Text("Add Caller")
                             .font(.callout)
                             .foregroundColor(.white)
@@ -156,7 +156,7 @@ struct AddressableCallView: View {
                         Button(action: {
                             // Display Outgoing Call View
                             DispatchQueue.main.async {
-                                appDelegate.displayCallView = false
+                                app.displayCallView = false
                             }
                         }) {
                             Image(systemName: "mail")
@@ -179,19 +179,19 @@ struct AddressableCallView: View {
                 Spacer()
                 // MARK: - Hang Up Call
                 Button( action: {
-                    guard let currentActiveCall = appDelegate.callManager?.currentActiveCall else {
+                    guard let currentActiveCall = app.callManager?.currentActiveCall else {
                         print("No currentActiveCall avaliable to end")
                         return
                     }
 
-                    guard let index = appDelegate.callManager?.calls.firstIndex(where: { $0.incomingCall?.uuid == currentActiveCall.uuid || $0.outgoingCall?.uuid == currentActiveCall.uuid }) else { return }
+                    guard let index = app.callManager?.calls.firstIndex(where: { $0.incomingCall?.uuid == currentActiveCall.uuid || $0.outgoingCall?.uuid == currentActiveCall.uuid }) else { return }
 
-                    guard let addressableCall = appDelegate.callManager?.calls[index] else {
+                    guard let addressableCall = app.callManager?.calls[index] else {
                         print("No call in the logs to end")
                         return
                     }
 
-                    appDelegate.callManager?.end(call: addressableCall)
+                    app.callManager?.end(call: addressableCall)
                 }) {
                     Image(systemName: "phone.down.fill")
                         .resizable()

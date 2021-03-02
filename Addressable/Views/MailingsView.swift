@@ -45,7 +45,7 @@ struct MailingsView: View {
                         ) {
                             ForEach(viewModel.radiusMailings, id: \.parentMailingID) { radiusMailing in
                                 Button(action: {
-                                    guard radiusMailing.listCount > 0 else { return }
+                                    guard radiusMailing.listCount > 0 && radiusMailing.status != "list_approved" else { return }
                                     viewModel.selectedRadiusMailing = radiusMailing
                                     navigateToComposeRadiusMailing = true
                                 }) {
@@ -114,12 +114,14 @@ struct MailingsView: View {
     }
 
     private func getRadiusMailingListStatus(_ mailing: RadiusMailing) -> String {
-        if mailing.listCount > 0 {
+        if mailing.listCount > 0 && mailing.status != "list_approved" {
             if mailing.targetQuantity > mailing.activeRecipientCount {
                 return "\(mailing.activeRecipientCount) (missing \(mailing.targetQuantity - mailing.activeRecipientCount))"
             } else if mailing.targetQuantity < mailing.activeRecipientCount {
                 return "surplus of \(mailing.activeRecipientCount - mailing.targetQuantity)!"
             }
+        } else if mailing.status == "list_approved" {
+            return "List Approved by Customer"
         }
         return "List Pending"
     }

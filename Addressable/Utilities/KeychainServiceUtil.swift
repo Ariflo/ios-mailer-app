@@ -6,8 +6,8 @@
 
 import Foundation
 
-let USER_BASIC_AUTH_TOKEN = "userBasicAuthToken"
-let USER_MOBILE_CLIENT_IDENTITY = "userMobileClientIdentity"
+let userBasicAuthToken = "userBasicAuthToken"
+let userMobileClientIdentity = "userMobileClientIdentity"
 
 open class KeyChainServiceUtil {
     open var loggingEnabled = false

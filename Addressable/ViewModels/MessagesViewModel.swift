@@ -44,9 +44,15 @@ class MessagesViewModel: ObservableObject, Identifiable {
 
     func getMessages(for leadId: Int) {
         addressableDataFetcher.getLeadMessages(for: leadId)
-            .map { $0.leadMessages.map { msg in
-                try! JSONDecoder().decode(Message.self, from: msg.data(using: .utf8)!)
-            }
+            .map { $0.leadMessages
+                .compactMap { msg -> Message? in
+                    do {
+                        return try JSONDecoder().decode(Message.self, from: msg.data(using: .utf8)!)
+                    } catch {
+                        print("getMessages(for leadID: \(leadId)) JSON decoding error: \(error)")
+                        return nil
+                    }
+                }
             }
             .receive(on: DispatchQueue.main)
             .sink(
@@ -74,9 +80,15 @@ class MessagesViewModel: ObservableObject, Identifiable {
             return
         }
         addressableDataFetcher.sendLeadMessage(encodedMessage)
-            .map { $0.leadMessages.map { msg in
-                try! JSONDecoder().decode(Message.self, from: msg.data(using: .utf8)!)
-            }
+            .map { $0.leadMessages
+                .compactMap { msg -> Message? in
+                    do {
+                        return try JSONDecoder().decode(Message.self, from: msg.data(using: .utf8)!)
+                    } catch {
+                        print("getMessages(_ message: \(message)) JSON decoding error: \(error)")
+                        return nil
+                    }
+                }
             }
             .receive(on: DispatchQueue.main)
             .sink(

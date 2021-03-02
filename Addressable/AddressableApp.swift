@@ -13,7 +13,7 @@ import GoogleMaps
 import GooglePlaces
 
 // API Key Restrictions set on Google Cloud, safe to keep this key here for now
-let GOOGLE_MAPS_API_KEY = "AIzaSyDKJ7-97nKoAeFrCeb1yPfoVDbrS8RttKM"
+let googleMapsApiKey = "AIzaSyDKJ7-97nKoAeFrCeb1yPfoVDbrS8RttKM"
 
 protocol PushKitEventDelegate: AnyObject {
     func credentialsUpdated(credentials: PKPushCredentials, deviceID: String)
@@ -22,21 +22,22 @@ protocol PushKitEventDelegate: AnyObject {
     func incomingPushReceived(payload: PKPushPayload, completion: @escaping () -> Void)
 }
 
-class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, ObservableObject {
+// TODO: Name this back to 'AppDelegate' when Lint issue is solved - https://github.com/realm/SwiftLint/issues/2786
+class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, ObservableObject {
     @Published var displayCallView: Bool = false
     @Published var callStatusText: String = ""
 
-    var callkitProviderDelegate: ProviderDelegate?
+    var callkitCallProvider: CallProvider?
     var callManager: CallManager?
     var latestPushCredentials: PKPushCredentials?
     lazy var voipRegistry = PKPushRegistry.init(queue: DispatchQueue.main)
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        GMSServices.provideAPIKey(GOOGLE_MAPS_API_KEY)
-        GMSPlacesClient.provideAPIKey(GOOGLE_MAPS_API_KEY)
+        GMSServices.provideAPIKey(googleMapsApiKey)
+        GMSPlacesClient.provideAPIKey(googleMapsApiKey)
 
         callManager = CallManager()
-        callkitProviderDelegate = ProviderDelegate(application: self, callManager: callManager!)
+        callkitCallProvider = CallProvider(application: self, callManager: callManager!)
 
         voipRegistry.delegate = self
         voipRegistry.desiredPushTypes = Set([PKPushType.voIP])
@@ -51,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
         let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
         let token = tokenParts.joined()
 
-        if let delegate = callkitProviderDelegate, let credentials = latestPushCredentials {
+        if let delegate = callkitCallProvider, let credentials = latestPushCredentials {
             delegate.credentialsUpdated(credentials: credentials, deviceID: token)
         }
     }
@@ -71,7 +72,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
         print("pushRegistry:didInvalidatePushTokenForType: \(type)")
 
-        if let delegate = callkitProviderDelegate {
+        if let delegate = callkitCallProvider {
             delegate.credentialsInvalidated()
         }
     }
@@ -83,7 +84,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
     func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
         print("pushRegistry:didReceiveIncomingPushWithPayload:forType:\(type) completion:")
 
-        if let delegate = self.callkitProviderDelegate {
+        if let delegate = self.callkitCallProvider {
             delegate.incomingPushReceived(payload: payload, completion: completion)
         }
 
@@ -163,7 +164,7 @@ extension UIApplication {
 
 @main
 struct AddressableApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @UIApplicationDelegateAdaptor(Application.self) var appDelegate
     @Environment(\.scenePhase) var scenePhase
 
     var body: some Scene {

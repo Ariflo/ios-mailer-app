@@ -19,7 +19,7 @@
 		CA4AE34125CD95E8003B6CE8 /* KeyPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */; };
 		CA4AE37B25D30C86003B6CE8 /* TwilioVoice in Frameworks */ = {isa = PBXBuildFile; productRef = CA4AE37A25D30C86003B6CE8 /* TwilioVoice */; };
 		CA62A7A425DED59B005BF410 /* DictionaryUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA62A7A325DED59B005BF410 /* DictionaryUtil.swift */; };
-		CA8555D125A81AF80063274D /* ProviderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8555D025A81AF80063274D /* ProviderDelegate.swift */; };
+		CA8555D125A81AF80063274D /* CallProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8555D025A81AF80063274D /* CallProvider.swift */; };
 		CA8555D625A81B330063274D /* CallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA8555D525A81B330063274D /* CallManager.swift */; };
 		CA85560925A9FA8F0063274D /* AddressableCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA85560825A9FA8F0063274D /* AddressableCall.swift */; };
 		CA85564D25AFB9B40063274D /* PermissionsUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA85564C25AFB9B40063274D /* PermissionsUtil.swift */; };
@@ -108,7 +108,7 @@
 		CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsViewModel.swift; sourceTree = "<group>"; };
 		CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPadView.swift; sourceTree = "<group>"; };
 		CA62A7A325DED59B005BF410 /* DictionaryUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryUtil.swift; sourceTree = "<group>"; };
-		CA8555D025A81AF80063274D /* ProviderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProviderDelegate.swift; sourceTree = "<group>"; };
+		CA8555D025A81AF80063274D /* CallProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallProvider.swift; sourceTree = "<group>"; };
 		CA8555D525A81B330063274D /* CallManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallManager.swift; sourceTree = "<group>"; };
 		CA85560825A9FA8F0063274D /* AddressableCall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressableCall.swift; sourceTree = "<group>"; };
 		CA85564C25AFB9B40063274D /* PermissionsUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsUtil.swift; sourceTree = "<group>"; };
@@ -300,7 +300,7 @@
 				B3DB52862579A84B004196A6 /* Mailings.swift */,
 				CAC8B0DC259D36AF00D4447F /* AddressableDataFetcher.swift */,
 				CA88420625A3A7D200E0D75A /* Authorization.swift */,
-				CA8555D025A81AF80063274D /* ProviderDelegate.swift */,
+				CA8555D025A81AF80063274D /* CallProvider.swift */,
 				CA8555D525A81B330063274D /* CallManager.swift */,
 				CA85560825A9FA8F0063274D /* AddressableCall.swift */,
 				CA85565725AFC4910063274D /* IncomingLead.swift */,
@@ -380,6 +380,7 @@
 				B370BC102576BAC10066624A /* Frameworks */,
 				B370BC112576BAC10066624A /* Resources */,
 				CA8555C425A6490B0063274D /* ShellScript */,
+				CAA4190625E9B9BA00225FF7 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -521,6 +522,23 @@
 			shellPath = /bin/sh;
 			shellScript = "find \"${CODESIGNING_FOLDER_PATH}\" -name '*.framework' -print0 | while read -d $'\\0' framework\ndo\n    codesign --force --deep --sign \"${EXPANDED_CODE_SIGN_IDENTITY}\" --preserve-metadata=identifier,entitlements --timestamp=none \"${framework}\"\ndone\n";
 		};
+		CAA4190625E9B9BA00225FF7 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint autocorrect && swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -549,7 +567,7 @@
 				CA85565825AFC4910063274D /* IncomingLead.swift in Sources */,
 				B3DB527F257992F8004196A6 /* MailingsView.swift in Sources */,
 				CADA001C25C0D09000004B4B /* EnumUtil.swift in Sources */,
-				CA8555D125A81AF80063274D /* ProviderDelegate.swift in Sources */,
+				CA8555D125A81AF80063274D /* CallProvider.swift in Sources */,
 				CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */,
 				B3DB52872579A84B004196A6 /* Mailings.swift in Sources */,
 				CAC8B0AB259D017E00D4447F /* CallListView.swift in Sources */,
@@ -724,7 +742,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 2MK28T8Y6R;
 				ENABLE_PREVIEWS = YES;
@@ -754,7 +772,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 2MK28T8Y6R;
 				ENABLE_PREVIEWS = YES;

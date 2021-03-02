@@ -53,6 +53,7 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
         self.locationManager.startUpdatingLocation()
 
         self.selectedRadiusMailing = selectedRadiusMailing
+        self.currentRadiusMailingID = selectedRadiusMailing?.parentMailingID
     }
 
     func maybeInitializeMapWithCurrentLocation() {
@@ -201,7 +202,7 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
             .store(in: &disposables)
     }
 
-    func createRadiusMailing() {
+    func createRadiusMailing(completion: @escaping (_ updatedMailing: RadiusMailing?) -> Void) {
         guard let encodedNewRadiusData = try? JSONEncoder().encode(
             OutgoingSubjectListEntryWrapper(subjectListEntry:
                                                 OutgoingSubjectListEntry(
@@ -229,6 +230,7 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
                     switch value {
                     case .failure(let error):
                         print("createNewRadiusMailing(), receiveCompletion error: \(error)")
+                        completion(nil)
                     case .finished:
                         break
                     }
@@ -236,24 +238,29 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
                 receiveValue: { [weak self] newRadiusMailing in
                     guard let self = self else { return }
                     self.currentRadiusMailingID = newRadiusMailing.parentMailingID
+                    completion(newRadiusMailing)
                 })
             .store(in: &disposables)
     }
 
-    func updateRadiusMailing(with radiusMailingUpdate: OutgoingRadiusMailing) {
-        guard let encodedUpdateRadiusMailingData = try? JSONEncoder().encode(
-            OutgoingRadiusMailingWrapper(radiusMailing: radiusMailingUpdate)
-        ) else {
-            print("Update Radius Mailing Encoding Error")
-            return
-        }
+    func updateRadiusMailingData(
+        for radiusMailingComponent: RadiusMailingComponent,
+        with radiusMailingUpdate: OutgoingRadiusMailing,
+        completion: @escaping (_ updatedMailing: RadiusMailing?) -> Void
+    ) {
 
         guard let radiusMailingID = currentRadiusMailingID else {
             print("No Current Radius Mailing Selected")
             return
         }
 
-        addressableDataFetcher.updateRadiusMailing(for: radiusMailingID, encodedUpdateRadiusMailingData)
+        addressableDataFetcher.updateRadiusMailing(
+            for: radiusMailingComponent,
+            with: radiusMailingID,
+            getEncodedUpdateRadiusMailingData(
+                component: radiusMailingComponent,
+                radiusMailingUpdate: radiusMailingUpdate)
+        )
             .map { resp in
                 resp.radiusMailing
             }
@@ -263,12 +270,50 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
                     switch value {
                     case .failure(let error):
                         print("updateRadiusMailing(), receiveCompletion error: \(error)")
+                        completion(nil)
                     case .finished:
                         break
                     }
                 },
-                receiveValue: { _ in })
+                receiveValue: { mailing in
+                    completion(mailing)
+                })
             .store(in: &disposables)
+    }
+
+    private func getEncodedUpdateRadiusMailingData(component: RadiusMailingComponent, radiusMailingUpdate: OutgoingRadiusMailing) -> Data? {
+        switch component {
+        case .cover:
+            guard let updateData = try? JSONEncoder().encode(
+                OutgoingRadiusMailingCoverArtWrapper(cover: OutgoingRadiusMailingCoverArtData(layoutTemplateID: radiusMailingUpdate.layoutTemplateID!))
+            ) else {
+                print("Update Radius Mailing COVER Encoding Error")
+                return nil
+            }
+            return updateData
+        case .topic:
+            guard let updateData = try? JSONEncoder().encode(
+                OutgoingRadiusMailingTopicWrapper(
+                    topic: OutgoingRadiusMailingTopicData(
+                        multiTouchTopicID: radiusMailingUpdate.multiTouchTopicID!,
+                        templateOneBody: radiusMailingUpdate.templateOneBody!,
+                        templateTwoBody: radiusMailingUpdate.templateTwoBody!,
+                        mergeVars: radiusMailingUpdate.mergeVars!,
+                        touchDuration: radiusMailingUpdate.touchDuration!))
+            ) else {
+                print("Update Radius Mailing TOPIC Encoding Error")
+                return nil
+            }
+            return updateData
+        case .list:
+            guard let updateData = try? JSONEncoder().encode(
+                OutgoingRadiusMailingListWrapper(multiTouchTopic: OutgoingRadiusMailingListData(touchTwoWeeks: radiusMailingUpdate.touchDurationConfirmation!))
+            ) else {
+                print("Update Radius Mailing Encoding Error")
+                return nil
+            }
+            return updateData
+        }
     }
 
     func updateListEntry(for id: Int, with status: String) {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CallListView: View {
-    @EnvironmentObject var appDelegate: AppDelegate
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: CallsViewModel
 
     init(viewModel: CallsViewModel) {
@@ -21,7 +21,7 @@ struct CallListView: View {
                 CustomRefreshableScrollView(viewBuilder: {
                     List(viewModel.incomingLeads) { lead in
                         Button(action: {
-                            appDelegate.verifyPermissions {
+                            app.verifyPermissions {
                                 // In the case a user disallowed PN permissions on initial launch
                                 // register for remote PN + Twilio here
                                 DispatchQueue.main.async {
@@ -29,10 +29,10 @@ struct CallListView: View {
                                 }
                                 // Display Outgoing Call View
                                 DispatchQueue.main.async {
-                                    appDelegate.displayCallView = true
+                                    app.displayCallView = true
                                 }
                                 // Make outgoing call
-                                appDelegate.callManager?.startCall(to: lead)
+                                app.callManager?.startCall(to: lead)
                             }
                         }) {
                             VStack(alignment: .leading, spacing: 6) {
@@ -54,11 +54,11 @@ struct CallListView: View {
                         action: {
                             // Display Outgoing Call View
                             DispatchQueue.main.async {
-                                appDelegate.displayCallView = true
+                                app.displayCallView = true
                             }
                         }
                     ) {
-                        Image(systemName: appDelegate.callManager?.currentActiveCall != nil ? "phone" : "")
+                        Image(systemName: app.callManager?.currentActiveCall != nil ? "phone" : "")
                             .font(.system(size: 60))
                             .foregroundColor(Color(red: 78 / 255, green: 71 / 255, blue: 210 / 255))
                             .padding(.top, 8)
