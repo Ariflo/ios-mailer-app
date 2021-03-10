@@ -261,24 +261,24 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
                 component: radiusMailingComponent,
                 radiusMailingUpdate: radiusMailingUpdate)
         )
-            .map { resp in
-                resp.radiusMailing
-            }
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { value in
-                    switch value {
-                    case .failure(let error):
-                        print("updateRadiusMailing(), receiveCompletion error: \(error)")
-                        completion(nil)
-                    case .finished:
-                        break
-                    }
-                },
-                receiveValue: { mailing in
-                    completion(mailing)
-                })
-            .store(in: &disposables)
+        .map { resp in
+            resp.radiusMailing
+        }
+        .receive(on: DispatchQueue.main)
+        .sink(
+            receiveCompletion: { value in
+                switch value {
+                case .failure(let error):
+                    print("updateRadiusMailing(), receiveCompletion error: \(error)")
+                    completion(nil)
+                case .finished:
+                    break
+                }
+            },
+            receiveValue: { mailing in
+                completion(mailing)
+            })
+        .store(in: &disposables)
     }
 
     private func getEncodedUpdateRadiusMailingData(component: RadiusMailingComponent, radiusMailingUpdate: OutgoingRadiusMailing) -> Data? {

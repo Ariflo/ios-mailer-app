@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct KeyPadView: View {
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: CallsViewModel
     @State private var number = "0"
 
@@ -22,7 +23,7 @@ struct KeyPadView: View {
                 Text(number)
             }.padding([.leading, .trailing])
             Divider()
-            KeyPad(number: $number, viewModel: viewModel)
+            KeyPad(number: $number, viewModel: viewModel).environmentObject(app)
         }
         .font(.largeTitle)
         .padding()
@@ -58,13 +59,13 @@ struct KeyPad: View {
     }
 
     private func addCallParticipant() {
-        guard let fromNumber = app.callManager?.currentActiveCallFrom else {
-            print("No from number to add participant")
+        guard let accountTwilioSmartNumber = app.callManager?.accountSmartNumberForCurrentCall else {
+            print("No account smart number avaliable to add participant to call")
             return
         }
         viewModel.addCallParticipant(
             addNumber: number,
-            fromNumber: fromNumber
+            fromNumber: accountTwilioSmartNumber
         )
     }
 }

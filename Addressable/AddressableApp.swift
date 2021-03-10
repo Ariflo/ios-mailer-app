@@ -32,7 +32,10 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
     var latestPushCredentials: PKPushCredentials?
     lazy var voipRegistry = PKPushRegistry.init(queue: DispatchQueue.main)
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+    func application(
+        _ application: UIApplication,
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+    ) -> Bool {
         GMSServices.provideAPIKey(googleMapsApiKey)
         GMSPlacesClient.provideAPIKey(googleMapsApiKey)
 
@@ -81,7 +84,12 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
      * This delegate method is available on iOS 11 and above. Call the completion handler once the
      * notification payload is passed to the `TwilioVoice.handleNotification()` method.
      */
-    func pushRegistry(_ registry: PKPushRegistry, didReceiveIncomingPushWith payload: PKPushPayload, for type: PKPushType, completion: @escaping () -> Void) {
+    func pushRegistry(
+        _ registry: PKPushRegistry,
+        didReceiveIncomingPushWith payload: PKPushPayload,
+        for type: PKPushType,
+        completion: @escaping () -> Void
+    ) {
         print("pushRegistry:didReceiveIncomingPushWithPayload:forType:\(type) completion:")
 
         if let delegate = self.callkitCallProvider {

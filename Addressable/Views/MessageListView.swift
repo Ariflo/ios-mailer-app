@@ -10,7 +10,21 @@ import SwiftUI
 struct MessageListView: View {
     @ObservedObject var viewModel: MessagesViewModel
     @State var navigateToChat = false
-    @State var selectedLead = IncomingLead(id: 0, md5: "", fromNumber: "", toNumber: "", firstName: "", lastName: "", streetLine1: "", streetLine2: "", city: "", state: "", zipcode: "", crmID: "")
+    @State var selectedLead = IncomingLead(
+        id: 0,
+        md5: "",
+        fromNumber: "",
+        toNumber: "",
+        firstName: "",
+        lastName: "",
+        streetLine1: "",
+        streetLine2: "",
+        city: "",
+        state: "",
+        zipcode: "",
+        crmID: nil,
+        status: ""
+    )
 
     init(viewModel: MessagesViewModel) {
         self.viewModel = viewModel
@@ -26,7 +40,7 @@ struct MessageListView: View {
                             navigateToChat = true
                         }) {
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("\(lead.firstName != nil || lead.firstName!.contains("unknown")  ? "Unknown Name" : lead.firstName!)").font(.title2)
+                                Text("\(lead.firstName == nil || lead.firstName!.contains("unknown")  ? "Unknown Name" : lead.firstName!)").font(.title2)
                                 Text(lead.fromNumber ?? "Unknown Number").font(.subheadline)
                             }.padding(.vertical, 8)
                         }

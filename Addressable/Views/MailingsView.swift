@@ -22,19 +22,20 @@ struct MailingsView: View {
             GeometryReader { geometry in
                 CustomRefreshableScrollView(viewBuilder: {
                     List {
-                        Section(
-                            header:
-                                CustomHeader(
-                                    name: "Cards and Batches",
-                                    image: Image(systemName: "mail.stack"),
-                                    backgroundColor: Color(red: 232 / 255, green: 104 / 255, blue: 81 / 255)
-                                )
-                        ) {
-                            ForEach(viewModel.customNotes) { customNote in
-                                Text("\(customNote.toFirstName.isEmpty  ? "Batch of \(customNote.batchSize) Notes" : customNote.toFirstName) \(customNote.toLastName)").padding()
-                            }
-                        }
-                        .listRowInsets(.init())
+                        //                        TODO: Add Single Note Sendoffs in v2.0.0
+                        //                        Section(
+                        //                            header:
+                        //                                CustomHeader(
+                        //                                    name: "Cards and Batches",
+                        //                                    image: Image(systemName: "mail.stack"),
+                        //                                    backgroundColor: Color(red: 232 / 255, green: 104 / 255, blue: 81 / 255)
+                        //                                )
+                        //                        ) {
+                        //                            ForEach(viewModel.customNotes) { customNote in
+                        //                                Text("\(customNote.toFirstName.isEmpty  ? "Batch of \(customNote.batchSize) Notes" : customNote.toFirstName) \(customNote.toLastName)").padding()
+                        //                            }
+                        //                        }
+                        //                        .listRowInsets(.init())
                         Section(
                             header:
                                 CustomHeader(
@@ -81,18 +82,19 @@ struct MailingsView: View {
                 viewModel.getAllMailingCampaigns()
             }
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(
-                        action: {
-                            navigateToComposeMail = true
-                        }
-                    ) {
-                        Image(systemName: "square.and.pencil")
-                            .font(.system(size: 60))
-                            .foregroundColor(Color(red: 78 / 255, green: 71 / 255, blue: 210 / 255))
-                            .padding(.top, 8)
-                    }
-                }
+                //                TODO: Add Single Note Sendoffs in v2.0.0
+                //                ToolbarItem(placement: .navigationBarTrailing) {
+                //                    Button(
+                //                        action: {
+                //                            navigateToComposeMail = true
+                //                        }
+                //                    ) {
+                //                        Image(systemName: "square.and.pencil")
+                //                            .font(.system(size: 60))
+                //                            .foregroundColor(Color(red: 78 / 255, green: 71 / 255, blue: 210 / 255))
+                //                            .padding(.top, 8)
+                //                    }
+                //                }
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(
                         action: {

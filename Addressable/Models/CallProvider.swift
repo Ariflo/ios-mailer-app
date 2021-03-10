@@ -187,6 +187,17 @@ extension CallProvider: CXProviderDelegate {
         update.remoteHandle = CXHandle(type: .generic, value: from)
         update.hasVideo = hasVideo
 
+        if let knownLead = callManager.incomingLeads.first(
+            where: { $0.fromNumber == from.replacingOccurrences(of: "+", with: "") }),
+           let firstName = knownLead.firstName,
+           let lastName = knownLead.lastName {
+            update.localizedCallerName = firstName.contains("UNKNOWN") ?
+                "Addressable Mailing Caller" :
+                "\(firstName) \(lastName)"
+        } else {
+            update.localizedCallerName = "Addressable Mailing Caller"
+        }
+
         provider.reportNewIncomingCall(with: callInvite.uuid, update: update) { error in
             if error == nil {
                 let call = AddressableCall(incomingCall: callInvite)
@@ -225,7 +236,8 @@ extension CallProvider: CXProviderDelegate {
             guard let accessToken = tokenData?.jwtToken, let to = lead.fromNumber, let from = lead.toNumber else { return }
             guard let userClientIdentity = tokenData?.twilioClientIdentity else { return }
 
-            self?.callManager.currentActiveCallFrom = from
+            // Store fromNumber (account smart number) in call manager for `add participant` functionality
+            self?.callManager.accountSmartNumberForCurrentCall = from
 
             let connectOptions = ConnectOptions(accessToken: accessToken) { builder in
                 builder.params = [twimlParamFrom: from, twimlParamTo: to, addressableParamSessionID: userClientIdentity]
@@ -345,9 +357,10 @@ extension CallProvider: CallDelegate {
         callDisconnected(call: call)
     }
 
-    func callDisconnected(call: Call) {
+    private func callDisconnected(call: Call) {
         if call == callManager.currentActiveCall {
             callManager.currentActiveCall = nil
+            callManager.previousActiveCall = call
         }
 
         guard let addressableCall = callManager.callWithUUID(uuid: call.uuid!) else {
@@ -452,11 +465,13 @@ extension CallProvider: PushKitEventDelegate {
     func incomingPushReceived(payload: PKPushPayload) {
         // The Voice SDK will use main queue to invoke `cancelledCallInviteReceived:error:` when delegate queue is not passed
         TwilioVoiceSDK.handleNotification(payload.dictionaryPayload, delegate: self, delegateQueue: nil)
+        callManager.getLatestIncomingLeadsList()
     }
 
     func incomingPushReceived(payload: PKPushPayload, completion: @escaping () -> Void) {
         // The Voice SDK will use main queue to invoke `cancelledCallInviteReceived:error:` when delegate queue is not passed
         TwilioVoiceSDK.handleNotification(payload.dictionaryPayload, delegate: self, delegateQueue: nil)
+        callManager.getLatestIncomingLeadsList()
     }
 
     func incomingPushHandled() {

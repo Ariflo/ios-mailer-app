@@ -9,6 +9,7 @@ import Foundation
 import Combine
 
 protocol FetchableData {
+    func tagIncomingLead(with id: Int, _ tagData: Data?) -> AnyPublisher<IncomingLeadResponse, ApiError>
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError>
     func getTwilioAccessToken(_ deviceIdData: Data?) -> AnyPublisher<TwilioAccessTokenData, ApiError>
     func getCurrentUserMailingCampaigns() -> AnyPublisher<CampaignsResponse, ApiError>
@@ -47,6 +48,12 @@ class AddressableDataFetcher {
 }
 
 extension AddressableDataFetcher: FetchableData {
+    func tagIncomingLead(with id: Int, _ tagData: Data?) -> AnyPublisher<IncomingLeadResponse, ApiError> {
+        return makeApiRequest(with: updateIncomingLeadRequestComponents(for: id),
+                              postRequestBodyData: nil,
+                              patchRequestBodyData: tagData)
+    }
+
     func updateRadiusMailing(for component: RadiusMailingComponent, with id: Int, _ updateRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingWrapper, ApiError> {
         switch component {
         case .cover:
@@ -378,6 +385,16 @@ private extension AddressableDataFetcher {
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
         components.path = AddressableAPI.path + "/list_entries/\(id)"
+
+        return components
+    }
+
+    func updateIncomingLeadRequestComponents(for id: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/incoming_leads/\(id)"
 
         return components
     }

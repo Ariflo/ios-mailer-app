@@ -136,7 +136,7 @@ struct AddressableCallView: View {
                         Button(action: {
                             displayKeyPad = true
                         }) {
-                            Image(systemName: app.callManager?.getIsCurrentCallIncoming() ?? false ? "person.crop.circle.badge.xmark":"person.badge.plus")
+                            Image(systemName: app.callManager?.getIsCallIncoming() ?? false ? "person.crop.circle.badge.xmark":"person.badge.plus")
                                 .resizable()
                                 .scaledToFit()
                                 .foregroundColor(.white)
@@ -146,7 +146,7 @@ struct AddressableCallView: View {
                                     RoundedRectangle(cornerRadius: 16)
                                         .stroke(Color.white, lineWidth: 4)
                                 )
-                        }.disabled(app.callManager?.getIsCurrentCallIncoming() ?? false)
+                        }.disabled(app.callManager?.getIsCallIncoming() ?? false)
                         Text("Add Caller")
                             .font(.callout)
                             .foregroundColor(.white)
@@ -206,7 +206,9 @@ struct AddressableCallView: View {
                 }
             }
         }.sheet(isPresented: $displayKeyPad) {
-            KeyPadView(viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher())).navigationBarHidden(true)
+            KeyPadView(viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher()))
+                .environmentObject(app)
+                .navigationBarHidden(true)
         }
     }
 }

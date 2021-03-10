@@ -105,7 +105,8 @@ struct MessageChatView_Previews: PreviewProvider {
                             city: nil,
                             state: nil,
                             zipcode: nil,
-                            crmID: nil)
+                            crmID: nil,
+                            status: "")
         )
     }
 }

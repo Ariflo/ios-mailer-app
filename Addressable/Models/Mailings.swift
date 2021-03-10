@@ -45,7 +45,6 @@ struct RadiusMailing: Codable {
     let radiusTemplateID: Int?
     let subjectListEntry: SubjectListEntry
     let topicDuration: Int?
-    let radiusTopicID: Int?
 
     enum CodingKeys: String, CodingKey {
         case account, user, name, status
@@ -58,7 +57,6 @@ struct RadiusMailing: Codable {
         case radiusTemplateID = "radius_template_id"
         case subjectListEntry = "subject_list_entry"
         case topicDuration = "topic_duration"
-        case radiusTopicID = "radius_topic_id"
     }
 }
 
@@ -422,20 +420,20 @@ struct CustomNotes: Codable {
 }
 
 // MARK: - CustomNote
-struct CustomNote: Codable, Identifiable {
+struct CustomNote: Codable {
     let id: Int
-    let body, toFirstName, toLastName: String
-    let toBusinessName, toToLine, toAttnLine: String?
-    let toAddressLine1: String
-    let toAddressLine2: String?
-    let toCity, toState, toZipcode, fromFirstName: String
-    let fromLastName, fromBusinessName: String
+    let body: String?
+    let toFirstName, toLastName, toBusinessName: String
+    let toToLine, toAttnLine: String?
+    let toAddressLine1, toAddressLine2, toCity, toState: String
+    let toZipcode, fromFirstName, fromLastName, fromBusinessName: String
     let fromToLine, fromAttnLine: String?
     let fromAddressLine1, fromAddressLine2, fromCity, fromState: String
     let fromZipcode: String
-    let handwritingID: String?
-    let status, cardType: String
-    let format, mediaSize, messageTemplateID: String?
+    let handwritingID: Int?
+    let status: String
+    let cardType, format, mediaSize: String?
+    let messageTemplateID: Int?
     let batchSize: Int
 
     enum CodingKeys: String, CodingKey {

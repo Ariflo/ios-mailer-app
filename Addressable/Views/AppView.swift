@@ -9,12 +9,14 @@ import SwiftUI
 
 struct AppView: View {
     @EnvironmentObject var app: Application
+    @State var displayIncomingLeadSurvey: Bool = false
 
     var body: some View {
-        /// User Authenticaton Check
         if KeyChainServiceUtil.shared[userBasicAuthToken] != nil {
             if app.displayCallView {
-                AddressableCallView(viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher())).navigationBarHidden(true)
+                AddressableCallView(viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher()))
+                    .environmentObject(app)
+                    .navigationBarHidden(true)
             } else {
                 TabView {
                     MailingsView(
@@ -28,6 +30,7 @@ struct AppView: View {
                     CallListView(
                         viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher())
                     )
+                    .environmentObject(app)
                     .navigationBarHidden(true)
                     .tabItem {
                         Image(systemName: "phone")
@@ -53,6 +56,15 @@ struct AppView: View {
                             UIApplication.shared.registerForRemoteNotifications()
                         }
                     }
+                    if let knownLead = app.callManager?.getLeadFromLastCall() {
+                        displayIncomingLeadSurvey = knownLead.status == "unknown" && app.callManager?.getIsCallIncoming() ?? false
+                    }
+                }.sheet(isPresented: $displayIncomingLeadSurvey) {
+                    TagIncomingLeadView(
+                        viewModel: TagIncomingLeadViewModel(
+                            addressableDataFetcher: AddressableDataFetcher()),
+                        taggingComplete: { displayIncomingLeadSurvey = false }
+                    ).environmentObject(app)
                 }
             }
         } else {

@@ -36,7 +36,7 @@ struct CallListView: View {
                             }
                         }) {
                             VStack(alignment: .leading, spacing: 6) {
-                                Text("\(lead.firstName != nil || lead.firstName!.contains("unknown")  ? "Unknown Name" : lead.firstName!)").font(.title2)
+                                Text("\(lead.firstName == nil || lead.firstName!.contains("unknown")  ? "Unknown Name" : lead.firstName!)").font(.title2)
                                 Text(lead.fromNumber ?? "Unknown Number").font(.subheadline)
                             }.padding(.vertical, 8)
                         }

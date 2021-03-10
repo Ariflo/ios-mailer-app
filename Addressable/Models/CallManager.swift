@@ -13,12 +13,25 @@ import Combine
 class CallManager {
     var disposables = Set<AnyCancellable>()
     var callsChangedHandler: (() -> Void)?
+    var incomingLeads: [IncomingLead] = []
+    var accountSmartNumberForCurrentCall: String = ""
+
     private let callController = CXCallController()
 
     private(set) var calls: [AddressableCall] = []
-    // currentActiveCall represents the last connected call
     var currentActiveCall: Call?
-    var currentActiveCallFrom: String = ""
+    var previousActiveCall: Call?
+
+    func getLeadFromLastCall() -> IncomingLead? {
+        return self.incomingLeads.first(
+            where: {
+                if let currCall = currentActiveCall {
+                    return $0.fromNumber == currCall.from?.replacingOccurrences(of: "+", with: "")
+                } else {
+                    return $0.fromNumber == previousActiveCall?.from?.replacingOccurrences(of: "+", with: "")
+                }
+            })
+    }
 
     func callWithUUID(uuid: UUID) -> AddressableCall? {
         guard let index = calls.firstIndex(where: { $0.incomingCall?.uuid == uuid || $0.outgoingCall?.uuid == uuid }) else {
@@ -38,7 +51,7 @@ class CallManager {
         return calls[index]
     }
 
-    func getIsCurrentCallIncoming() -> Bool {
+    func getIsCallIncoming() -> Bool {
         guard let currentActiveCall = currentActiveCall else {
             print("No currentActiveCall avaliable to end")
             return false
@@ -154,6 +167,26 @@ class CallManager {
             })
         .store(in: &disposables)
     }
+
+    func getLatestIncomingLeadsList() {
+        AddressableDataFetcher().getIncomingLeads()
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { value in
+                    switch value {
+                    case .failure(let error):
+                        print("getLatestIncomingLeadsList() receiveCompletion error: \(error)")
+                    case .finished:
+                        break
+                    }
+                },
+                receiveValue: { [weak self] incomingLeads in
+                    guard let self = self else { return }
+                    self.incomingLeads = incomingLeads
+                })
+            .store(in: &disposables)
+    }
+
 }
 
 struct TwilioAccessTokenData: Codable {

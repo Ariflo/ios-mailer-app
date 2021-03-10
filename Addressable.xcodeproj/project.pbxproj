@@ -16,6 +16,10 @@
 		B3DB527F257992F8004196A6 /* MailingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB527E257992F8004196A6 /* MailingsView.swift */; };
 		B3DB52872579A84B004196A6 /* Mailings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB52862579A84B004196A6 /* Mailings.swift */; };
 		CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */; };
+		CA4A0F4325F1966A00BF89CF /* TagIncomingLeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4A0F4225F1966A00BF89CF /* TagIncomingLeadView.swift */; };
+		CA4A0F4825F1A75D00BF89CF /* TagIncomingLeadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4A0F4725F1A75D00BF89CF /* TagIncomingLeadViewModel.swift */; };
+		CA4A0F4D25F1AF8000BF89CF /* SegmentedControlIconOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4A0F4C25F1AF8000BF89CF /* SegmentedControlIconOptionView.swift */; };
+		CA4A0F5225F2CE3200BF89CF /* CustomSegmentedPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4A0F5125F2CE3200BF89CF /* CustomSegmentedPickerView.swift */; };
 		CA4AE34125CD95E8003B6CE8 /* KeyPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */; };
 		CA4AE37B25D30C86003B6CE8 /* TwilioVoice in Frameworks */ = {isa = PBXBuildFile; productRef = CA4AE37A25D30C86003B6CE8 /* TwilioVoice */; };
 		CA62A7A425DED59B005BF410 /* DictionaryUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA62A7A325DED59B005BF410 /* DictionaryUtil.swift */; };
@@ -106,6 +110,10 @@
 		B3DB527E257992F8004196A6 /* MailingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsView.swift; sourceTree = "<group>"; };
 		B3DB52862579A84B004196A6 /* Mailings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailings.swift; sourceTree = "<group>"; };
 		CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsViewModel.swift; sourceTree = "<group>"; };
+		CA4A0F4225F1966A00BF89CF /* TagIncomingLeadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagIncomingLeadView.swift; sourceTree = "<group>"; };
+		CA4A0F4725F1A75D00BF89CF /* TagIncomingLeadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagIncomingLeadViewModel.swift; sourceTree = "<group>"; };
+		CA4A0F4C25F1AF8000BF89CF /* SegmentedControlIconOptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlIconOptionView.swift; sourceTree = "<group>"; };
+		CA4A0F5125F2CE3200BF89CF /* CustomSegmentedPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedPickerView.swift; sourceTree = "<group>"; };
 		CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPadView.swift; sourceTree = "<group>"; };
 		CA62A7A325DED59B005BF410 /* DictionaryUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryUtil.swift; sourceTree = "<group>"; };
 		CA8555D025A81AF80063274D /* CallProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallProvider.swift; sourceTree = "<group>"; };
@@ -290,6 +298,9 @@
 				CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */,
 				CAFDBEA825D5DDD5002D17B4 /* ComposeRadiusMailingView.swift */,
 				CAFDBEAD25D5DF0D002D17B4 /* GoogleMapsView.swift */,
+				CA4A0F4225F1966A00BF89CF /* TagIncomingLeadView.swift */,
+				CA4A0F4C25F1AF8000BF89CF /* SegmentedControlIconOptionView.swift */,
+				CA4A0F5125F2CE3200BF89CF /* CustomSegmentedPickerView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -318,6 +329,7 @@
 				CA85567625B0E34F0063274D /* MessagesViewModel.swift */,
 				CADA001325C0A22800004B4B /* ComposeMailingViewModel.swift */,
 				CAFDBEC425D6F3D3002D17B4 /* ComposeRadiusMailingViewModel.swift */,
+				CA4A0F4725F1A75D00BF89CF /* TagIncomingLeadViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -559,6 +571,7 @@
 				CA85568E25B0EB230063274D /* MessageChatView.swift in Sources */,
 				CAFDBEAE25D5DF0D002D17B4 /* GoogleMapsView.swift in Sources */,
 				CADA002D25C0F20C00004B4B /* ImageUtil.swift in Sources */,
+				CA4A0F4D25F1AF8000BF89CF /* SegmentedControlIconOptionView.swift in Sources */,
 				CA88420225A39F2700E0D75A /* SignInViewModel.swift in Sources */,
 				CADA000325BF8FE200004B4B /* ComposeMailingView.swift in Sources */,
 				CA85565D25AFC5ED0063274D /* CallsViewModel.swift in Sources */,
@@ -571,6 +584,7 @@
 				CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */,
 				B3DB52872579A84B004196A6 /* Mailings.swift in Sources */,
 				CAC8B0AB259D017E00D4447F /* CallListView.swift in Sources */,
+				CA4A0F5225F2CE3200BF89CF /* CustomSegmentedPickerView.swift in Sources */,
 				CA93F49E25C9E41000271404 /* AddressableCallView.swift in Sources */,
 				CADA001425C0A22800004B4B /* ComposeMailingViewModel.swift in Sources */,
 				CAC8B0B0259D01C300D4447F /* MessageListView.swift in Sources */,
@@ -579,8 +593,10 @@
 				B370BC172576BAC10066624A /* AddressableApp.swift in Sources */,
 				CA88422925A3D52F00E0D75A /* CustomRefreshableScrollView.swift in Sources */,
 				CA85564D25AFB9B40063274D /* PermissionsUtil.swift in Sources */,
+				CA4A0F4825F1A75D00BF89CF /* TagIncomingLeadViewModel.swift in Sources */,
 				CA8555D625A81B330063274D /* CallManager.swift in Sources */,
 				CA85568625B0E7330063274D /* MessageView.swift in Sources */,
+				CA4A0F4325F1966A00BF89CF /* TagIncomingLeadView.swift in Sources */,
 				CAFDBEA925D5DDD5002D17B4 /* ComposeRadiusMailingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
