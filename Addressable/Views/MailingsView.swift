@@ -32,7 +32,8 @@ struct MailingsView: View {
                         //                                )
                         //                        ) {
                         //                            ForEach(viewModel.customNotes) { customNote in
-                        //                                Text("\(customNote.toFirstName.isEmpty  ? "Batch of \(customNote.batchSize) Notes" : customNote.toFirstName) \(customNote.toLastName)").padding()
+                        //                                Text("\(customNote.toFirstName.isEmpty  ? "Batch of \(customNote.batchSize) Notes" :
+                        //                               customNote.toFirstName) \(customNote.toLastName)").padding()
                         //                            }
                         //                        }
                         //                        .listRowInsets(.init())
