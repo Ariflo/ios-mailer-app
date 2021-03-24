@@ -23,7 +23,8 @@ struct MessageListView: View {
         state: "",
         zipcode: "",
         crmID: nil,
-        status: ""
+        status: "",
+        qualityScore: nil
     )
 
     init(viewModel: MessagesViewModel) {

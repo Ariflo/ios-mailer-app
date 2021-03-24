@@ -15,6 +15,7 @@ struct AddressableCallView: View {
     @State var callOnHold = false
     @State var callIsMuted = false
     @State var callIsOnSpeaker = false
+    @State var scrollText = false
 
     init(viewModel: CallsViewModel) {
         self.viewModel = viewModel
@@ -26,15 +27,22 @@ struct AddressableCallView: View {
                 .edgesIgnoringSafeArea(.all)
 
             VStack(spacing: 12) {
-                VStack(spacing: 6) {
-                    Text(app.callStatusText)
-                        .font(.title)
-                        .foregroundColor(.white)
-                    Image("ZippyIcon")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 250, height: 250)
-                }
+                Text(app.callManager?.currentCallerID.caller ?? CallerID().caller)
+                    .font(.title)
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                Text(app.callManager?.currentCallerID.relatedMailingName ?? CallerID().relatedMailingName)
+                    .font(.title)
+                    .foregroundColor(.orange)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(app.callStatusText)
+                    .font(.title)
+                    .foregroundColor(.white)
+                Image("ZippyIcon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 200, height: 200)
 
                 HStack(spacing: 25) {
                     // MARK: - Mute

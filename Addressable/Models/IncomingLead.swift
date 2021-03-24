@@ -14,6 +14,7 @@ struct IncomingLead: Codable, Identifiable {
     let streetLine1, streetLine2, city, state: String?
     let zipcode, crmID: String?
     let status: String?
+    let qualityScore: Int?
 
     enum CodingKeys: String, CodingKey {
         case id, md5
@@ -26,6 +27,7 @@ struct IncomingLead: Codable, Identifiable {
         case city, state, zipcode
         case crmID = "crm_id"
         case status
+        case qualityScore = "quality_score"
     }
 }
 

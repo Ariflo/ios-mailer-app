@@ -21,6 +21,7 @@ class CallManager {
     private(set) var calls: [AddressableCall] = []
     var currentActiveCall: Call?
     var previousActiveCall: Call?
+    var currentCallerID: CallerID = CallerID()
 
     func getLeadFromLastCall() -> IncomingLead? {
         return self.incomingLeads.first(
@@ -199,4 +200,9 @@ struct TwilioAccessTokenData: Codable {
         case jwtToken = "jwt_token"
         case twilioClientIdentity = "twilio_client_identity"
     }
+}
+
+struct CallerID {
+    var caller: String = "Addressable Mailing Caller"
+    var relatedMailingName: String = ""
 }

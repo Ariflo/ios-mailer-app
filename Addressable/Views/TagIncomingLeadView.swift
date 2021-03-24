@@ -43,6 +43,7 @@ struct TagIncomingLeadView: View {
                         if let knownLead = app.callManager?.getLeadFromLastCall() {
                             viewModel.tagIncomingLead(for: knownLead.id) { taggedLead in
                                 guard taggedLead != nil else { return }
+                                app.callManager?.currentCallerID = CallerID()
                                 taggingComplete()
                             }
                         }
@@ -51,8 +52,8 @@ struct TagIncomingLeadView: View {
                     Text("Save")
                 }.padding()
 
-                if let fromNumber = app.callManager?.previousActiveCall?.from {
-                    Text("Tag Caller from \(fromNumber)")
+                if let callerID = app.callManager?.currentCallerID.caller {
+                    Text("Tag your call with \(callerID)")
                         .font(.title2)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 12)

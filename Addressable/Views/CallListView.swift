@@ -19,7 +19,7 @@ struct CallListView: View {
         NavigationView {
             GeometryReader { geometry in
                 CustomRefreshableScrollView(viewBuilder: {
-                    List(viewModel.incomingLeads) { lead in
+                    List(viewModel.incomingLeads.filter { $0.status != "spam" && $0.status != "removed"}) { lead in
                         Button(action: {
                             app.verifyPermissions {
                                 // In the case a user disallowed PN permissions on initial launch
@@ -35,10 +35,25 @@ struct CallListView: View {
                                 app.callManager?.startCall(to: lead)
                             }
                         }) {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text("\(lead.firstName == nil || lead.firstName!.contains("unknown")  ? "Unknown Name" : lead.firstName!)").font(.title2)
-                                Text(lead.fromNumber ?? "Unknown Number").font(.subheadline)
-                            }.padding(.vertical, 8)
+                            HStack {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text("\(lead.firstName == nil || lead.firstName!.contains("unknown")  ? "Unknown Name" : lead.firstName!)").font(.title2)
+                                    Text(lead.fromNumber ?? "Unknown Number").font(.subheadline)
+                                }.padding(.vertical, 8)
+                                Spacer()
+                                if let score = lead.qualityScore {
+                                    switch score {
+                                    case 1:
+                                        Text("Low Interest")
+                                    case 2:
+                                        Text("Fair")
+                                    case 3:
+                                        Text("Strong Lead")
+                                    default:
+                                        Text("Lead")
+                                    }
+                                }
+                            }
                         }
                     }.listStyle(PlainListStyle())
                 }, size: geometry.size) {

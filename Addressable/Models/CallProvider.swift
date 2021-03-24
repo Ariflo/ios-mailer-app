@@ -187,16 +187,14 @@ extension CallProvider: CXProviderDelegate {
         update.remoteHandle = CXHandle(type: .generic, value: from)
         update.hasVideo = hasVideo
 
-        if let knownLead = callManager.incomingLeads.first(
-            where: { $0.fromNumber == from.replacingOccurrences(of: "+", with: "") }),
-           let firstName = knownLead.firstName,
-           let lastName = knownLead.lastName {
-            update.localizedCallerName = firstName.contains("UNKNOWN") ?
-                "Addressable Mailing Caller" :
-                "\(firstName) \(lastName)"
-        } else {
-            update.localizedCallerName = "Addressable Mailing Caller"
+        if let fullName = callInvite.customParameters?["lead_full_name"],
+           let mailingName = callInvite.customParameters?["related_mailing_name"] {
+            callManager.currentCallerID.caller = fullName.contains("UNKNOWN") ? "Addressable Mailing Caller" : fullName
+            callManager.currentCallerID.relatedMailingName = mailingName
+        } else if let fullName = callInvite.customParameters?["lead_full_name"] {
+            callManager.currentCallerID.caller = fullName.contains("UNKNOWN") ? "Addressable Mailing Caller" : fullName
         }
+        update.localizedCallerName = "\(callManager.currentCallerID.caller) \(callManager.currentCallerID.relatedMailingName)"
 
         provider.reportNewIncomingCall(with: callInvite.uuid, update: update) { error in
             if error == nil {
@@ -361,6 +359,11 @@ extension CallProvider: CallDelegate {
         if call == callManager.currentActiveCall {
             callManager.currentActiveCall = nil
             callManager.previousActiveCall = call
+            if let knownLead = app.callManager?.getLeadFromLastCall() {
+                if knownLead.status != "unknown" {
+                    callManager.currentCallerID = CallerID()
+                }
+            }
         }
 
         guard let addressableCall = callManager.callWithUUID(uuid: call.uuid!) else {
