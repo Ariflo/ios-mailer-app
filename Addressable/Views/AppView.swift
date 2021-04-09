@@ -56,8 +56,9 @@ struct AppView: View {
                             UIApplication.shared.registerForRemoteNotifications()
                         }
                     }
-                    if let knownLead = app.callManager?.getLeadFromLastCall() {
-                        displayIncomingLeadSurvey = knownLead.status == "unknown" && app.callManager?.getIsCallIncoming() ?? false
+                    if let callManager = app.callManager,
+                       let knownLead = callManager.getLeadFromLatestCall() {
+                        displayIncomingLeadSurvey = knownLead.status == "unknown" && !app.fromAddressableCallView
                     }
                 }.sheet(isPresented: $displayIncomingLeadSurvey) {
                     TagIncomingLeadView(
@@ -70,7 +71,9 @@ struct AppView: View {
         } else {
             SignInView(
                 viewModel: SignInViewModel(addressableDataFetcher: AddressableDataFetcher())
-            ).navigationBarHidden(true)
+            )
+            .environmentObject(app)
+            .navigationBarHidden(true)
         }
     }
 }
@@ -80,3 +83,11 @@ struct AppView_Previews: PreviewProvider {
         AppView().environmentObject(Application())
     }
 }
+
+#if canImport(UIKit)
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+#endif

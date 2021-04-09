@@ -52,8 +52,37 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
         self.locationManager.requestWhenInUseAuthorization()
         self.locationManager.startUpdatingLocation()
 
-        self.selectedRadiusMailing = selectedRadiusMailing
-        self.currentRadiusMailingID = selectedRadiusMailing?.parentMailingID
+        if selectedRadiusMailing != nil {
+            self.selectedRadiusMailing = selectedRadiusMailing
+            self.currentRadiusMailingID = selectedRadiusMailing!.parentMailingID
+            self.locationEntry = "\(selectedRadiusMailing!.subjectListEntry.siteAddressLine1), " +
+                "\(selectedRadiusMailing!.subjectListEntry.siteAddressLine2) " +
+                "\(selectedRadiusMailing!.subjectListEntry.siteCity), " +
+                "\(selectedRadiusMailing!.subjectListEntry.siteState), " +
+                "\(selectedRadiusMailing!.subjectListEntry.siteZipcode) "
+            self.selectedLocationAddress1 = selectedRadiusMailing!.subjectListEntry.siteAddressLine1
+            self.selectedLocationAddress2 = selectedRadiusMailing!.subjectListEntry.siteAddressLine2
+            self.selectedLocationCity = selectedRadiusMailing!.subjectListEntry.siteCity
+            self.selectedLocationState = selectedRadiusMailing!.subjectListEntry.siteState
+            self.selectedLocationZipcode = selectedRadiusMailing!.subjectListEntry.siteZipcode
+
+            DispatchQueue.main.async {
+                self.getPlacesFromQuery(locationQuery: self.locationEntry) {[weak self] places in
+                    guard let self = self else { return }
+                    guard places != nil else { return }
+
+                    var selectedMailingPlace: GMSAutocompletePrediction?
+                    for place in places! {
+                        if self.locationEntry.contains(place.attributedPrimaryText.string) {
+                            selectedMailingPlace = place
+                            break
+                        }
+                    }
+                    guard selectedMailingPlace != nil else { return }
+                    self.setPlaceOnMap(for: selectedMailingPlace!.placeID)
+                }
+            }
+        }
     }
 
     func maybeInitializeMapWithCurrentLocation() {
@@ -61,17 +90,24 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
         longitude = location?.coordinate.longitude ?? 0
     }
 
-    func getPlacesFromQuery(locationQuery: String) {
+    func getPlacesFromQuery(locationQuery: String,
+                            completion: @escaping (_ places: [GMSAutocompletePrediction]?) -> Void = { _ in }) {
         let filter = GMSAutocompleteFilter()
         filter.type = .address
 
-        placesClient.findAutocompletePredictions(fromQuery: locationQuery, filter: filter, sessionToken: GMSAutocompleteSessionToken.init()) {[weak self] (results, error) in
+        placesClient.findAutocompletePredictions(
+            fromQuery: locationQuery,
+            filter: filter,
+            sessionToken: GMSAutocompleteSessionToken.init()
+        ) {[weak self] (results, error) in
             if let error = error {
                 print("Autocomplete error: \(error)")
+                completion(nil)
                 return
             }
             if let results = results {
                 self?.places = results
+                completion(results)
             }
         }
     }
@@ -245,7 +281,15 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
 
     func updateRadiusMailingData(
         for radiusMailingComponent: RadiusMailingComponent,
-        with radiusMailingUpdate: OutgoingRadiusMailing,
+        with radiusMailingUpdate: OutgoingRadiusMailing = OutgoingRadiusMailing(
+                                                                layoutTemplateID: nil,
+                                                                multiTouchTopicID: nil,
+                                                                templateOneBody: nil,
+                                                                templateTwoBody: nil,
+                                                                mergeVars: nil,
+                                                                touchDuration: nil,
+                                                                touchDurationConfirmation: nil
+                                                            ),
         completion: @escaping (_ updatedMailing: RadiusMailing?) -> Void
     ) {
 
@@ -283,6 +327,24 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
 
     private func getEncodedUpdateRadiusMailingData(component: RadiusMailingComponent, radiusMailingUpdate: OutgoingRadiusMailing) -> Data? {
         switch component {
+        case .location:
+            guard let updateData = try? JSONEncoder().encode(
+                OutgoingSubjectListEntryWrapper(subjectListEntry:
+                    OutgoingSubjectListEntry(
+                        siteAddressLine1: selectedLocationAddress1,
+                        siteAddressLine2: selectedLocationAddress2,
+                        siteCity: selectedLocationCity,
+                        siteState: selectedLocationState,
+                        siteZipcode: selectedLocationZipcode,
+                        latitude: String(latitude),
+                        longitude: String(longitude),
+                        status: "active_radius_subject")
+            )
+            ) else {
+                print("Update Radius Mailing LOCATION Encoding Error")
+                return nil
+            }
+            return updateData
         case .cover:
             guard let updateData = try? JSONEncoder().encode(
                 OutgoingRadiusMailingCoverArtWrapper(cover: OutgoingRadiusMailingCoverArtData(layoutTemplateID: radiusMailingUpdate.layoutTemplateID!))

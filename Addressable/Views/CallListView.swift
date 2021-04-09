@@ -19,6 +19,16 @@ struct CallListView: View {
         NavigationView {
             GeometryReader { geometry in
                 CustomRefreshableScrollView(viewBuilder: {
+                    if viewModel.incomingLeads.isEmpty && !viewModel.loading {
+                        HStack {
+                            Spacer()
+                            Text("No Calls from Leads")
+                            Spacer()
+                        }
+                    } else if viewModel.loading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                    }
                     List(viewModel.incomingLeads.filter { $0.status != "spam" && $0.status != "removed"}) { lead in
                         Button(action: {
                             app.verifyPermissions {
@@ -31,8 +41,15 @@ struct CallListView: View {
                                 DispatchQueue.main.async {
                                     app.displayCallView = true
                                 }
+
+                                guard let callManager = app.callManager else {
+                                    print("No CallManager to make phone call in CallListView")
+                                    return
+                                }
+                                // Get latest list of leads
+                                callManager.getLatestIncomingLeadsList()
                                 // Make outgoing call
-                                app.callManager?.startCall(to: lead)
+                                callManager.startCall(to: lead)
                             }
                         }) {
                             HStack {
@@ -50,7 +67,8 @@ struct CallListView: View {
                                     case 3:
                                         Text("Strong Lead")
                                     default:
-                                        Text("Lead")
+                                        // TODO: Consider returning a link to the Tag Form here
+                                        Text("Untagged Lead")
                                     }
                                 }
                             }

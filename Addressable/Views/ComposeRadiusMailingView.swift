@@ -10,8 +10,7 @@ import GoogleMaps
 
 // MARK: - ListEntryStatus
 enum ListEntryStatus: String {
-    case active = "active"
-    case rejected = "rejected"
+    case active, rejected
 }
 // MARK: - ComposeRadiusMailingSteps
 enum ComposeRadiusMailingSteps: String, CaseIterable {
@@ -39,7 +38,7 @@ struct ComposeRadiusMailingView: View {
     init(viewModel: ComposeRadiusMailingViewModel) {
         self.viewModel = viewModel
 
-        if self.viewModel.selectedRadiusMailing != nil {
+        if self.viewModel.selectedRadiusMailing?.status == "list_added" {
             self.viewModel.step = .confirmAudience
         }
     }
@@ -108,9 +107,13 @@ struct ComposeRadiusMailingView: View {
                                 showingAlert = true
                                 return
                             }
-                            if viewModel.step == .selectLocation {
+                            if viewModel.step == .selectLocation && viewModel.selectedRadiusMailing == nil {
                                 viewModel.createRadiusMailing { newMailing in
                                     guard newMailing != nil else { return }
+                                }
+                            } else if viewModel.selectedRadiusMailing != nil {
+                                viewModel.updateRadiusMailingData(for: .location) { updatedMailing in
+                                    guard updatedMailing != nil else { return }
                                 }
                             }
 
@@ -210,14 +213,12 @@ struct ComposeRadiusMailingView: View {
 // MARK: - ComposeRadiusMailingSelectLocationView
 struct ComposeRadiusMailingSelectLocationView: View {
     @ObservedObject var viewModel: ComposeRadiusMailingViewModel
-    @State var locationSelected: Bool = false
 
     init(viewModel: ComposeRadiusMailingViewModel) {
         self.viewModel = viewModel
     }
 
     var body: some View {
-
         let locationEntryBinding = Binding<String>(
             get: {
                 viewModel.locationEntry
@@ -229,11 +230,9 @@ struct ComposeRadiusMailingSelectLocationView: View {
         VStack {
             GoogleMapsView(
                 coordinates: (viewModel.latitude, viewModel.longitude),
-                locationSelected: locationSelected,
-                zoom: locationSelected ? 15.0 : 10.0
+                locationSelected: locationEntryIsPopulated(),
+                zoom: locationEntryIsPopulated() ? 15.0 : 10.0
             )
-            .edgesIgnoringSafeArea(.top)
-            .frame(height: 300)
 
             VStack(alignment: .leading, spacing: 15) {
                 Text("Enter the address of the property")
@@ -244,7 +243,7 @@ struct ComposeRadiusMailingSelectLocationView: View {
                     .autocapitalization(.none)
                     .disableAutocorrection(true)
 
-                if locationSelected {
+                if locationEntryIsPopulated() {
                     Text("Address Line 1")
                     TextField("", text: $viewModel.selectedLocationAddress1)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -283,24 +282,28 @@ struct ComposeRadiusMailingSelectLocationView: View {
                             .autocapitalization(.none)
                             .disableAutocorrection(true)
                     }
+                } else {
+                    List(viewModel.places, id: \.placeID) { place in
+                        Button(action: {
+                            viewModel.setPlaceOnMap(for: place.placeID)
+                            viewModel.locationEntry = place.attributedFullText.string
+                            viewModel.resetPlacesList()
+                            hideKeyboard()
+                        }) {
+                            Text(place.attributedFullText.string)
+                                .foregroundColor(.black)
+                        }
+                    }.listStyle(PlainListStyle())
                 }
-                List(viewModel.places, id: \.placeID) { place in
-                    Button(action: {
-                        locationSelected = true
-                        viewModel.setPlaceOnMap(for: place.placeID)
-
-                        viewModel.locationEntry = place.attributedFullText.string
-                        viewModel.resetPlacesList()
-                    }) {
-                        Text(place.attributedFullText.string)
-                            .foregroundColor(.black)
-                    }
-                }.listStyle(PlainListStyle())
             }.padding()
         }
         .onAppear {
             viewModel.maybeInitializeMapWithCurrentLocation()
         }
+    }
+
+    private func locationEntryIsPopulated() -> Bool {
+        return viewModel.locationEntry.contains(viewModel.selectedLocationAddress1)
     }
 }
 // MARK: - ComposeRadiusMailingCoverArtSelectionView
@@ -313,7 +316,8 @@ struct ComposeRadiusMailingCoverArtSelectionView: View {
 
     var body: some View {
         if (viewModel.mailingArt.filter({ $0.imageUrl != nil && $0.id != nil }).count < 1) {
-            EmptyListView(message: "No stationary avaliable, Please visit Addressable.app to upload cover art and continue.")
+            EmptyListView(message: "No stationary avaliable. Please visit the 'Stationary & Content' section " +
+                            "of the Addressable.app portal to upload cover art and continue.")
         } else {
             List(viewModel.mailingArt.filter { $0.imageUrl != nil && $0.id != nil }) { coverArt in
                 RadiusMailingCoverArtRow(viewModel: viewModel, coverImage: coverArt)

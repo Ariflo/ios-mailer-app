@@ -19,8 +19,8 @@ open class KeyChainServiceUtil {
         get {
             return load(withKey: key)
         } set {
-            DispatchQueue.global().sync(flags: .barrier) {
-                self.save(newValue, forKey: key)
+            DispatchQueue.global().sync(flags: .barrier) { [weak self] in
+                self?.save(newValue, forKey: key)
             }
         }
     }

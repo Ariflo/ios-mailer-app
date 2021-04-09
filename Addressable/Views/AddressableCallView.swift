@@ -36,7 +36,7 @@ struct AddressableCallView: View {
                     .foregroundColor(.orange)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
-                Text(app.callStatusText)
+                Text(app.callState)
                     .font(.title)
                     .foregroundColor(.white)
                 Image("ZippyIcon")
@@ -144,7 +144,7 @@ struct AddressableCallView: View {
                         Button(action: {
                             displayKeyPad = true
                         }) {
-                            Image(systemName: app.callManager?.getIsCallIncoming() ?? false ? "person.crop.circle.badge.xmark":"person.badge.plus")
+                            Image(systemName: app.callManager?.getIsCurrentCallIncoming() ?? false ? "person.crop.circle.badge.xmark":"person.badge.plus")
                                 .resizable()
                                 .scaledToFit()
                                 .foregroundColor(.white)
@@ -154,7 +154,7 @@ struct AddressableCallView: View {
                                     RoundedRectangle(cornerRadius: 16)
                                         .stroke(Color.white, lineWidth: 4)
                                 )
-                        }.disabled(app.callManager?.getIsCallIncoming() ?? false)
+                        }.disabled(app.callManager?.getIsCurrentCallIncoming() ?? false)
                         Text("Add Caller")
                             .font(.callout)
                             .foregroundColor(.white)
@@ -166,6 +166,8 @@ struct AddressableCallView: View {
                             DispatchQueue.main.async {
                                 app.displayCallView = false
                             }
+                            // TODO: Find a better approach here when UX is settled on
+                            app.fromAddressableCallView = true
                         }) {
                             Image(systemName: "mail")
                                 .resizable()
@@ -187,19 +189,18 @@ struct AddressableCallView: View {
                 Spacer()
                 // MARK: - Hang Up Call
                 Button( action: {
-                    guard let currentActiveCall = app.callManager?.currentActiveCall else {
-                        print("No currentActiveCall avaliable to end")
+                    guard let callManager = app.callManager else {
+                        print("No callManager avaliable to end call")
                         return
                     }
-
-                    guard let index = app.callManager?.calls.firstIndex(where: { $0.incomingCall?.uuid == currentActiveCall.uuid || $0.outgoingCall?.uuid == currentActiveCall.uuid }) else { return }
-
-                    guard let addressableCall = app.callManager?.calls[index] else {
-                        print("No call in the logs to end")
+                    guard let uuid = callManager.currentActiveCall?.uuid else {
+                        print("No currentActiveCall UUID avaliable to end")
                         return
                     }
-
-                    app.callManager?.end(call: addressableCall)
+                    if app.fromAddressableCallView {
+                        app.fromAddressableCallView = false
+                    }
+                    callManager.endCall(with: uuid)
                 }) {
                     Image(systemName: "phone.down.fill")
                         .resizable()

@@ -10,97 +10,121 @@ import CallKit
 import TwilioVoice
 import Combine
 
+enum CallState: String {
+    case connecting = "Connecting..."
+    case active = "Active"
+    case held = "On Hold"
+    case muted = "On Mute"
+    case ended = "Call Ended"
+}
+
 class CallManager {
+    private let callController = CXCallController()
     var disposables = Set<AnyCancellable>()
-    var callsChangedHandler: (() -> Void)?
+
     var incomingLeads: [IncomingLead] = []
     var accountSmartNumberForCurrentCall: String = ""
 
-    private let callController = CXCallController()
+    var incomingCalls: [String: Call]! = [:]
+    var activeCallInvites: [String: CallInvite]! = [:]
+    var activeCalls: [String: Call]! = [:]
 
-    private(set) var calls: [AddressableCall] = []
     var currentActiveCall: Call?
-    var previousActiveCall: Call?
     var currentCallerID: CallerID = CallerID()
+    var calledIncomingLead: IncomingLead?
 
-    func getLeadFromLastCall() -> IncomingLead? {
-        return self.incomingLeads.first(
-            where: {
-                if let currCall = currentActiveCall {
-                    return $0.fromNumber == currCall.from?.replacingOccurrences(of: "+", with: "")
-                } else {
-                    return $0.fromNumber == previousActiveCall?.from?.replacingOccurrences(of: "+", with: "")
-                }
+    func getLeadFromLatestCall() -> IncomingLead? {
+        guard let call = currentActiveCall else {
+            print("No currentActiveCall to getLeadFromLatestCall() in CallManager")
+            return nil
+        }
+
+        guard let uuid = call.uuid else {
+            print("No UUID to getLeadFromLatestCall() in CallManager")
+            return nil
+        }
+
+        guard let relatedIncomingCall = incomingCalls[uuid.uuidString] else {
+            if calledIncomingLead != nil { // Lead Related to Outgoing Call
+                return incomingLeads.first(
+                    where: { lead in lead.id == calledIncomingLead!.id })
+            }
+            print("No relatedIncomingCall to getLeadFromLatestCall() in CallManager")
+            return nil
+        }
+
+        guard let fromNumber = relatedIncomingCall.from else {
+            print("No fromNumber to getLeadFromLatestCall() in CallManager")
+            return nil
+        }
+
+        return incomingLeads.first(
+            where: { lead in
+                lead.fromNumber == fromNumber.replacingOccurrences(of: "+", with: "")
             })
     }
 
-    func callWithUUID(uuid: UUID) -> AddressableCall? {
-        guard let index = calls.firstIndex(where: { $0.incomingCall?.uuid == uuid || $0.outgoingCall?.uuid == uuid }) else {
-            return nil
-        }
-        return calls[index]
-    }
-
-    func getCurrentAddressableCall() -> AddressableCall? {
-        guard let currentActiveCall = currentActiveCall else {
-            print("No currentActiveCall avaliable to end")
-            return nil
+    func addActiveCall(_ call: Call, tagAsIncoming: Bool = false) {
+        guard let uuid = call.uuid else {
+            print("No UUID to addActiveCall in CallManager")
+            return
         }
 
-        guard let index = calls.firstIndex(where: { $0.incomingCall?.uuid == currentActiveCall.uuid || $0.outgoingCall?.uuid == currentActiveCall.uuid }) else { return nil }
+        currentActiveCall = call
+        activeCalls[uuid.uuidString] = call
 
-        return calls[index]
-    }
-
-    func getIsCallIncoming() -> Bool {
-        guard let currentActiveCall = currentActiveCall else {
-            print("No currentActiveCall avaliable to end")
-            return false
+        if tagAsIncoming {
+            incomingCalls[uuid.uuidString] = call
         }
-
-        guard let index = calls.firstIndex(where: { $0.incomingCall?.uuid == currentActiveCall.uuid || $0.outgoingCall?.uuid == currentActiveCall.uuid }) else { return false }
-
-        return ((calls[index].outgoingCall?.to?.contains("client")) != nil)
     }
 
-    func add(_ call: AddressableCall) {
-        calls.append(call)
-        call.stateChanged = { [weak self] in
-            guard let self = self else { return }
-            self.callsChangedHandler?()
+    func addCallInvite(_ callInvite: CallInvite) {
+        activeCallInvites[callInvite.uuid.uuidString] = callInvite
+    }
+
+    func removeCall(with uuid: UUID) {
+        let removedCall = activeCallInvites.removeValue(forKey: uuid.uuidString) ??
+            activeCalls.removeValue(forKey: uuid.uuidString)
+
+        if removedCall == nil {
+            print("Something went terribly wrong in CallManager.removeCall for uuid: \(uuid.uuidString)")
         }
-        callsChangedHandler?()
-    }
-
-    func remove(call: AddressableCall) {
-        guard let index = calls.firstIndex(where: { $0 === call }) else { return }
-        calls.remove(at: index)
-        callsChangedHandler?()
     }
 
     func removeAllCalls() {
-        calls.removeAll()
-        callsChangedHandler?()
+        for callInvite in activeCallInvites.values {
+            removeCall(with: callInvite.uuid)
+        }
+
+        for call in activeCalls.values {
+            guard let uuid = call.uuid else { continue }
+            removeCall(with: uuid)
+        }
+
+        if !incomingCalls.isEmpty {
+            incomingCalls.removeAll()
+        }
     }
 
-    func end(call: AddressableCall) {
-        let uuid = call.incomingCall?.uuid ?? call.outgoingCall?.uuid
-        guard let callId = uuid else {
-            print("No Call UUID to end call")
-            return
-        }
-        let endCallAction = CXEndCallAction(call: callId)
+    func endCall(with uuid: UUID) {
+        let endCallAction = CXEndCallAction(call: uuid)
         let transaction = CXTransaction(action: endCallAction)
 
         requestTransaction(transaction)
     }
 
     func startCall(to incomingLead: IncomingLead) {
-        let callHandle = CXHandle(type: .generic, value: String(data: encode(incomingLead)!, encoding: .utf8) ?? "")
+        guard let incomingLeadData = encode(incomingLead),
+              let leadDataString = String(data: incomingLeadData, encoding: .utf8) else {
+            print("No incomingLeadData in startCall() for CallManager to make call")
+            return
+        }
+        let callHandle = CXHandle(type: .generic, value: leadDataString)
         let startCallAction = CXStartCallAction(call: UUID(), handle: callHandle)
         let transaction = CXTransaction(action: startCallAction)
 
         requestTransaction(transaction)
+        calledIncomingLead = incomingLead
     }
 
     func setHeld(call: Call, onHold: Bool) {
@@ -188,6 +212,34 @@ class CallManager {
             .store(in: &disposables)
     }
 
+    func resetActiveCallState(for uuid: UUID? = nil) {
+        guard let callUuid = uuid else {
+            print("No UUID to remove call in resetActiveCallState()")
+            return
+        }
+
+        currentCallerID = CallerID()
+        currentActiveCall = nil
+        calledIncomingLead = nil
+        removeCall(with: callUuid)
+
+        if !incomingCalls.isEmpty {
+            incomingCalls.removeAll()
+        }
+    }
+
+    func getIsCurrentCallIncoming() -> Bool {
+        guard let activeCall = currentActiveCall else {
+            print("No currentActiveCall to getIsCurrentCallIncoming()")
+            return false
+        }
+        guard let uuid = activeCall.uuid else {
+            print("No uuid to getIsCurrentCallIncoming()")
+            return false
+        }
+        return incomingCalls[uuid.uuidString] != nil
+    }
+
 }
 
 struct TwilioAccessTokenData: Codable {
@@ -205,4 +257,26 @@ struct TwilioAccessTokenData: Codable {
 struct CallerID {
     var caller: String = "Addressable Mailing Caller"
     var relatedMailingName: String = ""
+}
+
+// MARK: - CallParticipantResponse
+struct CallParticipantResponse: Codable {
+    let status: String
+
+    enum CodingKeys: String, CodingKey {
+        case status
+    }
+}
+
+// MARK: - NewCaller
+struct NewCaller: Codable {
+    let sessionID: String
+    let addNumber: String
+    let fromNumber: String
+
+    enum CodingKeys: String, CodingKey {
+        case sessionID = "session_id"
+        case addNumber = "add_number"
+        case fromNumber = "from_number"
+    }
 }

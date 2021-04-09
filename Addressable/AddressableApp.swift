@@ -25,9 +25,10 @@ protocol PushKitEventDelegate: AnyObject {
 // TODO: Name this back to 'AppDelegate' when Lint issue is solved - https://github.com/realm/SwiftLint/issues/2786
 class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, ObservableObject {
     @Published var displayCallView: Bool = false
-    @Published var callStatusText: String = ""
+    @Published var callState: String = CallState.connecting.rawValue
+    @Published var fromAddressableCallView: Bool = false
 
-    var callkitCallProvider: CallProvider?
+    var callKitProvider: CallProvider?
     var callManager: CallManager?
     var latestPushCredentials: PKPushCredentials?
     lazy var voipRegistry = PKPushRegistry.init(queue: DispatchQueue.main)
@@ -40,7 +41,7 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
         GMSPlacesClient.provideAPIKey(googleMapsApiKey)
 
         callManager = CallManager()
-        callkitCallProvider = CallProvider(application: self, callManager: callManager!)
+        callKitProvider = CallProvider(application: self, callManager: callManager!)
 
         voipRegistry.delegate = self
         voipRegistry.desiredPushTypes = Set([PKPushType.voIP])
@@ -55,7 +56,7 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
         let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
         let token = tokenParts.joined()
 
-        if let delegate = callkitCallProvider, let credentials = latestPushCredentials {
+        if let delegate = callKitProvider, let credentials = latestPushCredentials {
             delegate.credentialsUpdated(credentials: credentials, deviceID: token)
         }
     }
@@ -75,7 +76,7 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
     func pushRegistry(_ registry: PKPushRegistry, didInvalidatePushTokenFor type: PKPushType) {
         print("pushRegistry:didInvalidatePushTokenForType: \(type)")
 
-        if let delegate = callkitCallProvider {
+        if let delegate = callKitProvider {
             delegate.credentialsInvalidated()
         }
     }
@@ -92,7 +93,7 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
     ) {
         print("pushRegistry:didReceiveIncomingPushWithPayload:forType:\(type) completion:")
 
-        if let delegate = self.callkitCallProvider {
+        if let delegate = self.callKitProvider {
             delegate.incomingPushReceived(payload: payload, completion: completion)
         }
 
@@ -103,28 +104,40 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
 
     func verifyPermissions(completion: @escaping () -> Void) {
         /**
-         * Both microphone and push notification access are required for in app phone calls on Addressable.
+         * Microphone access is required for in-app phone calls. Push
+         * notification permissions required ONLY if device token is not registered.
          */
-        checkPushNotificationsPermission {[weak self] pushNotificationPermissionGranted in
-            guard pushNotificationPermissionGranted else {
+        checkRecordPermission {[weak self] micPermissionGranted in
+            guard micPermissionGranted else {
                 DispatchQueue.main.async {
-                    self?.displayPermissionsChangeAlert(message: "Push notification permissions are required to recieve in-app phone calls")
+                    self?.displayPermissionsChangeAlert(
+                        message: "Microphone permissions are required for in-app phone calls"
+                    )
                 }
                 return
             }
 
-            UNUserNotificationCenter.current().getNotificationSettings {[weak self] settings in
-                guard settings.authorizationStatus == .authorized else {
+            guard UserDefaults.standard.data(forKey: kCachedDeviceToken) == nil else {
+                completion()
+                return
+            }
+
+            checkPushNotificationsPermission {[weak self] pushNotificationPermissionGranted in
+                guard pushNotificationPermissionGranted else {
                     DispatchQueue.main.async {
-                        self?.displayPermissionsChangeAlert(message: "Push notification permissions are required to recieve in-app phone calls")
+                        self?.displayPermissionsChangeAlert(
+                            message: "Push notification permissions are required for in-app phone calls"
+                        )
                     }
                     return
                 }
 
-                checkRecordPermission {[weak self] micPermissionGranted in
-                    guard micPermissionGranted else {
+                UNUserNotificationCenter.current().getNotificationSettings {[weak self] settings in
+                    guard settings.authorizationStatus == .authorized else {
                         DispatchQueue.main.async {
-                            self?.displayPermissionsChangeAlert(message: "Microphone permissions are required for in-app phone calls")
+                            self?.displayPermissionsChangeAlert(
+                                message: "Push notification permissions are required for in-app phone calls"
+                            )
                         }
                         return
                     }
@@ -185,7 +198,13 @@ struct AddressableApp: App {
             case .background:
                 print("App is in background")
             case .active:
-                print("App is Active")
+                if KeyChainServiceUtil.shared[userBasicAuthToken] != nil {
+                    appDelegate.verifyPermissions {
+                        DispatchQueue.main.async {
+                            UIApplication.shared.registerForRemoteNotifications()
+                        }
+                    }
+                }
             case .inactive:
                 print("App is Inactive")
             @unknown default:

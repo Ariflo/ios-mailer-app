@@ -11,7 +11,8 @@ import Combine
 class MailingsViewModel: ObservableObject, Identifiable {
     @Published var customNotes: [CustomNote] = []
     @Published var radiusMailings: [RadiusMailing] = []
-    @Published  var selectedRadiusMailing: RadiusMailing?
+    @Published var selectedRadiusMailing: RadiusMailing?
+    @Published var loading: Bool = false
 
     private let addressableDataFetcher: FetchableData
     private var disposables = Set<AnyCancellable>()
@@ -21,6 +22,7 @@ class MailingsViewModel: ObservableObject, Identifiable {
     }
 
     func getAllMailingCampaigns() {
+        loading = true
         addressableDataFetcher.getCurrentUserMailingCampaigns()
             .receive(on: DispatchQueue.main)
             .sink(
@@ -30,6 +32,7 @@ class MailingsViewModel: ObservableObject, Identifiable {
                     case .failure(let error):
                         print("getAllMailingCampaigns() receiveCompletion error: \(error)")
                         self.customNotes = []
+                        self.loading = false
                     case .finished:
                         break
                     }
@@ -38,6 +41,7 @@ class MailingsViewModel: ObservableObject, Identifiable {
                     guard let self = self else { return }
                     self.customNotes = campaignsData.campaigns.compactMap { $0.customNote }
                     self.radiusMailings = campaignsData.campaigns.compactMap { $0.radiusMailing }
+                    self.loading = false
                 })
             .store(in: &disposables)
     }

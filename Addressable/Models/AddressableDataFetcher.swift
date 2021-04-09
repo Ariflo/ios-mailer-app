@@ -31,7 +31,7 @@ protocol FetchableData {
 }
 
 enum RadiusMailingComponent {
-    case cover, topic, list
+    case location, cover, topic, list
 }
 
 enum ApiError: Error {
@@ -56,6 +56,10 @@ extension AddressableDataFetcher: FetchableData {
 
     func updateRadiusMailing(for component: RadiusMailingComponent, with id: Int, _ updateRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingWrapper, ApiError> {
         switch component {
+        case .location:
+            return makeApiRequest(with: updateRadiusMailingLocationRequestComponents(for: id),
+                                  postRequestBodyData: nil,
+                                  patchRequestBodyData: updateRadiusMailingData)
         case .cover:
             return makeApiRequest(with: updateRadiusMailingCoverRequestComponents(for: id),
                                   postRequestBodyData: nil,
@@ -345,6 +349,16 @@ private extension AddressableDataFetcher {
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
         components.path = AddressableAPI.path + "/radius_mailings/\(id)"
+
+        return components
+    }
+
+    func updateRadiusMailingLocationRequestComponents(for id: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/radius_mailings/\(id)/subject_address"
 
         return components
     }

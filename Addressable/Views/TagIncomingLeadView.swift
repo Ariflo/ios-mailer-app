@@ -40,10 +40,13 @@ struct TagIncomingLeadView: View {
             VStack(alignment: .leading, spacing: 25) {
                 Button(
                     action: {
-                        if let knownLead = app.callManager?.getLeadFromLastCall() {
+                        if let callManager = app.callManager,
+                           let knownLead = callManager.getLeadFromLatestCall() {
                             viewModel.tagIncomingLead(for: knownLead.id) { taggedLead in
-                                guard taggedLead != nil else { return }
-                                app.callManager?.currentCallerID = CallerID()
+                                guard taggedLead != nil else {
+                                    print("Unable to tagIncomingLead() in TagIncomingLeadView")
+                                    return
+                                }
                                 taggingComplete()
                             }
                         }
@@ -82,6 +85,14 @@ struct TagIncomingLeadView: View {
                         .padding()
                     isRemovalSegmentView
                 } : nil
+            }
+        }.onDisappear {
+            if let callManager = app.callManager {
+                guard let relatedCall = callManager.currentActiveCall else {
+                    print("No relatedCall to resetActiveCallState() in TagIncomingLeadView")
+                    return
+                }
+                callManager.resetActiveCallState(for: relatedCall.uuid)
             }
         }
     }

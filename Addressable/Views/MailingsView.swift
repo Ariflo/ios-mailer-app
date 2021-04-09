@@ -45,9 +45,23 @@ struct MailingsView: View {
                                     backgroundColor: Color(red: 78 / 255, green: 71 / 255, blue: 210 / 255)
                                 )
                         ) {
+                            if viewModel.radiusMailings.isEmpty && !viewModel.loading {
+                                HStack {
+                                    Spacer()
+                                    Text("No Radius Mailings Sent")
+                                    Spacer()
+                                }
+                            } else if viewModel.loading {
+                                HStack {
+                                    Spacer()
+                                    ProgressView()
+                                        .progressViewStyle(CircularProgressViewStyle())
+                                    Spacer()
+                                }
+                            }
+
                             ForEach(viewModel.radiusMailings, id: \.parentMailingID) { radiusMailing in
                                 Button(action: {
-                                    guard radiusMailing.listCount > 0 && radiusMailing.status != "list_approved" else { return }
                                     viewModel.selectedRadiusMailing = radiusMailing
                                     navigateToComposeRadiusMailing = true
                                 }) {
@@ -74,8 +88,10 @@ struct MailingsView: View {
                                isActive: $navigateToComposeMail) {}
             )
             .background(
-                NavigationLink(destination: ComposeRadiusMailingView(viewModel:
-                                                                        ComposeRadiusMailingViewModel(selectedRadiusMailing: viewModel.selectedRadiusMailing)
+                NavigationLink(destination: ComposeRadiusMailingView(
+                    viewModel: ComposeRadiusMailingViewModel(
+                        selectedRadiusMailing: viewModel.selectedRadiusMailing
+                    )
                 ).navigationBarHidden(true),
                 isActive: $navigateToComposeRadiusMailing) {}
             )
@@ -123,6 +139,8 @@ struct MailingsView: View {
             } else if mailing.targetQuantity < mailing.activeRecipientCount {
                 return "surplus of \(mailing.activeRecipientCount - mailing.targetQuantity)!"
             }
+        } else if mailing.status == "list_added" {
+            return "List Ready for Customer Approval"
         } else if mailing.status == "list_approved" {
             return "List Approved by Customer"
         }

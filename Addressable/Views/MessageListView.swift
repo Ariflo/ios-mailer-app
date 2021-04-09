@@ -35,6 +35,16 @@ struct MessageListView: View {
         NavigationView {
             GeometryReader { geometry in
                 CustomRefreshableScrollView(viewBuilder: {
+                    if viewModel.incomingLeadsWithMessages.isEmpty && !viewModel.loading {
+                        HStack {
+                            Spacer()
+                            Text("No Messages from Leads")
+                            Spacer()
+                        }
+                    } else if viewModel.loading {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                    }
                     List(viewModel.incomingLeadsWithMessages) { lead in
                         Button(action: {
                             selectedLead = lead

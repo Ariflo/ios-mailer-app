@@ -13,24 +13,32 @@ struct ProfileView: View {
 
     var body: some View {
         NavigationLink(destination: AppView(), tag: 1, selection: $successfullyLoggedOut) {
-            Button(action: {
-                showingAlert = true
-            }) {
-                HStack {
-                    Image(systemName: "arrow.right.to.line")
-                    Text("Sign Out")
+            VStack {
+                Button(action: {
+                    showingAlert = true
+                }) {
+                    HStack {
+                        Image(systemName: "arrow.right.to.line")
+                        Text("Sign Out")
+                    }
+                    .font(.title2)
+                }.alert(isPresented: $showingAlert) {
+                    .init(
+                        title: .init("Sign Out of Addressable?"),
+                        primaryButton: .destructive(.init("Sign Out")) {
+                            KeyChainServiceUtil.shared[userBasicAuthToken] = nil
+                            KeyChainServiceUtil.shared[userMobileClientIdentity] = nil
+                            successfullyLoggedOut = 1
+                        },
+                        secondaryButton: .cancel()
+                    )
                 }
-                .font(.title2)
-            }.alert(isPresented: $showingAlert) {
-                .init(
-                    title: .init("Sign Out of Addressable?"),
-                    primaryButton: .destructive(.init("Sign Out")) {
-                        KeyChainServiceUtil.shared[userBasicAuthToken] = nil
-                        KeyChainServiceUtil.shared[userMobileClientIdentity] = nil
-                        successfullyLoggedOut = 1
-                    },
-                    secondaryButton: .cancel()
-                )
+                if let versionNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
+                   let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                    Text("v\(appVersion) (\(versionNumber))")
+                        .foregroundColor(Color.black)
+                        .padding()
+                }
             }
         }
     }

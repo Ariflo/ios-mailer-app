@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SignInView: View {
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: SignInViewModel
 
     init(viewModel: SignInViewModel) {
@@ -82,6 +83,24 @@ struct SignInView: View {
                             return
                         }
                         KeyChainServiceUtil.shared[userBasicAuthToken] = loginData.base64EncodedString()
+                        // For the case where a user signs into the application on a previously registered device
+                        // register said user with the device on Addressable's DB
+                        guard let callManager = app.callManager,
+                              let deviceToken = KeyChainServiceUtil.shared[latestDeviceID] else {
+                            authorizedUser = 1
+                            return
+                        }
+
+                        callManager.fetchToken(
+                            deviceID: deviceToken
+                        ) { tokenData in
+                            guard tokenData?.jwtToken != nil else {
+                                alertText = "Sorry something went wrong, try again or reach out to an Addressable " +
+                                    "representative if the problem persists."
+                                showingAlert = true
+                                return
+                            }
+                        }
                         authorizedUser = 1
                     }
                 }) {
@@ -91,6 +110,13 @@ struct SignInView: View {
                 .alert(isPresented: $showingAlert) {
                     Alert(title: Text(alertText))
                 }
+
+            }
+            if let versionNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
+               let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                Text("v\(appVersion) (\(versionNumber))")
+                    .foregroundColor(Color.black)
+                    .padding()
             }
         }
         .padding()

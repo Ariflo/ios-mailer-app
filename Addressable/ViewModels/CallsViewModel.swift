@@ -12,12 +12,14 @@ class CallsViewModel: ObservableObject, Identifiable {
     @Published var incomingLeads: IncomingLeadsResponse = []
     private let addressableDataFetcher: FetchableData
     private var disposables = Set<AnyCancellable>()
+    @Published var loading: Bool = false
 
     init(addressableDataFetcher: FetchableData) {
         self.addressableDataFetcher = addressableDataFetcher
     }
 
     func getLeads() {
+        loading = true
         addressableDataFetcher.getIncomingLeads()
             .receive(on: DispatchQueue.main)
             .sink(
@@ -27,6 +29,7 @@ class CallsViewModel: ObservableObject, Identifiable {
                     case .failure(let error):
                         print("getLeads() receiveCompletion error: \(error)")
                         self.incomingLeads = []
+                        self.loading = false
                     case .finished:
                         break
                     }
@@ -34,6 +37,7 @@ class CallsViewModel: ObservableObject, Identifiable {
                 receiveValue: { [weak self] incomingLeads in
                     guard let self = self else { return }
                     self.incomingLeads = incomingLeads
+                    self.loading = false
                 })
             .store(in: &disposables)
     }

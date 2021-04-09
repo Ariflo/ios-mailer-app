@@ -11,6 +11,7 @@ import Combine
 class MessagesViewModel: ObservableObject, Identifiable {
     @Published var incomingLeadsWithMessages: IncomingLeadsResponse = []
     @Published var messages: [Message] = []
+    @Published var loading: Bool = false
 
     private let addressableDataFetcher: FetchableData
     private var disposables = Set<AnyCancellable>()
@@ -22,6 +23,7 @@ class MessagesViewModel: ObservableObject, Identifiable {
     }
 
     func getIncomingLeadsWithMessages() {
+        loading = true
         addressableDataFetcher.getIncomingLeadsWithMessages()
             .receive(on: DispatchQueue.main)
             .sink(
@@ -31,6 +33,7 @@ class MessagesViewModel: ObservableObject, Identifiable {
                     case .failure(let error):
                         print("getIncomingLeadsWithMessages() receiveCompletion error: \(error)")
                         self.incomingLeadsWithMessages = []
+                        self.loading = false
                     case .finished:
                         break
                     }
@@ -38,6 +41,7 @@ class MessagesViewModel: ObservableObject, Identifiable {
                 receiveValue: { [weak self] incomingLeads in
                     guard let self = self else { return }
                     self.incomingLeadsWithMessages = incomingLeads
+                    self.loading = false
                 })
             .store(in: &disposables)
     }

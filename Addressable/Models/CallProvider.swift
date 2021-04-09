@@ -15,6 +15,7 @@ let kRegistrationTTLInDays = 365
 
 let kCachedDeviceToken = "CachedDeviceToken"
 let kCachedBindingDate = "CachedBindingDate"
+let latestDeviceID = "LatestDeviceID"
 let twimlParamFrom = "From"
 let twimlParamTo = "To"
 let addressableParamSessionID = "SessionId"
@@ -39,10 +40,19 @@ class CallProvider: NSObject {
     var incomingPushCompletionCallback: (() -> Void)?
     var userInitiatedDisconnect: Bool = false
 
+    static var providerConfiguration: CXProviderConfiguration = {
+        let providerConfiguration = CXProviderConfiguration()
+
+        providerConfiguration.supportsVideo = false
+        providerConfiguration.maximumCallsPerCallGroup = 1
+        providerConfiguration.supportedHandleTypes = [.phoneNumber]
+
+        return providerConfiguration
+    }()
+
     init(application: Application, callManager: CallManager) {
         self.app = application
         self.callManager = callManager
-
         provider = CXProvider(configuration: CallProvider.providerConfiguration)
 
         super.init()
@@ -54,28 +64,13 @@ class CallProvider: NSObject {
          */
         TwilioVoiceSDK.audioDevice = audioDevice
     }
-
-    static var providerConfiguration: CXProviderConfiguration = {
-        let providerConfiguration = CXProviderConfiguration()
-
-        providerConfiguration.supportsVideo = true
-        providerConfiguration.maximumCallsPerCallGroup = 1
-        providerConfiguration.supportedHandleTypes = [.phoneNumber]
-
-        return providerConfiguration
-    }()
 }
 
-// MARK: - CXCallProvider
+// MARK: - CXProviderDelegate
 extension CallProvider: CXProviderDelegate {
     func providerDidReset(_ provider: CXProvider) {
         print("Stopping audio")
         audioDevice.isEnabled = false
-
-        for call in callManager.calls {
-            call.end()
-        }
-
         callManager.removeAllCalls()
     }
 
@@ -85,7 +80,6 @@ extension CallProvider: CXProviderDelegate {
         performAnswerVoiceCall(uuid: action.callUUID) {[weak self] success in
             if success {
                 print("performAnswerVoiceCall() successful")
-                // Display Incoming Call View while In-App
                 self?.app.displayCallView = true
             } else {
                 print("performAnswerVoiceCall() failed")
@@ -101,9 +95,9 @@ extension CallProvider: CXProviderDelegate {
     func provider(_ provider: CXProvider, perform action: CXSetHeldCallAction) {
         print("provider:performSetHeldAction:")
 
-        if let call = callManager.currentActiveCall {
+        if let call = callManager.activeCalls[action.callUUID.uuidString] {
             call.isOnHold = action.isOnHold
-            app.callStatusText = action.isOnHold ? CallState.held.rawValue : CallState.active.rawValue
+            app.callState = action.isOnHold ? CallState.held.rawValue : CallState.active.rawValue
             action.fulfill()
         } else {
             action.fail()
@@ -113,9 +107,9 @@ extension CallProvider: CXProviderDelegate {
     func provider(_ provider: CXProvider, perform action: CXSetMutedCallAction) {
         print("provider:performSetMutedAction:")
 
-        if let call = callManager.currentActiveCall {
+        if let call = callManager.activeCalls[action.callUUID.uuidString] {
             call.isMuted = action.isMuted
-            app.callStatusText = action.isMuted ? CallState.muted.rawValue : CallState.active.rawValue
+            app.callState = action.isMuted ? CallState.muted.rawValue : CallState.active.rawValue
             action.fulfill()
         } else {
             action.fail()
@@ -132,23 +126,22 @@ extension CallProvider: CXProviderDelegate {
         audioDevice.isEnabled = false
     }
 
-    func provider(_ provider: CXProvider, perform action: CXEndCallAction) {
+    func provider(
+        _ provider: CXProvider,
+        perform action: CXEndCallAction
+    ) {
         print("provider:performEndCallAction:")
-        guard let addressableCall = callManager.callWithUUID(uuid: action.callUUID) else {
-            action.fail()
-            return
-        }
-        print("Stopping audio")
+
         if app.displayCallView {
-            DispatchQueue.main.async {
-                self.app.displayCallView = false
+            DispatchQueue.main.async {[weak self] in
+                self?.app.displayCallView = false
             }
         }
 
-        if let invite = addressableCall.incomingCall {
+        if let invite = callManager.activeCallInvites[action.callUUID.uuidString] {
             invite.reject()
-            callManager.remove(call: addressableCall)
-        } else if let call = addressableCall.outgoingCall {
+            callManager.removeCall(with: action.callUUID)
+        } else if let call = callManager.activeCalls[action.callUUID.uuidString] {
             call.disconnect()
         } else {
             print("Unknown UUID to perform end-call action with")
@@ -162,9 +155,14 @@ extension CallProvider: CXProviderDelegate {
         configureAudioSession()
 
         provider.reportOutgoingCall(with: action.callUUID, startedConnectingAt: Date())
-        let lead = try? JSONDecoder().decode(IncomingLead.self, from: action.handle.value.data(using: .utf8)!)
+        guard let lead = try? JSONDecoder().decode(IncomingLead.self,
+                                                   from: action.handle.value.data(using: .utf8)!)
+        else {
+            print("No Lead to make call in CXStartCallAction of  CallProvider")
+            return
+        }
 
-        performVoiceCall(uuid: action.callUUID, lead: lead!) { success in
+        performVoiceCall(uuid: action.callUUID, lead: lead) { success in
             if success {
                 print("performVoiceCall() successful")
                 provider.reportOutgoingCall(with: action.callUUID, connectedAt: Date())
@@ -197,31 +195,29 @@ extension CallProvider: CXProviderDelegate {
         update.localizedCallerName = "\(callManager.currentCallerID.caller) \(callManager.currentCallerID.relatedMailingName)"
 
         provider.reportNewIncomingCall(with: callInvite.uuid, update: update) { error in
-            if error == nil {
-                let call = AddressableCall(incomingCall: callInvite)
-                self.callManager.add(call)
+            if let error = error {
+                print("Failed to report incoming call successfully: \(error.localizedDescription).")
+            } else {
+                print("Incoming call successfully reported.")
             }
             completion?(error)
         }
     }
 
     func performAnswerVoiceCall(uuid: UUID, completionHandler: @escaping (Bool) -> Void) {
-        guard let incomingAddressableCall = callManager.callWithUUID(uuid: uuid) else {
+        guard let callInvite = callManager.activeCallInvites[uuid.uuidString] else {
             print("No CallInvite matches the UUID")
             return
         }
-        let callInvite = incomingAddressableCall.incomingCall!
 
         let acceptOptions = AcceptOptions(callInvite: callInvite) { builder in
             builder.uuid = callInvite.uuid
         }
         let call = callInvite.accept(options: acceptOptions, delegate: self)
 
-        callManager.currentActiveCall = call
-        callManager.add(AddressableCall(incomingCall: nil, outgoingCall: call))
-
+        callManager.addActiveCall(call, tagAsIncoming: true)
         callKitCompletionCallback = completionHandler
-        callManager.remove(call: incomingAddressableCall)
+        callManager.removeCall(with: uuid)
 
         guard #available(iOS 13, *) else {
             incomingPushHandled()
@@ -230,22 +226,28 @@ extension CallProvider: CXProviderDelegate {
     }
 
     func performVoiceCall(uuid: UUID, lead: IncomingLead, completionHandler: @escaping (Bool) -> Void) {
-        callManager.fetchToken {[weak self] tokenData in
-            guard let accessToken = tokenData?.jwtToken, let to = lead.fromNumber, let from = lead.toNumber else { return }
+        callManager.fetchToken { [weak self] tokenData in
+            guard let self = self else { return }
+            guard let accessToken = tokenData?.jwtToken,
+                  let toNumber = lead.fromNumber,
+                  let from = lead.toNumber else { return }
             guard let userClientIdentity = tokenData?.twilioClientIdentity else { return }
 
-            // Store fromNumber (account smart number) in call manager for `add participant` functionality
-            self?.callManager.accountSmartNumberForCurrentCall = from
+            // Store from number (account smart number) in call manager for `add participant` functionality
+            self.callManager.accountSmartNumberForCurrentCall = from
 
             let connectOptions = ConnectOptions(accessToken: accessToken) { builder in
-                builder.params = [twimlParamFrom: from, twimlParamTo: to, addressableParamSessionID: userClientIdentity]
+                builder.params = [
+                    twimlParamFrom: from,
+                    twimlParamTo: toNumber,
+                    addressableParamSessionID: userClientIdentity
+                ]
                 builder.uuid = uuid
             }
 
-            let call = TwilioVoiceSDK.connect(options: connectOptions, delegate: self!)
-            self?.callManager.currentActiveCall = call
-            self?.callManager.add(AddressableCall(incomingCall: nil, outgoingCall: call))
-            self?.callKitCompletionCallback = completionHandler
+            let call = TwilioVoiceSDK.connect(options: connectOptions, delegate: self)
+            self.callManager.addActiveCall(call)
+            self.callKitCompletionCallback = completionHandler
         }
     }
 }
@@ -265,7 +267,7 @@ extension CallProvider: CallDelegate {
         if playCustomRingback {
             playRingback()
         }
-        app.callStatusText = CallState.connecting.rawValue
+        app.callState = CallState.connecting.rawValue
     }
 
     // MARK: Ringtone
@@ -301,7 +303,7 @@ extension CallProvider: CallDelegate {
             callKitCompletionCallback(true)
         }
 
-        app.callStatusText = CallState.active.rawValue
+        app.callState = CallState.active.rawValue
     }
 
     func callDidFailToConnect(call: Call, error: Error) {
@@ -313,12 +315,6 @@ extension CallProvider: CallDelegate {
 
         if playCustomRingback {
             stopRingback()
-        }
-
-        if app.displayCallView {
-            DispatchQueue.main.async {
-                self.app.displayCallView = false
-            }
         }
 
         provider.reportCall(with: call.uuid!, endedAt: Date(), reason: CXCallEndedReason.failed)
@@ -337,12 +333,6 @@ extension CallProvider: CallDelegate {
             stopRingback()
         }
 
-        if app.displayCallView {
-            DispatchQueue.main.async {
-                self.app.displayCallView = false
-            }
-        }
-
         if !userInitiatedDisconnect {
             var reason = CXCallEndedReason.remoteEnded
 
@@ -356,22 +346,14 @@ extension CallProvider: CallDelegate {
     }
 
     private func callDisconnected(call: Call) {
-        if call == callManager.currentActiveCall {
-            callManager.currentActiveCall = nil
-            callManager.previousActiveCall = call
-            if let knownLead = app.callManager?.getLeadFromLastCall() {
-                if knownLead.status != "unknown" {
-                    callManager.currentCallerID = CallerID()
-                }
+        if let knownLead = callManager.getLeadFromLatestCall() {
+            // If call related to **tagged** lead:
+            // - Reset CallerID reset activeCallState
+            // Otherwise keep in memory for TagIncomingLeadView to handle
+            if knownLead.status != "unknown" {
+                callManager.resetActiveCallState(for: call.uuid)
             }
         }
-
-        guard let addressableCall = callManager.callWithUUID(uuid: call.uuid!) else {
-            print("No call matches the UUID")
-            return
-        }
-
-        callManager.remove(call: addressableCall)
 
         userInitiatedDisconnect = false
 
@@ -379,9 +361,14 @@ extension CallProvider: CallDelegate {
             stopRingback()
         }
 
+        app.callState = CallState.ended.rawValue
+
         if app.displayCallView {
-            DispatchQueue.main.async {
-                self.app.displayCallView = false
+            DispatchQueue.main.async { [weak self] in
+                self?.app.displayCallView = false
+
+                // reset CallState on disconnect
+                self?.app.callState = CallState.connecting.rawValue
             }
         }
     }
@@ -409,6 +396,7 @@ extension CallProvider: PushKitEventDelegate {
 
                         // Save the device token after successfully registered.
                         UserDefaults.standard.set(cachedDeviceToken, forKey: kCachedDeviceToken)
+                        KeyChainServiceUtil.shared[latestDeviceID] = deviceID
 
                         /**
                          * The TTL of a registration is 1 year. The TTL for registration for this device/identity
@@ -511,25 +499,28 @@ extension CallProvider: NotificationDelegate {
         let backgroundTaskIdentifier =
             UIApplication.shared.beginBackgroundTask(expirationHandler: nil)
 
-        self.reportIncomingCall(
+        reportIncomingCall(
             callInvite: callInvite,
             from: from
         ) { _ in
             UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
         }
+        callManager.addCallInvite(callInvite)
     }
 
     func cancelledCallInviteReceived(cancelledCallInvite: CancelledCallInvite, error: Error) {
         print("cancelledCallInviteCanceled:error:, error: \(error.localizedDescription)")
 
-        if callManager.calls.isEmpty {
+        guard let activeCallInvites = callManager.activeCallInvites, !callManager.activeCallInvites.isEmpty else {
             print("No pending call invite")
             return
         }
 
-        guard let index = callManager.calls.firstIndex(where: { $0.incomingCall?.callSid == cancelledCallInvite.callSid }) else { return }
+        let callInvite = activeCallInvites.values.first { invite in invite.callSid == cancelledCallInvite.callSid }
 
-        callManager.end(call: callManager.calls[index])
+        if let callInvite = callInvite {
+            callManager.endCall(with: callInvite.uuid)
+        }
     }
 }
 

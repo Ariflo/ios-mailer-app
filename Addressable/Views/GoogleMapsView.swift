@@ -31,6 +31,7 @@ struct GoogleMapsView: UIViewRepresentable {
             zoom: zoom
         )
         mapView.camera = newCamera
+        mapView.clear()
 
         if locationSelected {
             let marker = GMSMarker()
