@@ -49,6 +49,25 @@
 	<string>$(EXECUTABLE_NAME) would like to access your location to send Radius Mailings</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>$(EXECUTABLE_NAME) would like to access your microphone to make phone calls</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>silka-bolditalic-webfont.ttf</string>
+		<string>silka-black-webfont.ttf</string>
+		<string>silka-blackitalic-webfont.ttf</string>
+		<string>silka-bold-webfont.ttf</string>
+		<string>silka-extralight-webfont.ttf</string>
+		<string>silka-extralightitalic-webfont.ttf</string>
+		<string>silka-light-webfont.ttf</string>
+		<string>silka-lightitalic-webfont.ttf</string>
+		<string>silka-medium-webfont.ttf</string>
+		<string>silka-mediumitalic-webfont.ttf</string>
+		<string>silka-regular-webfont.ttf</string>
+		<string>silka-regularitalic-webfont.ttf</string>
+		<string>silka-semibold-webfont.ttf</string>
+		<string>silka-semibolditalic-webfont.ttf</string>
+		<string>silka-thin-webfont.ttf</string>
+		<string>silka-thinitalic-webfont.ttf</string>
+	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -77,25 +96,6 @@
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-	</array>
-	<key>UIAppFonts</key>
-	<array>
-		<string>silka-bolditalic-webfont.ttf</string>
-		<string>silka-black-webfont.ttf</string>
-		<string>silka-blackitalic-webfont.ttf</string>
-		<string>silka-bold-webfont.ttf</string>
-		<string>silka-extralight-webfont.ttf</string>
-		<string>silka-extralightitalic-webfont.ttf</string>
-		<string>silka-light-webfont.ttf</string>
-		<string>silka-lightitalic-webfont.ttf</string>
-		<string>silka-medium-webfont.ttf</string>
-		<string>silka-mediumitalic-webfont.ttf</string>
-		<string>silka-regular-webfont.ttf</string>
-		<string>silka-regularitalic-webfont.ttf</string>
-		<string>silka-semibold-webfont.ttf</string>
-		<string>silka-semibolditalic-webfont.ttf</string>
-		<string>silka-thin-webfont.ttf</string>
-		<string>silka-thinitalic-webfont.ttf</string>
 	</array>
 </dict>
 </plist>
