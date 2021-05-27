@@ -261,11 +261,7 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
 
                         if self.selectedCoverImageID == nil {
                             self.selectedCoverImageID = self.mailingCoverImages.keys.first(where: {
-                                if let defaultImage = self.mailingCoverImages[$0]!.image.isDefaultCoverImage {
-                                    return defaultImage
-                                } else {
-                                    return false
-                                }
+                                self.mailingCoverImages[$0]!.image.isDefaultCoverImage!
                             })
                         }
                     }
