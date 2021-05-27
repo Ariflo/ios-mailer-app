@@ -11,7 +11,6 @@ import Combine
 class MailingsViewModel: ObservableObject, Identifiable {
     @Published var customNotes: [CustomNote] = []
     @Published var radiusMailings: [RadiusMailing] = []
-    @Published var selectedRadiusMailing: RadiusMailing?
     @Published var loading: Bool = false
 
     private let addressableDataFetcher: FetchableData

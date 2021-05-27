@@ -15,6 +15,15 @@
 		B370BC872576DE9F0066624A /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370BC862576DE9F0066624A /* SignInView.swift */; };
 		B3DB527F257992F8004196A6 /* MailingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB527E257992F8004196A6 /* MailingsView.swift */; };
 		B3DB52872579A84B004196A6 /* Mailings.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB52862579A84B004196A6 /* Mailings.swift */; };
+		CA0FE8DE264B614900AAE273 /* StringsUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0FE8DD264B614900AAE273 /* StringsUtil.swift */; };
+		CA120FEB263486CD0077D743 /* TargetCriteriaMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA120FEA263486CD0077D743 /* TargetCriteriaMenuView.swift */; };
+		CA120FFB2634BFBB0077D743 /* SliderUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA120FFA2634BFBA0077D743 /* SliderUtils.swift */; };
+		CA1210002634C0240077D743 /* SliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA120FFF2634C0240077D743 /* SliderView.swift */; };
+		CA1210052634D2310077D743 /* NumberUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1210042634D2310077D743 /* NumberUtils.swift */; };
+		CA121010263728200077D743 /* TargetCriteriaSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA12100F263728200077D743 /* TargetCriteriaSliderView.swift */; };
+		CA121015263742D00077D743 /* CheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA121014263742D00077D743 /* CheckView.swift */; };
+		CA3B8F8A265430AC005A12EF /* DataTreeSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3B8F89265430AC005A12EF /* DataTreeSearch.swift */; };
+		CA3B8F8C26557FEE005A12EF /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3B8F8B26557FEE005A12EF /* ProfileViewModel.swift */; };
 		CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */; };
 		CA4A0F4325F1966A00BF89CF /* TagIncomingLeadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4A0F4225F1966A00BF89CF /* TagIncomingLeadView.swift */; };
 		CA4A0F4825F1A75D00BF89CF /* TagIncomingLeadViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4A0F4725F1A75D00BF89CF /* TagIncomingLeadViewModel.swift */; };
@@ -37,7 +46,10 @@
 		CA88420725A3A7D200E0D75A /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88420625A3A7D200E0D75A /* Authorization.swift */; };
 		CA88422925A3D52F00E0D75A /* CustomRefreshableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */; };
 		CA93F49E25C9E41000271404 /* AddressableCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93F49D25C9E41000271404 /* AddressableCallView.swift */; };
+		CA9504DD2627834500F0245E /* PreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9504DC2627834500F0245E /* PreviewViewModel.swift */; };
+		CA9504E2262783F200F0245E /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9504E1262783F200F0245E /* PreviewView.swift */; };
 		CAB80CA425B8EFF4005E868D /* ringtone.wav in Resources */ = {isa = PBXBuildFile; fileRef = CAB80CA325B8EFF4005E868D /* ringtone.wav */; };
+		CABE7A5E2639E5FC00B1B9AE /* DetectScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE7A5D2639E5FC00B1B9AE /* DetectScrollView.swift */; };
 		CAC8B086259BE6D400D4447F /* KeychainServiceUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */; };
 		CAC8B0A0259CFBC800D4447F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B09F259CFBC800D4447F /* AppView.swift */; };
 		CAC8B0AB259D017E00D4447F /* CallListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0AA259D017E00D4447F /* CallListView.swift */; };
@@ -45,34 +57,58 @@
 		CAC8B0BD259D020500D4447F /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0BC259D020500D4447F /* ProfileView.swift */; };
 		CAC8B0D5259D347F00D4447F /* JsonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0D4259D347F00D4447F /* JsonUtil.swift */; };
 		CAC8B0DD259D36AF00D4447F /* AddressableDataFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0DC259D36AF00D4447F /* AddressableDataFetcher.swift */; };
-		CADA000325BF8FE200004B4B /* ComposeMailingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADA000225BF8FE200004B4B /* ComposeMailingView.swift */; };
-		CADA001425C0A22800004B4B /* ComposeMailingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADA001325C0A22800004B4B /* ComposeMailingViewModel.swift */; };
+		CACFA56F263234BC007AA8E4 /* GoogleMapsBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA56E263234BC007AA8E4 /* GoogleMapsBase.framework */; };
+		CACFA571263234D0007AA8E4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA570263234D0007AA8E4 /* GoogleMaps.framework */; };
+		CACFA573263234DB007AA8E4 /* GoogleMapsCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA572263234DB007AA8E4 /* GoogleMapsCore.framework */; };
+		CACFA57526323507007AA8E4 /* GooglePlaces.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA57426323507007AA8E4 /* GooglePlaces.framework */; };
+		CACFA5772632354B007AA8E4 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5762632354B007AA8E4 /* GoogleMaps.bundle */; };
+		CACFA57C26323593007AA8E4 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA57B26323593007AA8E4 /* Accelerate.framework */; };
+		CACFA583263235BF007AA8E4 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA57D263235BE007AA8E4 /* CoreTelephony.framework */; };
+		CACFA584263235BF007AA8E4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA57E263235BE007AA8E4 /* CoreData.framework */; };
+		CACFA585263235BF007AA8E4 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA57F263235BE007AA8E4 /* CoreImage.framework */; };
+		CACFA586263235BF007AA8E4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA580263235BE007AA8E4 /* CoreGraphics.framework */; };
+		CACFA587263235BF007AA8E4 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA581263235BE007AA8E4 /* CoreText.framework */; };
+		CACFA588263235BF007AA8E4 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA582263235BE007AA8E4 /* CoreLocation.framework */; };
+		CACFA58A263235C9007AA8E4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA589263235C9007AA8E4 /* GLKit.framework */; };
+		CACFA58C263235D9007AA8E4 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA58B263235D9007AA8E4 /* ImageIO.framework */; };
+		CACFA58E263235F4007AA8E4 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA58D263235F4007AA8E4 /* libc++.tbd */; };
+		CACFA59326323605007AA8E4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA59226323605007AA8E4 /* libz.tbd */; };
+		CACFA5982632360E007AA8E4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA5972632360E007AA8E4 /* OpenGLES.framework */; };
+		CACFA59A2632361C007AA8E4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA5992632361C007AA8E4 /* QuartzCore.framework */; };
+		CACFA59C26323625007AA8E4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA59B26323625007AA8E4 /* SystemConfiguration.framework */; };
+		CACFA59E2632362E007AA8E4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA59D2632362E007AA8E4 /* UIKit.framework */; };
+		CACFA5A02632368F007AA8E4 /* GooglePlaces.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA59F2632368F007AA8E4 /* GooglePlaces.framework */; };
+		CACFA5A2263236D1007AA8E4 /* GoogleMapsBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CACFA5A1263236D1007AA8E4 /* GoogleMapsBase.framework */; };
+		CACFA5A4263236E5007AA8E4 /* GooglePlaces.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5A3263236E5007AA8E4 /* GooglePlaces.bundle */; };
+		CACFA5A926323EC5007AA8E4 /* ColorsUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACFA5A826323EC5007AA8E4 /* ColorsUtil.swift */; };
+		CACFA5C9263336B8007AA8E4 /* silka-extralightitalic-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5BC2633361E007AA8E4 /* silka-extralightitalic-webfont.ttf */; };
+		CACFA5CA263336B8007AA8E4 /* silka-regularitalic-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5BE2633361E007AA8E4 /* silka-regularitalic-webfont.ttf */; };
+		CACFA5CB263336B8007AA8E4 /* silka-regular-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5C326333666007AA8E4 /* silka-regular-webfont.ttf */; };
+		CACFA5CC263336B8007AA8E4 /* silka-lightitalic-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5BD2633361E007AA8E4 /* silka-lightitalic-webfont.ttf */; };
+		CACFA5CD263336B8007AA8E4 /* silka-extralight-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5C126333666007AA8E4 /* silka-extralight-webfont.ttf */; };
+		CACFA5CE263336B8007AA8E4 /* silka-thinitalic-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5C02633361E007AA8E4 /* silka-thinitalic-webfont.ttf */; };
+		CACFA5CF263336B8007AA8E4 /* silka-semibold-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5C726333667007AA8E4 /* silka-semibold-webfont.ttf */; };
+		CACFA5D0263336B8007AA8E4 /* silka-bolditalic-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5BB2633361E007AA8E4 /* silka-bolditalic-webfont.ttf */; };
+		CACFA5D1263336B8007AA8E4 /* silka-light-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5C626333667007AA8E4 /* silka-light-webfont.ttf */; };
+		CACFA5D2263336B8007AA8E4 /* silka-semibolditalic-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5BA2633361E007AA8E4 /* silka-semibolditalic-webfont.ttf */; };
+		CACFA5D3263336B8007AA8E4 /* silka-medium-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5C826333667007AA8E4 /* silka-medium-webfont.ttf */; };
+		CACFA5D4263336B8007AA8E4 /* silka-bold-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5C526333667007AA8E4 /* silka-bold-webfont.ttf */; };
+		CACFA5D5263336B8007AA8E4 /* silka-thin-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5C226333666007AA8E4 /* silka-thin-webfont.ttf */; };
+		CACFA5D6263336B8007AA8E4 /* silka-mediumitalic-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5BF2633361E007AA8E4 /* silka-mediumitalic-webfont.ttf */; };
+		CACFA5D7263336B8007AA8E4 /* silka-black-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5C426333667007AA8E4 /* silka-black-webfont.ttf */; };
+		CACFA5D8263336B8007AA8E4 /* silka-blackitalic-webfont.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CACFA5B9263335E2007AA8E4 /* silka-blackitalic-webfont.ttf */; };
+		CACFA5DD26333B04007AA8E4 /* FontUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACFA5DC26333B04007AA8E4 /* FontUtils.swift */; };
+		CACFA5E7263350D4007AA8E4 /* BordersUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACFA5E6263350D4007AA8E4 /* BordersUtils.swift */; };
 		CADA001C25C0D09000004B4B /* EnumUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADA001B25C0D09000004B4B /* EnumUtil.swift */; };
-		CADA002D25C0F20C00004B4B /* ImageUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADA002C25C0F20C00004B4B /* ImageUtil.swift */; };
-		CAFDBE6D25D5D4BE002D17B4 /* GoogleMapsBase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE6C25D5D4BE002D17B4 /* GoogleMapsBase.framework */; };
-		CAFDBE7325D5D4E5002D17B4 /* GoogleMaps.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE7125D5D4E0002D17B4 /* GoogleMaps.framework */; };
-		CAFDBE7425D5D4E5002D17B4 /* GoogleMapsCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE7225D5D4E5002D17B4 /* GoogleMapsCore.framework */; };
-		CAFDBE7625D5D5F8002D17B4 /* GoogleMaps.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CAFDBE7525D5D5F8002D17B4 /* GoogleMaps.bundle */; };
-		CAFDBE7B25D5D697002D17B4 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE7A25D5D697002D17B4 /* Accelerate.framework */; };
-		CAFDBE7D25D5D6A5002D17B4 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE7C25D5D6A5002D17B4 /* CoreData.framework */; };
-		CAFDBE7F25D5D6B3002D17B4 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE7E25D5D6B3002D17B4 /* CoreGraphics.framework */; };
-		CAFDBE8125D5D6C4002D17B4 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE8025D5D6C4002D17B4 /* CoreImage.framework */; };
-		CAFDBE8325D5D6CE002D17B4 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE8225D5D6CE002D17B4 /* CoreLocation.framework */; };
-		CAFDBE8525D5D6DD002D17B4 /* CoreTelephony.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE8425D5D6DD002D17B4 /* CoreTelephony.framework */; };
-		CAFDBE8725D5D6EC002D17B4 /* CoreText.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE8625D5D6EC002D17B4 /* CoreText.framework */; };
-		CAFDBE8925D5D6F8002D17B4 /* GLKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE8825D5D6F8002D17B4 /* GLKit.framework */; };
-		CAFDBE8B25D5D704002D17B4 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE8A25D5D704002D17B4 /* ImageIO.framework */; };
-		CAFDBE8D25D5D71B002D17B4 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE8C25D5D71B002D17B4 /* libc++.tbd */; };
-		CAFDBE9225D5D72E002D17B4 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE9125D5D72E002D17B4 /* libz.tbd */; };
-		CAFDBE9725D5D73E002D17B4 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE9625D5D73E002D17B4 /* OpenGLES.framework */; };
-		CAFDBE9925D5D751002D17B4 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE9825D5D751002D17B4 /* QuartzCore.framework */; };
-		CAFDBE9B25D5D768002D17B4 /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE9A25D5D768002D17B4 /* SystemConfiguration.framework */; };
-		CAFDBE9D25D5D776002D17B4 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBE9C25D5D776002D17B4 /* UIKit.framework */; };
-		CAFDBEA225D5DAF4002D17B4 /* GooglePlaces.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CAFDBEA125D5DAF4002D17B4 /* GooglePlaces.framework */; };
-		CAFDBEA425D5DB25002D17B4 /* GooglePlaces.bundle in Resources */ = {isa = PBXBuildFile; fileRef = CAFDBEA325D5DB25002D17B4 /* GooglePlaces.bundle */; };
 		CAFDBEA925D5DDD5002D17B4 /* ComposeRadiusMailingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFDBEA825D5DDD5002D17B4 /* ComposeRadiusMailingView.swift */; };
 		CAFDBEAE25D5DF0D002D17B4 /* GoogleMapsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFDBEAD25D5DF0D002D17B4 /* GoogleMapsView.swift */; };
 		CAFDBEC525D6F3D3002D17B4 /* ComposeRadiusMailingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFDBEC425D6F3D3002D17B4 /* ComposeRadiusMailingViewModel.swift */; };
+		CAFECD192632091C009A7837 /* ComposeRadiusMailingSelectLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFECD182632091C009A7837 /* ComposeRadiusMailingSelectLocationView.swift */; };
+		CAFECD1E2632099D009A7837 /* ComposeRadiusMailingCoverArtSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFECD1D2632099D009A7837 /* ComposeRadiusMailingCoverArtSelectionView.swift */; };
+		CAFECD23263209F2009A7837 /* ComposeRadiusMailingTopicSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFECD22263209F1009A7837 /* ComposeRadiusMailingTopicSelectionView.swift */; };
+		CAFECD2826320ACD009A7837 /* ComposeRadiusMailingListConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFECD2726320ACD009A7837 /* ComposeRadiusMailingListConfirmationView.swift */; };
+		CAFECD2D26320B15009A7837 /* ComposeRadiusMailingAudienceConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFECD2C26320B15009A7837 /* ComposeRadiusMailingAudienceConfirmationView.swift */; };
+		CAFECD3226320B78009A7837 /* ComposeRadiusMailingConfirmSendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFECD3126320B78009A7837 /* ComposeRadiusMailingConfirmSendView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -108,6 +144,15 @@
 		B370BC862576DE9F0066624A /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		B3DB527E257992F8004196A6 /* MailingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsView.swift; sourceTree = "<group>"; };
 		B3DB52862579A84B004196A6 /* Mailings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailings.swift; sourceTree = "<group>"; };
+		CA0FE8DD264B614900AAE273 /* StringsUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringsUtil.swift; sourceTree = "<group>"; };
+		CA120FEA263486CD0077D743 /* TargetCriteriaMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetCriteriaMenuView.swift; sourceTree = "<group>"; };
+		CA120FFA2634BFBA0077D743 /* SliderUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderUtils.swift; sourceTree = "<group>"; };
+		CA120FFF2634C0240077D743 /* SliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderView.swift; sourceTree = "<group>"; };
+		CA1210042634D2310077D743 /* NumberUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberUtils.swift; sourceTree = "<group>"; };
+		CA12100F263728200077D743 /* TargetCriteriaSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetCriteriaSliderView.swift; sourceTree = "<group>"; };
+		CA121014263742D00077D743 /* CheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckView.swift; sourceTree = "<group>"; };
+		CA3B8F89265430AC005A12EF /* DataTreeSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTreeSearch.swift; sourceTree = "<group>"; };
+		CA3B8F8B26557FEE005A12EF /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		CA3CE816259BC38500A230E1 /* MailingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingsViewModel.swift; sourceTree = "<group>"; };
 		CA4A0F4225F1966A00BF89CF /* TagIncomingLeadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagIncomingLeadView.swift; sourceTree = "<group>"; };
 		CA4A0F4725F1A75D00BF89CF /* TagIncomingLeadViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagIncomingLeadViewModel.swift; sourceTree = "<group>"; };
@@ -129,7 +174,10 @@
 		CA88420625A3A7D200E0D75A /* Authorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authorization.swift; sourceTree = "<group>"; };
 		CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomRefreshableScrollView.swift; path = Addressable/Utilities/CustomRefreshableScrollView.swift; sourceTree = SOURCE_ROOT; };
 		CA93F49D25C9E41000271404 /* AddressableCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressableCallView.swift; sourceTree = "<group>"; };
+		CA9504DC2627834500F0245E /* PreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewModel.swift; sourceTree = "<group>"; };
+		CA9504E1262783F200F0245E /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		CAB80CA325B8EFF4005E868D /* ringtone.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ringtone.wav; sourceTree = "<group>"; };
+		CABE7A5D2639E5FC00B1B9AE /* DetectScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectScrollView.swift; sourceTree = "<group>"; };
 		CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceUtil.swift; sourceTree = "<group>"; };
 		CAC8B09F259CFBC800D4447F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
 		CAC8B0AA259D017E00D4447F /* CallListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallListView.swift; sourceTree = "<group>"; };
@@ -137,34 +185,58 @@
 		CAC8B0BC259D020500D4447F /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		CAC8B0D4259D347F00D4447F /* JsonUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonUtil.swift; sourceTree = "<group>"; };
 		CAC8B0DC259D36AF00D4447F /* AddressableDataFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressableDataFetcher.swift; sourceTree = "<group>"; };
-		CADA000225BF8FE200004B4B /* ComposeMailingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeMailingView.swift; sourceTree = "<group>"; };
-		CADA001325C0A22800004B4B /* ComposeMailingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeMailingViewModel.swift; sourceTree = "<group>"; };
+		CACFA56E263234BC007AA8E4 /* GoogleMapsBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMapsBase.framework; sourceTree = "<group>"; };
+		CACFA570263234D0007AA8E4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
+		CACFA572263234DB007AA8E4 /* GoogleMapsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMapsCore.framework; sourceTree = "<group>"; };
+		CACFA57426323507007AA8E4 /* GooglePlaces.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GooglePlaces.framework; sourceTree = "<group>"; };
+		CACFA5762632354B007AA8E4 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = GoogleMaps.framework/Resources/GoogleMaps.bundle; sourceTree = "<group>"; };
+		CACFA57B26323593007AA8E4 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
+		CACFA57D263235BE007AA8E4 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
+		CACFA57E263235BE007AA8E4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		CACFA57F263235BE007AA8E4 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
+		CACFA580263235BE007AA8E4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		CACFA581263235BE007AA8E4 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
+		CACFA582263235BE007AA8E4 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		CACFA589263235C9007AA8E4 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
+		CACFA58B263235D9007AA8E4 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
+		CACFA58D263235F4007AA8E4 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
+		CACFA59226323605007AA8E4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		CACFA5972632360E007AA8E4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
+		CACFA5992632361C007AA8E4 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		CACFA59B26323625007AA8E4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
+		CACFA59D2632362E007AA8E4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		CACFA59F2632368F007AA8E4 /* GooglePlaces.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GooglePlaces.framework; path = "../../Downloads/GooglePlaces-4.2.0/Frameworks/GooglePlaces.framework"; sourceTree = "<group>"; };
+		CACFA5A1263236D1007AA8E4 /* GoogleMapsBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleMapsBase.framework; path = "../../Downloads/GoogleMaps-4.2.0/Base/Frameworks/GoogleMapsBase.framework"; sourceTree = "<group>"; };
+		CACFA5A3263236E5007AA8E4 /* GooglePlaces.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = GooglePlaces.bundle; sourceTree = "<group>"; };
+		CACFA5A826323EC5007AA8E4 /* ColorsUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsUtil.swift; sourceTree = "<group>"; };
+		CACFA5B9263335E2007AA8E4 /* silka-blackitalic-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-blackitalic-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5BA2633361E007AA8E4 /* silka-semibolditalic-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-semibolditalic-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5BB2633361E007AA8E4 /* silka-bolditalic-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-bolditalic-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5BC2633361E007AA8E4 /* silka-extralightitalic-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-extralightitalic-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5BD2633361E007AA8E4 /* silka-lightitalic-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-lightitalic-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5BE2633361E007AA8E4 /* silka-regularitalic-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-regularitalic-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5BF2633361E007AA8E4 /* silka-mediumitalic-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-mediumitalic-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5C02633361E007AA8E4 /* silka-thinitalic-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-thinitalic-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5C126333666007AA8E4 /* silka-extralight-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-extralight-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5C226333666007AA8E4 /* silka-thin-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-thin-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5C326333666007AA8E4 /* silka-regular-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-regular-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5C426333667007AA8E4 /* silka-black-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-black-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5C526333667007AA8E4 /* silka-bold-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-bold-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5C626333667007AA8E4 /* silka-light-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-light-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5C726333667007AA8E4 /* silka-semibold-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-semibold-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5C826333667007AA8E4 /* silka-medium-webfont.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "silka-medium-webfont.ttf"; sourceTree = "<group>"; };
+		CACFA5DC26333B04007AA8E4 /* FontUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontUtils.swift; sourceTree = "<group>"; };
+		CACFA5E6263350D4007AA8E4 /* BordersUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BordersUtils.swift; sourceTree = "<group>"; };
 		CADA001B25C0D09000004B4B /* EnumUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumUtil.swift; sourceTree = "<group>"; };
-		CADA002C25C0F20C00004B4B /* ImageUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUtil.swift; sourceTree = "<group>"; };
-		CAFDBE6C25D5D4BE002D17B4 /* GoogleMapsBase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMapsBase.framework; sourceTree = "<group>"; };
-		CAFDBE7125D5D4E0002D17B4 /* GoogleMaps.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMaps.framework; sourceTree = "<group>"; };
-		CAFDBE7225D5D4E5002D17B4 /* GoogleMapsCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GoogleMapsCore.framework; sourceTree = "<group>"; };
-		CAFDBE7525D5D5F8002D17B4 /* GoogleMaps.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GoogleMaps.bundle; path = GoogleMaps.framework/Resources/GoogleMaps.bundle; sourceTree = "<group>"; };
-		CAFDBE7A25D5D697002D17B4 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = System/Library/Frameworks/Accelerate.framework; sourceTree = SDKROOT; };
-		CAFDBE7C25D5D6A5002D17B4 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		CAFDBE7E25D5D6B3002D17B4 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		CAFDBE8025D5D6C4002D17B4 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = System/Library/Frameworks/CoreImage.framework; sourceTree = SDKROOT; };
-		CAFDBE8225D5D6CE002D17B4 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
-		CAFDBE8425D5D6DD002D17B4 /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
-		CAFDBE8625D5D6EC002D17B4 /* CoreText.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreText.framework; path = System/Library/Frameworks/CoreText.framework; sourceTree = SDKROOT; };
-		CAFDBE8825D5D6F8002D17B4 /* GLKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLKit.framework; path = System/Library/Frameworks/GLKit.framework; sourceTree = SDKROOT; };
-		CAFDBE8A25D5D704002D17B4 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
-		CAFDBE8C25D5D71B002D17B4 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
-		CAFDBE9125D5D72E002D17B4 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
-		CAFDBE9625D5D73E002D17B4 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
-		CAFDBE9825D5D751002D17B4 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		CAFDBE9A25D5D768002D17B4 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		CAFDBE9C25D5D776002D17B4 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
-		CAFDBEA125D5DAF4002D17B4 /* GooglePlaces.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = GooglePlaces.framework; sourceTree = "<group>"; };
-		CAFDBEA325D5DB25002D17B4 /* GooglePlaces.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = GooglePlaces.bundle; path = GooglePlaces.framework/Resources/GooglePlaces.bundle; sourceTree = "<group>"; };
 		CAFDBEA825D5DDD5002D17B4 /* ComposeRadiusMailingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusMailingView.swift; sourceTree = "<group>"; };
 		CAFDBEAD25D5DF0D002D17B4 /* GoogleMapsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapsView.swift; sourceTree = "<group>"; };
 		CAFDBEC425D6F3D3002D17B4 /* ComposeRadiusMailingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusMailingViewModel.swift; sourceTree = "<group>"; };
+		CAFECD182632091C009A7837 /* ComposeRadiusMailingSelectLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusMailingSelectLocationView.swift; sourceTree = "<group>"; };
+		CAFECD1D2632099D009A7837 /* ComposeRadiusMailingCoverArtSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusMailingCoverArtSelectionView.swift; sourceTree = "<group>"; };
+		CAFECD22263209F1009A7837 /* ComposeRadiusMailingTopicSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusMailingTopicSelectionView.swift; sourceTree = "<group>"; };
+		CAFECD2726320ACD009A7837 /* ComposeRadiusMailingListConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusMailingListConfirmationView.swift; sourceTree = "<group>"; };
+		CAFECD2C26320B15009A7837 /* ComposeRadiusMailingAudienceConfirmationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusMailingAudienceConfirmationView.swift; sourceTree = "<group>"; };
+		CAFECD3126320B78009A7837 /* ComposeRadiusMailingConfirmSendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusMailingConfirmSendView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,26 +244,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CAFDBE9D25D5D776002D17B4 /* UIKit.framework in Frameworks */,
-				CAFDBE9B25D5D768002D17B4 /* SystemConfiguration.framework in Frameworks */,
-				CAFDBE9925D5D751002D17B4 /* QuartzCore.framework in Frameworks */,
-				CAFDBE9725D5D73E002D17B4 /* OpenGLES.framework in Frameworks */,
-				CAFDBE9225D5D72E002D17B4 /* libz.tbd in Frameworks */,
-				CAFDBE8D25D5D71B002D17B4 /* libc++.tbd in Frameworks */,
-				CAFDBE8B25D5D704002D17B4 /* ImageIO.framework in Frameworks */,
-				CAFDBE8925D5D6F8002D17B4 /* GLKit.framework in Frameworks */,
-				CAFDBE8725D5D6EC002D17B4 /* CoreText.framework in Frameworks */,
-				CAFDBE8525D5D6DD002D17B4 /* CoreTelephony.framework in Frameworks */,
-				CAFDBE8325D5D6CE002D17B4 /* CoreLocation.framework in Frameworks */,
-				CAFDBE8125D5D6C4002D17B4 /* CoreImage.framework in Frameworks */,
-				CAFDBE7F25D5D6B3002D17B4 /* CoreGraphics.framework in Frameworks */,
-				CAFDBE7D25D5D6A5002D17B4 /* CoreData.framework in Frameworks */,
-				CAFDBE7B25D5D697002D17B4 /* Accelerate.framework in Frameworks */,
-				CAFDBE7325D5D4E5002D17B4 /* GoogleMaps.framework in Frameworks */,
+				CACFA59E2632362E007AA8E4 /* UIKit.framework in Frameworks */,
+				CACFA59C26323625007AA8E4 /* SystemConfiguration.framework in Frameworks */,
+				CACFA59A2632361C007AA8E4 /* QuartzCore.framework in Frameworks */,
+				CACFA5982632360E007AA8E4 /* OpenGLES.framework in Frameworks */,
+				CACFA59326323605007AA8E4 /* libz.tbd in Frameworks */,
+				CACFA58E263235F4007AA8E4 /* libc++.tbd in Frameworks */,
+				CACFA58C263235D9007AA8E4 /* ImageIO.framework in Frameworks */,
+				CACFA58A263235C9007AA8E4 /* GLKit.framework in Frameworks */,
+				CACFA583263235BF007AA8E4 /* CoreTelephony.framework in Frameworks */,
+				CACFA584263235BF007AA8E4 /* CoreData.framework in Frameworks */,
+				CACFA585263235BF007AA8E4 /* CoreImage.framework in Frameworks */,
+				CACFA5A2263236D1007AA8E4 /* GoogleMapsBase.framework in Frameworks */,
+				CACFA586263235BF007AA8E4 /* CoreGraphics.framework in Frameworks */,
+				CACFA5A02632368F007AA8E4 /* GooglePlaces.framework in Frameworks */,
+				CACFA587263235BF007AA8E4 /* CoreText.framework in Frameworks */,
+				CACFA588263235BF007AA8E4 /* CoreLocation.framework in Frameworks */,
+				CACFA57C26323593007AA8E4 /* Accelerate.framework in Frameworks */,
+				CACFA571263234D0007AA8E4 /* GoogleMaps.framework in Frameworks */,
 				CA4AE37B25D30C86003B6CE8 /* TwilioVoice in Frameworks */,
-				CAFDBE6D25D5D4BE002D17B4 /* GoogleMapsBase.framework in Frameworks */,
-				CAFDBE7425D5D4E5002D17B4 /* GoogleMapsCore.framework in Frameworks */,
-				CAFDBEA225D5DAF4002D17B4 /* GooglePlaces.framework in Frameworks */,
+				CACFA56F263234BC007AA8E4 /* GoogleMapsBase.framework in Frameworks */,
+				CACFA573263234DB007AA8E4 /* GoogleMapsCore.framework in Frameworks */,
+				CACFA57526323507007AA8E4 /* GooglePlaces.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,8 +289,9 @@
 		B370BC0A2576BAC10066624A = {
 			isa = PBXGroup;
 			children = (
-				CAFDBEA325D5DB25002D17B4 /* GooglePlaces.bundle */,
-				CAFDBE7525D5D5F8002D17B4 /* GoogleMaps.bundle */,
+				CACFA5B8263335C6007AA8E4 /* AddressableFonts */,
+				CACFA5A3263236E5007AA8E4 /* GooglePlaces.bundle */,
+				CACFA5762632354B007AA8E4 /* GoogleMaps.bundle */,
 				CAB80C9725B7867A005E868D /* Ringtone */,
 				B370BC152576BAC10066624A /* Addressable */,
 				B370BC272576BAC20066624A /* AddressableTests */,
@@ -291,7 +366,6 @@
 				CA85568025B0E6400063274D /* ContentMessageView.swift */,
 				CA85568525B0E7330063274D /* MessageView.swift */,
 				CA85568D25B0EB230063274D /* MessageChatView.swift */,
-				CADA000225BF8FE200004B4B /* ComposeMailingView.swift */,
 				CA93F49D25C9E41000271404 /* AddressableCallView.swift */,
 				CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */,
 				CAFDBEA825D5DDD5002D17B4 /* ComposeRadiusMailingView.swift */,
@@ -299,6 +373,18 @@
 				CA4A0F4225F1966A00BF89CF /* TagIncomingLeadView.swift */,
 				CA4A0F4C25F1AF8000BF89CF /* SegmentedControlIconOptionView.swift */,
 				CA4A0F5125F2CE3200BF89CF /* CustomSegmentedPickerView.swift */,
+				CA9504E1262783F200F0245E /* PreviewView.swift */,
+				CAFECD182632091C009A7837 /* ComposeRadiusMailingSelectLocationView.swift */,
+				CAFECD1D2632099D009A7837 /* ComposeRadiusMailingCoverArtSelectionView.swift */,
+				CAFECD22263209F1009A7837 /* ComposeRadiusMailingTopicSelectionView.swift */,
+				CAFECD2726320ACD009A7837 /* ComposeRadiusMailingListConfirmationView.swift */,
+				CAFECD2C26320B15009A7837 /* ComposeRadiusMailingAudienceConfirmationView.swift */,
+				CAFECD3126320B78009A7837 /* ComposeRadiusMailingConfirmSendView.swift */,
+				CA120FEA263486CD0077D743 /* TargetCriteriaMenuView.swift */,
+				CA120FFF2634C0240077D743 /* SliderView.swift */,
+				CA12100F263728200077D743 /* TargetCriteriaSliderView.swift */,
+				CA121014263742D00077D743 /* CheckView.swift */,
+				CABE7A5D2639E5FC00B1B9AE /* DetectScrollView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -313,6 +399,7 @@
 				CA8555D525A81B330063274D /* CallManager.swift */,
 				CA85565725AFC4910063274D /* IncomingLead.swift */,
 				CA85567B25B0E5C50063274D /* Messages.swift */,
+				CA3B8F89265430AC005A12EF /* DataTreeSearch.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -324,9 +411,10 @@
 				CA88420125A39F2700E0D75A /* SignInViewModel.swift */,
 				CA85565C25AFC5ED0063274D /* CallsViewModel.swift */,
 				CA85567625B0E34F0063274D /* MessagesViewModel.swift */,
-				CADA001325C0A22800004B4B /* ComposeMailingViewModel.swift */,
 				CAFDBEC425D6F3D3002D17B4 /* ComposeRadiusMailingViewModel.swift */,
 				CA4A0F4725F1A75D00BF89CF /* TagIncomingLeadViewModel.swift */,
+				CA9504DC2627834500F0245E /* PreviewViewModel.swift */,
+				CA3B8F8B26557FEE005A12EF /* ProfileViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -338,8 +426,13 @@
 				CAC8B0D4259D347F00D4447F /* JsonUtil.swift */,
 				CA85564C25AFB9B40063274D /* PermissionsUtil.swift */,
 				CADA001B25C0D09000004B4B /* EnumUtil.swift */,
-				CADA002C25C0F20C00004B4B /* ImageUtil.swift */,
 				CA62A7A325DED59B005BF410 /* DictionaryUtil.swift */,
+				CACFA5A826323EC5007AA8E4 /* ColorsUtil.swift */,
+				CACFA5DC26333B04007AA8E4 /* FontUtils.swift */,
+				CACFA5E6263350D4007AA8E4 /* BordersUtils.swift */,
+				CA120FFA2634BFBA0077D743 /* SliderUtils.swift */,
+				CA1210042634D2310077D743 /* NumberUtils.swift */,
+				CA0FE8DD264B614900AAE273 /* StringsUtil.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -347,25 +440,27 @@
 		CA8555BF25A648FB0063274D /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				CAFDBEA125D5DAF4002D17B4 /* GooglePlaces.framework */,
-				CAFDBE9C25D5D776002D17B4 /* UIKit.framework */,
-				CAFDBE9A25D5D768002D17B4 /* SystemConfiguration.framework */,
-				CAFDBE9825D5D751002D17B4 /* QuartzCore.framework */,
-				CAFDBE9625D5D73E002D17B4 /* OpenGLES.framework */,
-				CAFDBE9125D5D72E002D17B4 /* libz.tbd */,
-				CAFDBE8C25D5D71B002D17B4 /* libc++.tbd */,
-				CAFDBE8A25D5D704002D17B4 /* ImageIO.framework */,
-				CAFDBE8825D5D6F8002D17B4 /* GLKit.framework */,
-				CAFDBE8625D5D6EC002D17B4 /* CoreText.framework */,
-				CAFDBE8425D5D6DD002D17B4 /* CoreTelephony.framework */,
-				CAFDBE8225D5D6CE002D17B4 /* CoreLocation.framework */,
-				CAFDBE8025D5D6C4002D17B4 /* CoreImage.framework */,
-				CAFDBE7E25D5D6B3002D17B4 /* CoreGraphics.framework */,
-				CAFDBE7C25D5D6A5002D17B4 /* CoreData.framework */,
-				CAFDBE7A25D5D697002D17B4 /* Accelerate.framework */,
-				CAFDBE6C25D5D4BE002D17B4 /* GoogleMapsBase.framework */,
-				CAFDBE7125D5D4E0002D17B4 /* GoogleMaps.framework */,
-				CAFDBE7225D5D4E5002D17B4 /* GoogleMapsCore.framework */,
+				CACFA59D2632362E007AA8E4 /* UIKit.framework */,
+				CACFA59B26323625007AA8E4 /* SystemConfiguration.framework */,
+				CACFA5992632361C007AA8E4 /* QuartzCore.framework */,
+				CACFA5972632360E007AA8E4 /* OpenGLES.framework */,
+				CACFA59226323605007AA8E4 /* libz.tbd */,
+				CACFA58D263235F4007AA8E4 /* libc++.tbd */,
+				CACFA58B263235D9007AA8E4 /* ImageIO.framework */,
+				CACFA589263235C9007AA8E4 /* GLKit.framework */,
+				CACFA57E263235BE007AA8E4 /* CoreData.framework */,
+				CACFA580263235BE007AA8E4 /* CoreGraphics.framework */,
+				CACFA57F263235BE007AA8E4 /* CoreImage.framework */,
+				CACFA582263235BE007AA8E4 /* CoreLocation.framework */,
+				CACFA57D263235BE007AA8E4 /* CoreTelephony.framework */,
+				CACFA581263235BE007AA8E4 /* CoreText.framework */,
+				CACFA57B26323593007AA8E4 /* Accelerate.framework */,
+				CACFA56E263234BC007AA8E4 /* GoogleMapsBase.framework */,
+				CACFA5A1263236D1007AA8E4 /* GoogleMapsBase.framework */,
+				CACFA570263234D0007AA8E4 /* GoogleMaps.framework */,
+				CACFA572263234DB007AA8E4 /* GoogleMapsCore.framework */,
+				CACFA59F2632368F007AA8E4 /* GooglePlaces.framework */,
+				CACFA57426323507007AA8E4 /* GooglePlaces.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -376,6 +471,29 @@
 				CAB80CA325B8EFF4005E868D /* ringtone.wav */,
 			);
 			path = Ringtone;
+			sourceTree = "<group>";
+		};
+		CACFA5B8263335C6007AA8E4 /* AddressableFonts */ = {
+			isa = PBXGroup;
+			children = (
+				CACFA5BB2633361E007AA8E4 /* silka-bolditalic-webfont.ttf */,
+				CACFA5BC2633361E007AA8E4 /* silka-extralightitalic-webfont.ttf */,
+				CACFA5BD2633361E007AA8E4 /* silka-lightitalic-webfont.ttf */,
+				CACFA5BF2633361E007AA8E4 /* silka-mediumitalic-webfont.ttf */,
+				CACFA5BE2633361E007AA8E4 /* silka-regularitalic-webfont.ttf */,
+				CACFA5BA2633361E007AA8E4 /* silka-semibolditalic-webfont.ttf */,
+				CACFA5C02633361E007AA8E4 /* silka-thinitalic-webfont.ttf */,
+				CACFA5B9263335E2007AA8E4 /* silka-blackitalic-webfont.ttf */,
+				CACFA5C426333667007AA8E4 /* silka-black-webfont.ttf */,
+				CACFA5C526333667007AA8E4 /* silka-bold-webfont.ttf */,
+				CACFA5C126333666007AA8E4 /* silka-extralight-webfont.ttf */,
+				CACFA5C626333667007AA8E4 /* silka-light-webfont.ttf */,
+				CACFA5C826333667007AA8E4 /* silka-medium-webfont.ttf */,
+				CACFA5C326333666007AA8E4 /* silka-regular-webfont.ttf */,
+				CACFA5C726333667007AA8E4 /* silka-semibold-webfont.ttf */,
+				CACFA5C226333666007AA8E4 /* silka-thin-webfont.ttf */,
+			);
+			path = AddressableFonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -489,11 +607,27 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CACFA5D1263336B8007AA8E4 /* silka-light-webfont.ttf in Resources */,
 				B370BC1E2576BAC10066624A /* Preview Assets.xcassets in Resources */,
+				CACFA5D2263336B8007AA8E4 /* silka-semibolditalic-webfont.ttf in Resources */,
+				CACFA5C9263336B8007AA8E4 /* silka-extralightitalic-webfont.ttf in Resources */,
+				CACFA5D0263336B8007AA8E4 /* silka-bolditalic-webfont.ttf in Resources */,
+				CACFA5CB263336B8007AA8E4 /* silka-regular-webfont.ttf in Resources */,
+				CACFA5D8263336B8007AA8E4 /* silka-blackitalic-webfont.ttf in Resources */,
+				CACFA5CC263336B8007AA8E4 /* silka-lightitalic-webfont.ttf in Resources */,
+				CACFA5CF263336B8007AA8E4 /* silka-semibold-webfont.ttf in Resources */,
+				CACFA5D3263336B8007AA8E4 /* silka-medium-webfont.ttf in Resources */,
+				CACFA5CA263336B8007AA8E4 /* silka-regularitalic-webfont.ttf in Resources */,
+				CACFA5D4263336B8007AA8E4 /* silka-bold-webfont.ttf in Resources */,
 				B370BC1B2576BAC10066624A /* Assets.xcassets in Resources */,
+				CACFA5CE263336B8007AA8E4 /* silka-thinitalic-webfont.ttf in Resources */,
 				CAB80CA425B8EFF4005E868D /* ringtone.wav in Resources */,
-				CAFDBE7625D5D5F8002D17B4 /* GoogleMaps.bundle in Resources */,
-				CAFDBEA425D5DB25002D17B4 /* GooglePlaces.bundle in Resources */,
+				CACFA5772632354B007AA8E4 /* GoogleMaps.bundle in Resources */,
+				CACFA5A4263236E5007AA8E4 /* GooglePlaces.bundle in Resources */,
+				CACFA5D5263336B8007AA8E4 /* silka-thin-webfont.ttf in Resources */,
+				CACFA5CD263336B8007AA8E4 /* silka-extralight-webfont.ttf in Resources */,
+				CACFA5D6263336B8007AA8E4 /* silka-mediumitalic-webfont.ttf in Resources */,
+				CACFA5D7263336B8007AA8E4 /* silka-black-webfont.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -557,42 +691,60 @@
 			files = (
 				CA85567725B0E34F0063274D /* MessagesViewModel.swift in Sources */,
 				CA85567C25B0E5C50063274D /* Messages.swift in Sources */,
+				CAFECD3226320B78009A7837 /* ComposeRadiusMailingConfirmSendView.swift in Sources */,
 				CAC8B086259BE6D400D4447F /* KeychainServiceUtil.swift in Sources */,
 				CA62A7A425DED59B005BF410 /* DictionaryUtil.swift in Sources */,
 				CA4AE34125CD95E8003B6CE8 /* KeyPadView.swift in Sources */,
+				CA120FFB2634BFBB0077D743 /* SliderUtils.swift in Sources */,
 				CAC8B0D5259D347F00D4447F /* JsonUtil.swift in Sources */,
 				CAC8B0DD259D36AF00D4447F /* AddressableDataFetcher.swift in Sources */,
+				CAFECD2D26320B15009A7837 /* ComposeRadiusMailingAudienceConfirmationView.swift in Sources */,
 				CA85568125B0E6400063274D /* ContentMessageView.swift in Sources */,
 				CAC8B0A0259CFBC800D4447F /* AppView.swift in Sources */,
 				CA85568E25B0EB230063274D /* MessageChatView.swift in Sources */,
 				CAFDBEAE25D5DF0D002D17B4 /* GoogleMapsView.swift in Sources */,
-				CADA002D25C0F20C00004B4B /* ImageUtil.swift in Sources */,
+				CABE7A5E2639E5FC00B1B9AE /* DetectScrollView.swift in Sources */,
+				CA3B8F8A265430AC005A12EF /* DataTreeSearch.swift in Sources */,
+				CA9504DD2627834500F0245E /* PreviewViewModel.swift in Sources */,
 				CA4A0F4D25F1AF8000BF89CF /* SegmentedControlIconOptionView.swift in Sources */,
+				CA9504E2262783F200F0245E /* PreviewView.swift in Sources */,
 				CA88420225A39F2700E0D75A /* SignInViewModel.swift in Sources */,
-				CADA000325BF8FE200004B4B /* ComposeMailingView.swift in Sources */,
 				CA85565D25AFC5ED0063274D /* CallsViewModel.swift in Sources */,
+				CAFECD1E2632099D009A7837 /* ComposeRadiusMailingCoverArtSelectionView.swift in Sources */,
 				CAFDBEC525D6F3D3002D17B4 /* ComposeRadiusMailingViewModel.swift in Sources */,
+				CAFECD2826320ACD009A7837 /* ComposeRadiusMailingListConfirmationView.swift in Sources */,
 				CA88420725A3A7D200E0D75A /* Authorization.swift in Sources */,
 				CA85565825AFC4910063274D /* IncomingLead.swift in Sources */,
+				CAFECD192632091C009A7837 /* ComposeRadiusMailingSelectLocationView.swift in Sources */,
 				B3DB527F257992F8004196A6 /* MailingsView.swift in Sources */,
 				CADA001C25C0D09000004B4B /* EnumUtil.swift in Sources */,
 				CA8555D125A81AF80063274D /* CallProvider.swift in Sources */,
 				CA3CE817259BC38500A230E1 /* MailingsViewModel.swift in Sources */,
+				CACFA5E7263350D4007AA8E4 /* BordersUtils.swift in Sources */,
 				B3DB52872579A84B004196A6 /* Mailings.swift in Sources */,
 				CAC8B0AB259D017E00D4447F /* CallListView.swift in Sources */,
 				CA4A0F5225F2CE3200BF89CF /* CustomSegmentedPickerView.swift in Sources */,
 				CA93F49E25C9E41000271404 /* AddressableCallView.swift in Sources */,
-				CADA001425C0A22800004B4B /* ComposeMailingViewModel.swift in Sources */,
+				CA120FEB263486CD0077D743 /* TargetCriteriaMenuView.swift in Sources */,
 				CAC8B0B0259D01C300D4447F /* MessageListView.swift in Sources */,
+				CACFA5A926323EC5007AA8E4 /* ColorsUtil.swift in Sources */,
+				CA3B8F8C26557FEE005A12EF /* ProfileViewModel.swift in Sources */,
+				CAFECD23263209F2009A7837 /* ComposeRadiusMailingTopicSelectionView.swift in Sources */,
 				CAC8B0BD259D020500D4447F /* ProfileView.swift in Sources */,
 				B370BC872576DE9F0066624A /* SignInView.swift in Sources */,
+				CA121015263742D00077D743 /* CheckView.swift in Sources */,
 				B370BC172576BAC10066624A /* AddressableApp.swift in Sources */,
 				CA88422925A3D52F00E0D75A /* CustomRefreshableScrollView.swift in Sources */,
 				CA85564D25AFB9B40063274D /* PermissionsUtil.swift in Sources */,
 				CA4A0F4825F1A75D00BF89CF /* TagIncomingLeadViewModel.swift in Sources */,
+				CA121010263728200077D743 /* TargetCriteriaSliderView.swift in Sources */,
+				CA1210002634C0240077D743 /* SliderView.swift in Sources */,
 				CA8555D625A81B330063274D /* CallManager.swift in Sources */,
 				CA85568625B0E7330063274D /* MessageView.swift in Sources */,
 				CA4A0F4325F1966A00BF89CF /* TagIncomingLeadView.swift in Sources */,
+				CACFA5DD26333B04007AA8E4 /* FontUtils.swift in Sources */,
+				CA1210052634D2310077D743 /* NumberUtils.swift in Sources */,
+				CA0FE8DE264B614900AAE273 /* StringsUtil.swift in Sources */,
 				CAFDBEA925D5DDD5002D17B4 /* ComposeRadiusMailingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -754,7 +906,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2.5;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;
@@ -784,7 +936,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2.5;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;

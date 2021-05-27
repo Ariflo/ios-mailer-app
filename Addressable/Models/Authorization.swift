@@ -26,3 +26,12 @@ struct DeviceIDWrapper: Codable {
         case deviceID = "device_id"
     }
 }
+
+// MARK: - MobileUserLoggedOutResponse
+struct MobileUserLoggedOutResponse: Codable {
+    let success: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case success
+    }
+}

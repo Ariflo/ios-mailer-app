@@ -15,7 +15,8 @@ struct GoogleMapsView: UIViewRepresentable {
 
     func makeUIView(context: Self.Context) -> GMSMapView {
         let camera = GMSCameraPosition.camera(withLatitude: coordinates.0, longitude: coordinates.1, zoom: zoom)
-        let mapView = GMSMapView.map(withFrame: CGRect.zero, camera: camera)
+        let mapID = GMSMapID(identifier: "a7e9b12ef1d1327d")
+        let mapView = GMSMapView(frame: .zero, mapID: mapID, camera: camera)
 
         mapView.isMyLocationEnabled = true
 
@@ -35,6 +36,7 @@ struct GoogleMapsView: UIViewRepresentable {
 
         if locationSelected {
             let marker = GMSMarker()
+            marker.icon = GMSMarker.markerImage(with: UIColor(rgb: 0x7E00B5))
             marker.position = CLLocationCoordinate2D(latitude: coordinates.0, longitude: coordinates.1)
             marker.map = mapView
         }

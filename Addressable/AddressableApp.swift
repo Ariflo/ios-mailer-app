@@ -24,7 +24,11 @@ protocol PushKitEventDelegate: AnyObject {
 
 // TODO: Name this back to 'AppDelegate' when Lint issue is solved - https://github.com/realm/SwiftLint/issues/2786
 class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, ObservableObject {
+    // TODO: Replace these w/ Navigation Enum w/ Dashboard Refresh
     @Published var displayCallView: Bool = false
+    @Published var displayComposeRadiusMailing: Bool = false
+    @Published var selectedRadiusMailing: RadiusMailing?
+
     @Published var callState: String = CallState.connecting.rawValue
     @Published var fromAddressableCallView: Bool = false
 

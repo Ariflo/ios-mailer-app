@@ -8,6 +8,43 @@
 import SwiftUI
 import Combine
 
+// MARK: - Mailing
+struct Mailing: Codable {
+    let id, accountID, userID: Int
+    let name, createdAt, updatedAt: String
+    let isCopyApproved, isAssetsApproved: Bool
+    let targetQuantity, finalQuantity: Int
+    let hubspotTicketID: Int?
+    let subjectListEntryID: Int
+    let multiTouchTopicID, parentMailingID: Int?
+    let mailingOrder, priority, effort, confidence: Int
+    let feasibility: Int
+    let mailedZipcodes: String?
+    let isMailed, manualList: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case accountID = "account_id"
+        case userID = "user_id"
+        case name
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+        case isCopyApproved = "is_copy_approved"
+        case isAssetsApproved = "is_assets_approved"
+        case targetQuantity = "target_quantity"
+        case finalQuantity = "final_quantity"
+        case hubspotTicketID = "hubspot_ticket_id"
+        case subjectListEntryID = "subject_list_entry_id"
+        case multiTouchTopicID = "multi_touch_topic_id"
+        case parentMailingID = "parent_mailing_id"
+        case mailingOrder = "mailing_order"
+        case priority, effort, confidence, feasibility
+        case mailedZipcodes = "mailed_zipcodes"
+        case isMailed = "is_mailed"
+        case manualList = "manual_list"
+    }
+}
+
 // MARK: - CampaignsResponse
 struct CampaignsResponse: Codable {
     let campaigns: [Campaign]
@@ -33,33 +70,59 @@ struct RadiusMailingWrapper: Codable {
 }
 
 // MARK: - RadiusMailing
-struct RadiusMailing: Codable {
+struct RadiusMailing: Codable, Identifiable {
+    let id: Int
     let account: Account
     let user: User
     let name, status: String
     let listCount: Int
-    let recipients: [SubjectListEntry]
+    let recipients: [Recipient]
     let targetQuantity, activeRecipientCount: Int
     let layoutTemplate: LayoutTemplate?
-    let parentMailingID: Int
     let radiusTemplateID: Int?
+    let customNoteTemplateID: Int?
+    let relatedMailing: Mailing?
     let subjectListEntry: SubjectListEntry
     let topicDuration: Int?
+    let topicSelectionID: Int?
+    let listStatus: String?
+    let targetDropDate: String?
+    let cardInsidePreviewUrl: String?
 
     enum CodingKeys: String, CodingKey {
-        case account, user, name, status
+        case id, account, user, name, status
         case listCount = "list_count"
         case recipients
         case targetQuantity = "target_quantity"
         case activeRecipientCount = "active_recipient_count"
         case layoutTemplate = "layout_template"
-        case parentMailingID = "parent_mailing_id"
         case radiusTemplateID = "radius_template_id"
+        case customNoteTemplateID = "custom_note_template_id"
+        case relatedMailing = "corresponding_mailing"
         case subjectListEntry = "subject_list_entry"
         case topicDuration = "topic_duration"
+        case topicSelectionID = "selected_multi_touch_topic_id"
+        case listStatus = "list_status"
+        case targetDropDate = "target_drop_date"
+        case cardInsidePreviewUrl = "card_inside_preview_url"
     }
 }
+// MARK: - OutgoingRadiusMailingTargetDropDate
+struct OutgoingRadiusMailingTargetDropDate: Codable {
+    let radiusMailing: TargetDropDate
 
+    enum CodingKeys: String, CodingKey {
+        case radiusMailing = "radius_mailing"
+    }
+}
+// MARK: - TargetDropDate
+struct TargetDropDate: Codable {
+    let tagetDropDate: String?
+
+    enum CodingKeys: String, CodingKey {
+        case tagetDropDate = "target_drop_date"
+    }
+}
 // MARK: - OutgoingRadiusMailingCoverArtWrapper
 struct OutgoingRadiusMailingCoverArtWrapper: Codable {
     let cover: OutgoingRadiusMailingCoverArtData
@@ -81,25 +144,33 @@ struct OutgoingRadiusMailingCoverArtData: Codable {
 // MARK: - OutgoingRadiusMailingCoverArtWrapper
 struct OutgoingRadiusMailingTopicWrapper: Codable {
     let topic: OutgoingRadiusMailingTopicData
+    let topicTemplate: OutgoingRadiusMailingTopicTemplateData
+    let mergeVars: [String: String]
 
     enum CodingKeys: String, CodingKey {
         case topic
+        case topicTemplate = "topic_template"
+        case mergeVars = "merge_vars"
     }
 }
 // MARK: - OutgoingRadiusMailingTopicData
 struct OutgoingRadiusMailingTopicData: Codable {
     let multiTouchTopicID: Int
-    let templateOneBody: String
-    let templateTwoBody: String
-    let mergeVars: [String: String]
-    let touchDuration: Int
 
     enum CodingKeys: String, CodingKey {
         case multiTouchTopicID = "multi_touch_topic_id"
+    }
+}
+// MARK: - OutgoingRadiusMailingTopicTemplateData
+struct OutgoingRadiusMailingTopicTemplateData: Codable {
+    let shouldEditTouchOneTemplate: Bool?
+    let templateOneBody: String
+    let templateTwoBody: String
+
+    enum CodingKeys: String, CodingKey {
+        case shouldEditTouchOneTemplate = "update_template_one"
         case templateOneBody = "template_one_body"
         case templateTwoBody = "template_two_body"
-        case mergeVars = "merge_vars"
-        case touchDuration = "touch_two_weeks"
     }
 }
 // MARK: - OutgoingRadiusMailingListWrapper
@@ -119,27 +190,6 @@ struct OutgoingRadiusMailingListData: Codable {
     }
 }
 
-// MARK: - OutgoingRadiusMailing
-struct OutgoingRadiusMailing: Codable {
-    let layoutTemplateID: Int?
-    let multiTouchTopicID: Int?
-    let templateOneBody: String?
-    let templateTwoBody: String?
-    let mergeVars: [String: String]?
-    let touchDuration: Int?
-    let touchDurationConfirmation: Int?
-
-    enum CodingKeys: String, CodingKey {
-        case layoutTemplateID = "layout_template_id"
-        case multiTouchTopicID = "multi_touch_topic_id"
-        case templateOneBody = "template_one_body"
-        case templateTwoBody = "template_two_body"
-        case mergeVars = "merge_vars"
-        case touchDuration = "touch_duration"
-        case touchDurationConfirmation = "touch_duration_confirmation"
-    }
-}
-
 // MARK: - Account
 struct Account: Codable {
     let id: Int
@@ -152,9 +202,11 @@ struct Account: Codable {
 // MARK: - User
 struct User: Codable {
     let id: Int
+    let authenticationToken: String
 
     enum CodingKeys: String, CodingKey {
         case id
+        case authenticationToken = "authentication_token"
     }
 }
 
@@ -172,7 +224,12 @@ struct SubjectListEntry: Codable, Identifiable {
     let id: Int
     let firstName: String?
     let lastName: String?
-    let siteAddressLine1, siteAddressLine2: String
+    let mailingAddressLine1, mailingAddressLine2: String?
+    let mailingCity: String?
+    let mailingState: String?
+    let mailingZipcode: String?
+    let siteAddressLine1: String
+    let siteAddressLine2: String?
     let siteCity: String
     let siteState: String
     let siteZipcode: String
@@ -182,6 +239,11 @@ struct SubjectListEntry: Codable, Identifiable {
         case id
         case firstName = "first_name"
         case lastName = "last_name"
+        case mailingAddressLine1 = "mailing_address_line_1"
+        case mailingAddressLine2 = "mailing_address_line_2"
+        case mailingCity = "mailing_city"
+        case mailingState = "mailing_state"
+        case mailingZipcode = "mailing_zipcode"
         case siteAddressLine1 = "site_address_line_1"
         case siteAddressLine2 = "site_address_line_2"
         case siteCity = "site_city"
@@ -190,12 +252,29 @@ struct SubjectListEntry: Codable, Identifiable {
         case status
     }
 }
+
+// MARK: - Recipient
+struct Recipient: Codable, Identifiable {
+    let id: Int
+    let fullName, status, siteAddress, mailingAddress: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case fullName = "full_name"
+        case status
+        case siteAddress = "site_address"
+        case mailingAddress = "mailing_address"
+    }
+}
+
 // MARK: - OutgoingSubjectListEntryWrapper
-struct OutgoingSubjectListEntryWrapper: Codable {
+struct OutgoingNewRadiusMailingWrapper: Codable {
     let subjectListEntry: OutgoingSubjectListEntry
+    let dataTreeSearch: DataTreeSearchCriteria
 
     enum CodingKeys: String, CodingKey {
         case subjectListEntry = "subject_list_entry"
+        case dataTreeSearch = "data_tree_search"
     }
 }
 
@@ -239,18 +318,18 @@ struct CustomNotes: Codable {
 struct CustomNote: Codable {
     let id: Int
     let body: String?
-    let toFirstName, toLastName, toBusinessName: String
+    let toFirstName, toLastName, toBusinessName: String?
     let toToLine, toAttnLine: String?
-    let toAddressLine1, toAddressLine2, toCity, toState: String
-    let toZipcode, fromFirstName, fromLastName, fromBusinessName: String
+    let toAddressLine1, toAddressLine2, toCity, toState: String?
+    let toZipcode, fromFirstName, fromLastName, fromBusinessName: String?
     let fromToLine, fromAttnLine: String?
-    let fromAddressLine1, fromAddressLine2, fromCity, fromState: String
-    let fromZipcode: String
+    let fromAddressLine1, fromAddressLine2, fromCity, fromState: String?
+    let fromZipcode: String?
     let handwritingID: Int?
-    let status: String
+    let status: String?
     let cardType, format: String?
     let mediaSize, messageTemplateID: Int?
-    let batchSize: Int
+    let batchSize: Int?
 
     enum CodingKeys: String, CodingKey {
         case id, body
@@ -336,63 +415,54 @@ struct OutgoingCustomNote: Codable {
 
 // MARK: - MailingCoverArtResponse
 struct MailingCoverArtResponse: Codable {
-    let mailingCoverArts: [MailingCoverArts]
+    let mailingCoverImages: [MailingCoverImageMap]
 
     enum CodingKeys: String, CodingKey {
-        case mailingCoverArts = "layout_templates"
+        case mailingCoverImages = "layout_templates"
     }
 }
 
 // MARK: - MailingCoverArts
-struct MailingCoverArts: Codable {
-    let mailingCoverArt: MailingCoverArt
+struct MailingCoverImageMap: Codable {
+    let mailingCoverImage: MailingCoverImage
 
     enum CodingKeys: String, CodingKey {
-        case mailingCoverArt = "layout_template"
+        case mailingCoverImage = "layout_template"
     }
 }
 // MARK: - MailingCoverArt
-struct MailingCoverArt: Codable, Identifiable {
+struct MailingCoverImage: Codable, Identifiable, Equatable {
     let id: Int?
     let name: String?
     let pdfUrl: String?
     let imageUrl: String?
+    let cardFrontImageUrl: String?
+    let isDefaultCoverImage: Bool?
+    let error: String?
 
     enum CodingKeys: String, CodingKey {
         case id, name
         case pdfUrl = "pdf_url"
         case imageUrl = "image_url"
+        case cardFrontImageUrl = "card_front_url"
+        case isDefaultCoverImage = "is_default_cover_image"
+        case error
     }
 }
 // MARK: - CustomNote.CoverImage
 extension CustomNote {
     struct CoverImage: View {
-        @ObservedObject var imageLoader: ImageLoader
-        @State var image = UIImage()
-        let size: CGFloat
-        let cornerRadius: CGFloat
-        var setAsCardLayout: Bool
+        var image: UIImage
 
-        init(withURL url: String, size: CGFloat, cornerRadius: CGFloat, setAsCardLayout: Bool = false) {
-            imageLoader = ImageLoader(urlString: url)
-            self.size = size
-            self.cornerRadius = !setAsCardLayout ? cornerRadius : 0
-            self.setAsCardLayout = setAsCardLayout
+        init(imageData: Data) {
+            self.image = UIImage(data: imageData) ?? UIImage(systemName: "exclamationmark.triangle")!
         }
 
         var body: some View {
             Image(uiImage: image)
                 .resizable()
-                .scaledToFill()
-                .frame(width: getImageWidth(), height: size)
-                .cornerRadius(cornerRadius)
-                .onReceive(imageLoader.didChange) { data in
-                    self.image = UIImage(data: data) ?? UIImage(systemName: "exclamationmark.triangle")!
-                }
-        }
-
-        private func getImageWidth() -> CGFloat {
-            return !setAsCardLayout ? size : size * 2
+                .scaledToFit()
+                .frame(maxWidth: 350, maxHeight: 200)
         }
     }
 }
@@ -432,8 +502,8 @@ struct MessageTemplateElement: Codable {
 // MARK: - MessageTemplate
 struct MessageTemplate: Codable, Identifiable {
     let id: Int
-    let title, body: String
-    let mergeVars: [String: String]
+    var title, body: String
+    var mergeVars: [String]
     let owned: Bool?
 
     enum CodingKeys: String, CodingKey {
@@ -490,5 +560,82 @@ struct ListEntryResponse: Codable {
 
     enum CodingKeys: String, CodingKey {
         case message
+    }
+}
+
+// MARK: - MailingCoverImageData
+struct MailingCoverImageData: Codable, Identifiable {
+    let id: Int
+    let image: MailingCoverImage
+    let imageData: Data
+
+    enum CodingKeys: String, CodingKey {
+        case id, image, imageData
+    }
+}
+
+// MARK: - OutgoingMessageTemplateWrapper
+struct OutgoingMessageTemplateWrapper: Codable {
+    let messageTemplate: OutgoingMessageTemplate
+
+    enum CodingKeys: String, CodingKey {
+        case messageTemplate = "message_template"
+    }
+}
+
+// MARK: - OutgoingMessageTemplate
+struct OutgoingMessageTemplate: Codable {
+    let title: String?
+    let body: String
+
+    enum CodingKeys: String, CodingKey {
+        case title
+        case body
+    }
+}
+
+// MARK: - UpdatedMessageTemplateWrapper
+struct UpdatedMessageTemplateWrapper: Codable {
+    let messageTemplate: UpdatedMessageTemplate
+
+    enum CodingKeys: String, CodingKey {
+        case messageTemplate = "message_template"
+    }
+}
+
+// MARK: - UpdatedMessageTemplate
+struct UpdatedMessageTemplate: Codable, Identifiable {
+    let id: Int
+    let title, body: String
+    let mergeVars: [String]
+    let owned: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case id, title, body
+        case mergeVars = "merge_vars"
+        case owned
+    }
+}
+
+// MARK: - UpdatedMessageTemplateWrapper
+struct NewMessageTemplateWrapper: Codable {
+    let messageTemplate: NewMessageTemplate
+
+    enum CodingKeys: String, CodingKey {
+        case messageTemplate = "message_template"
+    }
+}
+
+// MARK: - UpdatedMessageTemplate
+struct NewMessageTemplate: Codable, Identifiable {
+    let id: Int
+    let title, body: String
+    let mergeVars: [String]
+    let owned: Bool?
+
+    enum CodingKeys: String, CodingKey {
+        case id, title, body
+        case mergeVars = "merge_vars"
+        case owned
     }
 }

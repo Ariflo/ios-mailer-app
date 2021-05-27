@@ -8,7 +8,7 @@
 import SwiftUI
 import Combine
 
-class SignInViewModel: ObservableObject, Identifiable {
+class SignInViewModel: ObservableObject {
     private let addressableDataFetcher: FetchableData
     private var disposables = Set<AnyCancellable>()
 

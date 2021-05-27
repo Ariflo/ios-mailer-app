@@ -8,8 +8,14 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @ObservedObject var viewModel: ProfileViewModel
+
     @State var showingAlert = false
     @State var successfullyLoggedOut: Int?
+
+    init(viewModel: ProfileViewModel) {
+        self.viewModel = viewModel
+    }
 
     var body: some View {
         NavigationLink(destination: AppView(), tag: 1, selection: $successfullyLoggedOut) {
@@ -26,9 +32,15 @@ struct ProfileView: View {
                     .init(
                         title: .init("Sign Out of Addressable?"),
                         primaryButton: .destructive(.init("Sign Out")) {
-                            KeyChainServiceUtil.shared[userBasicAuthToken] = nil
-                            KeyChainServiceUtil.shared[userMobileClientIdentity] = nil
-                            successfullyLoggedOut = 1
+                            viewModel.logout { logoutResponse in
+                                guard logoutResponse != nil else {
+                                    print("User is unable to succssfully logout")
+                                    return
+                                }
+                                KeyChainServiceUtil.shared[userBasicAuthToken] = nil
+                                KeyChainServiceUtil.shared[userMobileClientIdentity] = nil
+                                successfullyLoggedOut = 1
+                            }
                         },
                         secondaryButton: .cancel()
                     )
@@ -46,6 +58,6 @@ struct ProfileView: View {
 
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView()
+        ProfileView(viewModel: ProfileViewModel(addressableDataFetcher: AddressableDataFetcher()))
     }
 }

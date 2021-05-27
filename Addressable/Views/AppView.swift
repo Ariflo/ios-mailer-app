@@ -17,11 +17,17 @@ struct AppView: View {
                 AddressableCallView(viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher()))
                     .environmentObject(app)
                     .navigationBarHidden(true)
+            } else if app.displayComposeRadiusMailing {
+                ComposeRadiusMailingView(
+                    viewModel: ComposeRadiusMailingViewModel(
+                        selectedRadiusMailing: app.selectedRadiusMailing)
+                ).environmentObject(app)
             } else {
                 TabView {
                     MailingsView(
                         viewModel: MailingsViewModel(addressableDataFetcher: AddressableDataFetcher())
                     )
+                    .environmentObject(app)
                     .navigationBarHidden(true)
                     .tabItem {
                         Image(systemName: "mail")
@@ -44,7 +50,7 @@ struct AppView: View {
                         Image(systemName: "message")
                         Text("Messages")
                     }
-                    ProfileView()
+                    ProfileView(viewModel: ProfileViewModel(addressableDataFetcher: AddressableDataFetcher()))
                         .navigationBarHidden(true)
                         .tabItem {
                             Image(systemName: "person")

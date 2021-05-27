@@ -9,9 +9,9 @@ import SwiftUI
 import GooglePlaces
 
 struct MailingsView: View {
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: MailingsViewModel
     @State var navigateToComposeMail = false
-    @State var navigateToComposeRadiusMailing = false
 
     init(viewModel: MailingsViewModel) {
         self.viewModel = viewModel
@@ -22,21 +22,6 @@ struct MailingsView: View {
             GeometryReader { geometry in
                 CustomRefreshableScrollView(viewBuilder: {
                     List {
-                        //                        TODO: Add Single Note Sendoffs in v2.0.0
-                        //                        Section(
-                        //                            header:
-                        //                                CustomHeader(
-                        //                                    name: "Cards and Batches",
-                        //                                    image: Image(systemName: "mail.stack"),
-                        //                                    backgroundColor: Color(red: 232 / 255, green: 104 / 255, blue: 81 / 255)
-                        //                                )
-                        //                        ) {
-                        //                            ForEach(viewModel.customNotes) { customNote in
-                        //                                Text("\(customNote.toFirstName.isEmpty  ? "Batch of \(customNote.batchSize) Notes" :
-                        //                               customNote.toFirstName) \(customNote.toLastName)").padding()
-                        //                            }
-                        //                        }
-                        //                        .listRowInsets(.init())
                         Section(
                             header:
                                 CustomHeader(
@@ -60,10 +45,10 @@ struct MailingsView: View {
                                 }
                             }
 
-                            ForEach(viewModel.radiusMailings, id: \.parentMailingID) { radiusMailing in
+                            ForEach(viewModel.radiusMailings) { radiusMailing in
                                 Button(action: {
-                                    viewModel.selectedRadiusMailing = radiusMailing
-                                    navigateToComposeRadiusMailing = true
+                                    app.selectedRadiusMailing = radiusMailing
+                                    app.displayComposeRadiusMailing = true
                                 }) {
                                     HStack(alignment: .top) {
                                         Text("\(radiusMailing.name)")
@@ -73,52 +58,27 @@ struct MailingsView: View {
                                             .padding()
                                     }
                                 }
+                                .disabled(radiusMailing.status == MailingStatus.approved.rawValue)
+                                .opacity(radiusMailing.status == MailingStatus.approved.rawValue ? 0.8 : 1)
                             }
-                        }
-                        .listRowInsets(.init())
+                        }.listRowInsets(.init())
                     }
                     .listStyle(PlainListStyle())
                 }, size: geometry.size) {
                     viewModel.getAllMailingCampaigns()
                 }
             }
-            .background(
-                NavigationLink(destination: ComposeMailingView(
-                                viewModel: ComposeMailingViewModel(addressableDataFetcher: AddressableDataFetcher())).navigationBarHidden(true),
-                               isActive: $navigateToComposeMail) {}
-            )
-            .background(
-                NavigationLink(destination: ComposeRadiusMailingView(
-                    viewModel: ComposeRadiusMailingViewModel(
-                        selectedRadiusMailing: viewModel.selectedRadiusMailing
-                    )
-                ).navigationBarHidden(true),
-                isActive: $navigateToComposeRadiusMailing) {}
-            )
             .onAppear {
                 viewModel.getAllMailingCampaigns()
             }
             .toolbar {
-                //                TODO: Add Single Note Sendoffs in v2.0.0
-                //                ToolbarItem(placement: .navigationBarTrailing) {
-                //                    Button(
-                //                        action: {
-                //                            navigateToComposeMail = true
-                //                        }
-                //                    ) {
-                //                        Image(systemName: "square.and.pencil")
-                //                            .font(.system(size: 60))
-                //                            .foregroundColor(Color(red: 78 / 255, green: 71 / 255, blue: 210 / 255))
-                //                            .padding(.top, 8)
-                //                    }
-                //                }
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(
                         action: {
-                            if viewModel.selectedRadiusMailing != nil {
-                                viewModel.selectedRadiusMailing = nil
+                            if app.selectedRadiusMailing != nil {
+                                app.selectedRadiusMailing = nil
                             }
-                            navigateToComposeRadiusMailing = true
+                            app.displayComposeRadiusMailing = true
                         }
                     ) {
                         Image(systemName: "mappin.and.ellipse")
@@ -133,18 +93,24 @@ struct MailingsView: View {
     }
 
     private func getRadiusMailingListStatus(_ mailing: RadiusMailing) -> String {
-        if mailing.listCount > 0 && mailing.status != "list_approved" {
-            if mailing.targetQuantity > mailing.activeRecipientCount {
-                return "\(mailing.activeRecipientCount) (missing \(mailing.targetQuantity - mailing.activeRecipientCount))"
-            } else if mailing.targetQuantity < mailing.activeRecipientCount {
-                return "surplus of \(mailing.activeRecipientCount - mailing.targetQuantity)!"
-            }
-        } else if mailing.status == "list_added" {
-            return "List Ready for Customer Approval"
-        } else if mailing.status == "list_approved" {
-            return "List Approved by Customer"
+        if mailing.status == MailingStatus.approved.rawValue {
+            return "In Progress"
         }
-        return "List Pending"
+        switch mailing.listStatus {
+        case ListStatus.new.rawValue:
+            return "List Pending"
+        case ListStatus.searching.rawValue,
+             ListStatus.exporting.rawValue,
+             ListStatus.ingesting.rawValue:
+            return "Building List"
+        case ListStatus.complete.rawValue:
+            if mailing.recipients.count > 0 {
+                return "List Ready for Customer Approval"
+            }
+            return "Requires Target Criteria Update"
+        default:
+            return "Requires Target Criteria Update"
+        }
     }
 }
 

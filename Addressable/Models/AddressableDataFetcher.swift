@@ -11,27 +11,31 @@ import Combine
 protocol FetchableData {
     func tagIncomingLead(with id: Int, _ tagData: Data?) -> AnyPublisher<IncomingLeadResponse, ApiError>
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError>
+    func logoutMobileUser() -> AnyPublisher<MobileUserLoggedOutResponse, ApiError>
     func getTwilioAccessToken(_ deviceIdData: Data?) -> AnyPublisher<TwilioAccessTokenData, ApiError>
     func getCurrentUserMailingCampaigns() -> AnyPublisher<CampaignsResponse, ApiError>
     func getIncomingLeads() -> AnyPublisher<IncomingLeadsResponse, ApiError>
     func getIncomingLeadsWithMessages() -> AnyPublisher<IncomingLeadsResponse, ApiError>
     func getLeadMessages(for leadId: Int) -> AnyPublisher<MessagesResponse, ApiError>
     func sendLeadMessage(_ message: Data?) -> AnyPublisher<MessagesResponse, ApiError>
-    func getMailingCoverArt() -> AnyPublisher<MailingCoverArtResponse, ApiError>
+    func getMailingCoverImages() -> AnyPublisher<MailingCoverArtResponse, ApiError>
     func getMailingReturnAddress() -> AnyPublisher<ReturnAddress, ApiError>
     func sendCustomMailing(_ mailing: Data?) -> AnyPublisher<OutgoingCustomNoteResponse, ApiError>
     func getMessageTemplates() -> AnyPublisher<MessageTemplatesResponse, ApiError>
+    func createMessageTemplate(_ newMessageTemplateData: Data?) -> AnyPublisher<NewMessageTemplateWrapper, ApiError>
     func addCallParticipant(_ newCallData: Data?) -> AnyPublisher<CallParticipantResponse, ApiError>
     func getMultiTouchTopics() -> AnyPublisher<MultiTouchTopicResponse, ApiError>
     func getMessageTemplate(for id: Int) -> AnyPublisher<MessageTemplateElement, ApiError>
+    func updateMessageTemplate(for id: Int, _ messageTemplateData: Data?) -> AnyPublisher<UpdatedMessageTemplateWrapper, ApiError>
     func createNewRadiusMailing(_ newRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingWrapper, ApiError>
     func updateRadiusMailing(for component: RadiusMailingComponent, with id: Int, _ updateRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingWrapper, ApiError>
     func updateRadiusListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<ListEntryResponse, ApiError>
     func getSelectedRadiusMailing(for id: Int) -> AnyPublisher<RadiusMailingWrapper, ApiError>
+    func getDefaultDataTreeSearchCriteria() -> AnyPublisher<DataTreeSearchCriteriaWrapper, ApiError>
 }
 
 enum RadiusMailingComponent {
-    case location, cover, topic, list
+    case location, cover, topic, list, targetDate
 }
 
 enum ApiError: Error {
@@ -48,6 +52,18 @@ class AddressableDataFetcher {
 }
 
 extension AddressableDataFetcher: FetchableData {
+    func logoutMobileUser() -> AnyPublisher<MobileUserLoggedOutResponse, ApiError> {
+        makeApiRequest(with: logoutMobileUserRequestComponents(), postRequestBodyData: Data())
+    }
+
+    func getDefaultDataTreeSearchCriteria() -> AnyPublisher<DataTreeSearchCriteriaWrapper, ApiError> {
+        return makeApiRequest(with: getDefaultDataTreeSearchCriteriaRequestComponents())
+    }
+
+    func createMessageTemplate(_ newMessageTemplateData: Data?) -> AnyPublisher<NewMessageTemplateWrapper, ApiError> {
+        makeApiRequest(with: getOrCreateMessageTemplatesRequestComponents(), postRequestBodyData: newMessageTemplateData)
+    }
+
     func tagIncomingLead(with id: Int, _ tagData: Data?) -> AnyPublisher<IncomingLeadResponse, ApiError> {
         return makeApiRequest(with: updateIncomingLeadRequestComponents(for: id),
                               postRequestBodyData: nil,
@@ -72,6 +88,10 @@ extension AddressableDataFetcher: FetchableData {
             return makeApiRequest(with: updateRadiusMailingListRequestComponents(for: id),
                                   postRequestBodyData: nil,
                                   patchRequestBodyData: updateRadiusMailingData)
+        case .targetDate:
+            return makeApiRequest(with: updateRadiusMailingDateRequestComponents(for: id),
+                                  postRequestBodyData: nil,
+                                  patchRequestBodyData: updateRadiusMailingData)
         }
     }
 
@@ -90,7 +110,13 @@ extension AddressableDataFetcher: FetchableData {
     }
 
     func getMessageTemplate(for id: Int) -> AnyPublisher<MessageTemplateElement, ApiError> {
-        return makeApiRequest(with: getMessageTemplateRequestComponents(for: id))
+        return makeApiRequest(with: getOrUpdateMessageTemplateRequestComponents(for: id))
+    }
+
+    func updateMessageTemplate(for id: Int, _ messageTemplateData: Data?) -> AnyPublisher<UpdatedMessageTemplateWrapper, ApiError> {
+        return makeApiRequest(with: getOrUpdateMessageTemplateRequestComponents(for: id),
+                              postRequestBodyData: nil,
+                              patchRequestBodyData: messageTemplateData)
     }
 
     func getMultiTouchTopics() -> AnyPublisher<MultiTouchTopicResponse, ApiError> {
@@ -106,7 +132,7 @@ extension AddressableDataFetcher: FetchableData {
     }
 
     func getMessageTemplates() -> AnyPublisher<MessageTemplatesResponse, ApiError> {
-        return makeApiRequest(with: getMessageTemplatesRequestComponents())
+        return makeApiRequest(with: getOrCreateMessageTemplatesRequestComponents())
     }
 
     func sendCustomMailing(_ mailing: Data?) -> AnyPublisher<OutgoingCustomNoteResponse, ApiError> {
@@ -117,7 +143,7 @@ extension AddressableDataFetcher: FetchableData {
         return makeApiRequest(with: getMailingReturnAddressRequestComponents())
     }
 
-    func getMailingCoverArt() -> AnyPublisher<MailingCoverArtResponse, ApiError> {
+    func getMailingCoverImages() -> AnyPublisher<MailingCoverArtResponse, ApiError> {
         return makeApiRequest(with: getMailingCoverArtRequestComponents())
     }
 
@@ -213,6 +239,16 @@ private extension AddressableDataFetcher {
         return components
     }
 
+    func logoutMobileUserRequestComponents() -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/auth/mobile_logout"
+
+        return components
+    }
+
     func customNotesRequestComponents() -> URLComponents {
         var components = URLComponents()
 
@@ -293,7 +329,7 @@ private extension AddressableDataFetcher {
         return components
     }
 
-    func getMessageTemplatesRequestComponents() -> URLComponents {
+    func getOrCreateMessageTemplatesRequestComponents() -> URLComponents {
         var components = URLComponents()
 
         components.scheme = AddressableAPI.scheme
@@ -303,7 +339,7 @@ private extension AddressableDataFetcher {
         return components
     }
 
-    func getMessageTemplateRequestComponents(for id: Int) -> URLComponents {
+    func getOrUpdateMessageTemplateRequestComponents(for id: Int) -> URLComponents {
         var components = URLComponents()
 
         components.scheme = AddressableAPI.scheme
@@ -393,6 +429,26 @@ private extension AddressableDataFetcher {
         return components
     }
 
+    func updateRadiusMailingDateRequestComponents(for id: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/radius_mailings/\(id)/target_date"
+
+        return components
+    }
+
+    func updateRadiusMailingStatusRequestComponents(for id: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/radius_mailings/\(id)/status"
+
+        return components
+    }
+
     func updateListEntryRequestComponents(for id: Int) -> URLComponents {
         var components = URLComponents()
 
@@ -409,6 +465,16 @@ private extension AddressableDataFetcher {
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
         components.path = AddressableAPI.path + "/incoming_leads/\(id)"
+
+        return components
+    }
+
+    func getDefaultDataTreeSearchCriteriaRequestComponents() -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/data_tree_search/default_criteria"
 
         return components
     }
