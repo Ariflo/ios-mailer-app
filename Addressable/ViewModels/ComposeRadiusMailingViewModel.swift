@@ -33,7 +33,7 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
 
     @Published var step = ComposeRadiusMailingSteps.selectLocation
     @Published var locationEntry: String = ""
-    @Published var selectedCoverImageID: Int?
+    @Published var selectedCoverImageID: Int = 0
     @Published var mailingCoverImages: [Int: MailingCoverImageData] = [:]
     @Published var topics: [MultiTouchTopic] = []
     @Published var topicSelectionID: Int = 0
@@ -139,9 +139,9 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
     }
 
     func populateForm(with radiusMailing: RadiusMailing) {
-        self.selectedDropDate = radiusMailing.targetDropDate!
-        self.touchOneMailing = radiusMailing
-        selectedCoverImageID = radiusMailing.layoutTemplate?.id
+        selectedDropDate = radiusMailing.targetDropDate!
+        touchOneMailing = radiusMailing
+        selectedCoverImageID = radiusMailing.layoutTemplate?.id ?? 0
         topicSelectionID = radiusMailing.topicSelectionID ?? 0
         locationEntry = "\(radiusMailing.subjectListEntry.siteAddressLine1), " +
             "\(radiusMailing.subjectListEntry.siteAddressLine2 ?? "") " +
@@ -218,7 +218,9 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
         addressableDataFetcher.getMailingCoverImages()
             .map { resp in
                 resp.mailingCoverImages.filter({
-                    $0.mailingCoverImage.cardFrontImageUrl != nil && $0.mailingCoverImage.id != nil
+                    $0.mailingCoverImage.cardFrontImageUrl != nil &&
+                        $0.mailingCoverImage.id != nil &&
+                        $0.mailingCoverImage.isDefaultCoverImage != nil
                 }).map { $0.mailingCoverImage }
             }
             .receive(on: DispatchQueue.main)
@@ -258,12 +260,9 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
                     // Present images when they've all loaded
                     if self.mailingCoverImages.keys.count == coverImages.count {
                         self.loadingImages = false
-
-                        if self.selectedCoverImageID == nil {
-                            self.selectedCoverImageID = self.mailingCoverImages.keys.first(where: {
-                                self.mailingCoverImages[$0]!.image.isDefaultCoverImage!
-                            })
-                        }
+                        self.selectedCoverImageID = self.mailingCoverImages.keys.first(where: {
+                            self.mailingCoverImages[$0]!.image.isDefaultCoverImage!
+                        }) ?? 0
                     }
                 }
             }
@@ -522,7 +521,7 @@ class ComposeRadiusMailingViewModel: NSObject, ObservableObject, Identifiable {
             return updateData
         case .cover:
             guard let updateData = try? JSONEncoder().encode(
-                OutgoingRadiusMailingCoverArtWrapper(cover: OutgoingRadiusMailingCoverArtData(layoutTemplateID: selectedCoverImageID!))
+                OutgoingRadiusMailingCoverArtWrapper(cover: OutgoingRadiusMailingCoverArtData(layoutTemplateID: selectedCoverImageID))
             ) else {
                 print("Update Radius Mailing COVER Encoding Error")
                 return nil

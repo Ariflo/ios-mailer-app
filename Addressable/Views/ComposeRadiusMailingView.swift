@@ -273,7 +273,7 @@ struct ComposeRadiusMailingView: View {
         case .selectLocation:
             return viewModel.locationEntry.isEmpty
         case .selectCard:
-            return viewModel.selectedCoverImageID == nil || viewModel.mailingCoverImages.isEmpty
+            return viewModel.selectedCoverImageID == 0 || viewModel.mailingCoverImages.isEmpty
         case .chooseTopic:
             return viewModel.topics.isEmpty || isMissingMergeVars()
         case .audienceProcessing:

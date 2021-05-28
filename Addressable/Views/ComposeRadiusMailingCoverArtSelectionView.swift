@@ -11,11 +11,9 @@ import UIKit
 struct ComposeRadiusMailingCoverArtSelectionView: View {
     @ObservedObject var viewModel: ComposeRadiusMailingViewModel
     @State var customizeCardCover: Bool = false
-    @State var selectedMailingCoverId: Int
 
     init(viewModel: ComposeRadiusMailingViewModel) {
         self.viewModel = viewModel
-        self.selectedMailingCoverId = viewModel.selectedCoverImageID ?? 0
 
         UIPageControl.appearance().currentPageIndicatorTintColor = .black
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(rgb: 0xDDDDDD)
@@ -44,7 +42,7 @@ struct ComposeRadiusMailingCoverArtSelectionView: View {
             }
         } else {
             VStack {
-                TabView(selection: $selectedMailingCoverId) {
+                TabView(selection: $viewModel.selectedCoverImageID) {
                     ForEach(Array(viewModel.mailingCoverImages.keys), id: \.self) { coverImageID in
                         if let imageData = viewModel.mailingCoverImages[coverImageID] {
                             RadiusMailingCoverArt(viewModel: viewModel, coverImage: imageData)
@@ -63,7 +61,7 @@ struct ComposeRadiusMailingCoverArtSelectionView: View {
                     customizeCardCover = !customizeCardCover
 
                     // Set Card Cover Selection
-                    viewModel.selectedCoverImageID = customizeCardCover ? nil : selectedMailingCoverId
+                    viewModel.selectedCoverImageID = customizeCardCover ? 0 : viewModel.selectedCoverImageID
                 }) {
                     Text(!customizeCardCover ? "Customize" : "Select Card Cover")
                         .font(Font.custom("Silka-Medium", size: 14))
