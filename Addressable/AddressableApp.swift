@@ -24,17 +24,16 @@ protocol PushKitEventDelegate: AnyObject {
 
 // TODO: Name this back to 'AppDelegate' when Lint issue is solved - https://github.com/realm/SwiftLint/issues/2786
 class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, ObservableObject {
-    // TODO: Replace these w/ Navigation Enum w/ Dashboard Refresh
-    @Published var displayCallView: Bool = false
-    @Published var displayComposeRadiusMailing: Bool = false
-    @Published var selectedRadiusMailing: RadiusMailing?
-
+    @Published var currentView: AddressableView = KeyChainServiceUtil.shared[userBasicAuthToken] != nil ?
+        .dashboard(false) : .signIn
+    @Published var selectedMailing: RadiusMailing?
     @Published var callState: String = CallState.connecting.rawValue
-    @Published var fromAddressableCallView: Bool = false
 
-    var callKitProvider: CallProvider?
+    var callKitProvider: CallService?
     var callManager: CallManager?
     var latestPushCredentials: PKPushCredentials?
+
+    lazy var dependencyProvider = DependencyProvider()
     lazy var voipRegistry = PKPushRegistry.init(queue: DispatchQueue.main)
 
     func application(
@@ -44,8 +43,10 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
         GMSServices.provideAPIKey(googleMapsApiKey)
         GMSPlacesClient.provideAPIKey(googleMapsApiKey)
 
-        callManager = CallManager()
-        callKitProvider = CallProvider(application: self, callManager: callManager!)
+        callManager = CallManager(application: self)
+        if let safeCallManager = callManager {
+            callKitProvider = CallService(application: self, callManager: safeCallManager)
+        }
 
         voipRegistry.delegate = self
         voipRegistry.desiredPushTypes = Set([PKPushType.voIP])
@@ -152,14 +153,14 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
     }
 
     func displayPermissionsChangeAlert(message: String) {
-        let alertController = UIAlertController(title: "Addressable",
-                                                message: message,
-                                                preferredStyle: .alert)
+        let alertController = UIAlertController(title: "Addressable", message: message, preferredStyle: .alert)
 
         let goToSettings = UIAlertAction(title: "Open Privacy Settings", style: .default) { _ in
-            UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!,
-                                      options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: false],
-                                      completionHandler: nil)
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                UIApplication.shared.open(url,
+                                          options: [UIApplication.OpenExternalURLOptionsKey.universalLinksOnly: false],
+                                          completionHandler: nil)
+            }
         }
 
         let cancel = UIAlertAction(title: "Cancel", style: .cancel)
@@ -171,6 +172,7 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
 }
 
 extension UIApplication {
+    // TODO: Consider an alternative to using keyWindow here for displaying permissions alert on topViewController
     class func topViewController(controller: UIViewController? = UIApplication.shared.keyWindow?.rootViewController) -> UIViewController? {
         if let navigationController = controller as? UINavigationController {
             return topViewController(controller: navigationController.visibleViewController)
@@ -194,9 +196,7 @@ struct AddressableApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NavigationView {
-                AppView().environmentObject(appDelegate)
-            }
+            AppView().environmentObject(appDelegate)
         }.onChange(of: scenePhase) { phase in
             switch phase {
             case .background:

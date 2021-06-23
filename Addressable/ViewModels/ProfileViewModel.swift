@@ -9,15 +9,15 @@ import SwiftUI
 import Combine
 
 class ProfileViewModel: ObservableObject {
-    private let addressableDataFetcher: FetchableData
+    private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
 
-    init(addressableDataFetcher: FetchableData) {
-        self.addressableDataFetcher = addressableDataFetcher
+    init(provider: DependencyProviding) {
+        self.apiService = provider.register(provider: provider)
     }
 
     func logout(onCompletion: @escaping (MobileUserLoggedOutResponse?) -> Void) {
-        addressableDataFetcher.logoutMobileUser()
+        apiService.logoutMobileUser()
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] value in

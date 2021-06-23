@@ -24,7 +24,6 @@ struct SliderValue {
 }
 
 class SliderHandle: ObservableObject {
-
     // Slider Size
     let sliderWidth: CGFloat
     let sliderHeight: CGFloat
@@ -56,7 +55,7 @@ class SliderHandle: ObservableObject {
         self.sliderValueStart = sliderValueStart
         self.sliderValueRange = sliderValueEnd - sliderValueStart
 
-        let startLocation = CGPoint(x: (CGFloat(startPercentage.wrappedValue)/1.0)*sliderWidth, y: sliderHeight/2)
+        let startLocation = CGPoint(x: (CGFloat(startPercentage.wrappedValue) / 1.0) * sliderWidth, y: sliderHeight / 2)
 
         self.startLocation = startLocation
         self.currentLocation = startLocation
@@ -77,19 +76,19 @@ class SliderHandle: ObservableObject {
             // Update current value
             let currentXPoint = dragLocation.x < 0 ? 0 : dragLocation.x
             self.currentPercentage.wrappedValue = Double(currentXPoint / self.sliderWidth)
-
-        }.onEnded { _ in
+        }
+        .onEnded { _ in
             self.onDrag = false
         }
 
     func resetHandlePosition(to position: CGFloat) {
         currentPercentage.wrappedValue = Double(position / self.sliderWidth)
-        currentLocation = CGPoint(x: position, y: sliderHeight/2)
+        currentLocation = CGPoint(x: position, y: sliderHeight / 2)
     }
 
     func setDefaultValues(to value: Double) {
-        currentPercentage.wrappedValue = (value - sliderValueStart)/sliderValueRange
-        currentLocation = CGPoint(x: (CGFloat(currentPercentage.wrappedValue)/1.0)*sliderWidth, y: sliderHeight/2)
+        currentPercentage.wrappedValue = (value - sliderValueStart) / sliderValueRange
+        currentLocation = CGPoint(x: (CGFloat(currentPercentage.wrappedValue) / 1.0) * sliderWidth, y: sliderHeight / 2)
     }
 
     private func restrictSliderBtnLocation(_ dragLocation: CGPoint) {
@@ -100,8 +99,8 @@ class SliderHandle: ObservableObject {
     }
 
     private func calcSliderBtnLocation(_ dragLocation: CGPoint) {
-        if dragLocation.y != sliderHeight/2 {
-            currentLocation = CGPoint(x: dragLocation.x, y: sliderHeight/2)
+        if dragLocation.y != sliderHeight / 2 {
+            currentLocation = CGPoint(x: dragLocation.x, y: sliderHeight / 2)
         } else {
             currentLocation = dragLocation
         }
@@ -109,7 +108,6 @@ class SliderHandle: ObservableObject {
 }
 
 class CustomSlider: ObservableObject {
-
     // Slider Size
     final let width: CGFloat = 300
     final let lineWidth: CGFloat = 8

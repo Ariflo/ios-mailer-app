@@ -8,19 +8,20 @@
 import SwiftUI
 import Combine
 
-class CallsViewModel: ObservableObject, Identifiable {
-    @Published var incomingLeads: IncomingLeadsResponse = []
-    private let addressableDataFetcher: FetchableData
+class CallsViewModel: ObservableObject {
+    private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
-    @Published var loading: Bool = false
 
-    init(addressableDataFetcher: FetchableData) {
-        self.addressableDataFetcher = addressableDataFetcher
+    @Published var loading: Bool = false
+    @Published var incomingLeads: IncomingLeadsResponse = []
+
+    init(provider: DependencyProviding) {
+        apiService = provider.register(provider: provider)
     }
 
     func getLeads() {
         loading = true
-        addressableDataFetcher.getIncomingLeads()
+        apiService.getIncomingLeads()
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] value in
@@ -57,7 +58,7 @@ class CallsViewModel: ObservableObject, Identifiable {
             print("Add Caller Encoding Error")
             return
         }
-        addressableDataFetcher.addCallParticipant(encodedCallData)
+        apiService.addCallParticipant(encodedCallData)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { value in

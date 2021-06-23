@@ -13,19 +13,19 @@ extension Int {
         let thousand = number / 1000
         let million = number / 1000000
         if million >= 1.0 {
-            return "\(round(million*10)/10)M"
+            return "\(round(million * 10) / 10)M"
         } else if thousand >= 1.0 {
-            return "\(round(thousand*10)/10)K"
+            return "\(round(thousand * 10) / 10)K"
         } else {
             return "\(self)"
         }
     }
 
-    var roundedToNearestThousandWithAbbreviations: String {
-        return "\(self/1000)K"
+    var roundedToNearestThousandWithAbbrev: String {
+        return "\(self / 1000)K"
     }
 
     var roundedToNearestThousand: Int {
-        return (self/1000)*1000
+        return (self / 1000) * 1000
     }
 }

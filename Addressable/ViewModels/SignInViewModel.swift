@@ -9,15 +9,15 @@ import SwiftUI
 import Combine
 
 class SignInViewModel: ObservableObject {
-    private let addressableDataFetcher: FetchableData
+    private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
 
-    init(addressableDataFetcher: FetchableData) {
-        self.addressableDataFetcher = addressableDataFetcher
+    init(provider: DependencyProviding) {
+        apiService = provider.register(provider: provider)
     }
 
     func login(with basicAuthtoken: String, onAuthenticationCompletion: @escaping (AuthorizedUserResponse?) -> Void) {
-        addressableDataFetcher.getCurrentUserAuthorization(with: basicAuthtoken)
+        apiService.getCurrentUserAuthorization(with: basicAuthtoken)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] value in

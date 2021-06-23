@@ -68,7 +68,7 @@ open class KeyChainServiceUtil {
         let result = NSMutableDictionary()
         result.setValue(kSecClassGenericPassword, forKey: kSecClass as String)
         result.setValue(key, forKey: kSecAttrService as String)
-        result.setValue(kSecAttrAccessibleAlwaysThisDeviceOnly, forKey: kSecAttrAccessible as String)
+        result.setValue(kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly, forKey: kSecAttrAccessible as String)
         return result
     }
 

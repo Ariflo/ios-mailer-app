@@ -19,19 +19,25 @@ enum CallState: String {
 }
 
 class CallManager {
+    private var app: Application
     private let callController = CXCallController()
     var disposables = Set<AnyCancellable>()
 
     var incomingLeads: [IncomingLead] = []
     var accountSmartNumberForCurrentCall: String = ""
 
-    var incomingCalls: [String: Call]! = [:]
-    var activeCallInvites: [String: CallInvite]! = [:]
-    var activeCalls: [String: Call]! = [:]
+    var incomingCalls: [String: Call] = [:]
+    var activeCallInvites: [String: CallInvite] = [:]
+    var activeCalls: [String: Call] = [:]
 
     var currentActiveCall: Call?
-    var currentCallerID: CallerID = CallerID()
+    var currentCallerID = CallerID()
     var calledIncomingLead: IncomingLead?
+
+    init(application: Application) {
+        self.app = application
+    }
+
 
     func getLeadFromLatestCall() -> IncomingLead? {
         guard let call = currentActiveCall else {
@@ -45,9 +51,10 @@ class CallManager {
         }
 
         guard let relatedIncomingCall = incomingCalls[uuid.uuidString] else {
-            if calledIncomingLead != nil { // Lead Related to Outgoing Call
-                return incomingLeads.first(
-                    where: { lead in lead.id == calledIncomingLead!.id })
+            // Lead Related to Outgoing Call
+            if calledIncomingLead != nil {
+                // swiftlint:disable force_unwrapping
+                return incomingLeads.first { lead in lead.id == calledIncomingLead!.id }
             }
             print("No relatedIncomingCall to getLeadFromLatestCall() in CallManager")
             return nil
@@ -58,10 +65,9 @@ class CallManager {
             return nil
         }
 
-        return incomingLeads.first(
-            where: { lead in
-                lead.fromNumber == fromNumber.replacingOccurrences(of: "+", with: "")
-            })
+        return incomingLeads.first { lead in
+            lead.fromNumber == fromNumber.replacingOccurrences(of: "+", with: "")
+        }
     }
 
     func addActiveCall(_ call: Call, tagAsIncoming: Bool = false) {
@@ -174,7 +180,7 @@ class CallManager {
     }
 
     func fetchToken(deviceID: String = "", tokenReceived: @escaping (_ tokenData: TwilioAccessTokenData?) -> Void ) {
-        AddressableDataFetcher().getTwilioAccessToken(
+        ApiService(provider: app.dependencyProvider).getTwilioAccessToken(
             encode(DeviceIDWrapper(deviceID: deviceID))
         )
         .sink(
@@ -194,7 +200,7 @@ class CallManager {
     }
 
     func getLatestIncomingLeadsList() {
-        AddressableDataFetcher().getIncomingLeads()
+        ApiService(provider: app.dependencyProvider).getIncomingLeads()
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { value in
@@ -239,7 +245,6 @@ class CallManager {
         }
         return incomingCalls[uuid.uuidString] != nil
     }
-
 }
 
 struct TwilioAccessTokenData: Codable {

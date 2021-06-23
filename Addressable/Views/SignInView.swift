@@ -31,22 +31,18 @@ struct SignInView: View {
                 .frame(width: 250, height: 250)
 
             TextField("Username", text: $username)
-                .textFieldStyle(RoundedBorderTextFieldStyle())
                 .textContentType(.username)
                 .keyboardType(.emailAddress)
-                .autocapitalization(.none)
-                .disableAutocorrection(true)
+                .modifier(TextFieldModifier())
 
             HStack {
                 if secured {
                     SecureField("Password", text: $password)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
                         .textContentType(.password)
+                        .modifier(TextFieldModifier())
                 } else {
                     TextField("Password", text: $password)
-                        .autocapitalization(.none)
-                        .padding(4)
-                        .border(Color.black, width: 1)
+                        .modifier(TextFieldModifier())
                 }
 
                 Button(action: {
@@ -60,12 +56,10 @@ struct SignInView: View {
                 }
             }
 
-            NavigationLink(destination: AppView(), tag: 1, selection: $authorizedUser) {
+            NavigationLink(destination: AppView().environmentObject(app), tag: 1, selection: $authorizedUser) {
                 Button(action: {
-                    let ws = CharacterSet.whitespacesAndNewlines
-
-                    let account = username.trimmingCharacters(in: ws)
-                    let pwd = password.trimmingCharacters(in: ws)
+                    let account = username.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                    let pwd = password.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 
                     guard !(account.isEmpty || pwd.isEmpty) else {
                         alertText = "Please enter a username and password."
@@ -74,34 +68,37 @@ struct SignInView: View {
                     }
 
                     let loginString = String(format: "%@:%@", account, pwd)
-                    let loginData = loginString.data(using: String.Encoding.utf8)!
-
-                    viewModel.login(with: loginData.base64EncodedString()) { authenticatedUserInfo in
-                        guard authenticatedUserInfo != nil else {
-                            alertText = "Incorrect Username or Password. Try Agian!"
-                            showingAlert = true
-                            return
-                        }
-                        KeyChainServiceUtil.shared[userBasicAuthToken] = loginData.base64EncodedString()
-                        // For the case where a user signs into the application on a previously registered device
-                        // register said user with the device on Addressable's DB
-                        guard let callManager = app.callManager,
-                              let deviceToken = KeyChainServiceUtil.shared[latestDeviceID] else {
-                            authorizedUser = 1
-                            return
-                        }
-
-                        callManager.fetchToken(
-                            deviceID: deviceToken
-                        ) { tokenData in
-                            guard tokenData?.jwtToken != nil else {
-                                alertText = "Sorry something went wrong, try again or reach out to an Addressable " +
-                                    "representative if the problem persists."
+                    if let loginData = loginString.data(using: String.Encoding.utf8) {
+                        viewModel.login(with: loginData.base64EncodedString()) { authenticatedUserInfo in
+                            guard authenticatedUserInfo != nil else {
+                                alertText = "Incorrect Username or Password. Try Again!"
                                 showingAlert = true
                                 return
                             }
+
+                            KeyChainServiceUtil.shared[userBasicAuthToken] = loginData.base64EncodedString()
+
+                            // For the case where a user signs into the application on a previously registered device
+                            // register said user with the device on Addressable's DB
+                            guard let callManager = app.callManager,
+                                  let deviceToken = KeyChainServiceUtil.shared[latestDeviceID] else {
+                                // In this case the device was not previously registered, safe to proceed
+                                logInToApplication()
+                                return
+                            }
+                            callManager.fetchToken(
+                                deviceID: deviceToken
+                            ) { tokenData in
+                                guard tokenData?.jwtToken != nil else {
+                                    alertText = "Sorry something went wrong, " +
+                                        "try again or reach out to an Addressable " +
+                                        "representative if the problem persists."
+                                    showingAlert = true
+                                    return
+                                }
+                                logInToApplication()
+                            }
                         }
-                        authorizedUser = 1
                     }
                 }) {
                     Text("Log In")
@@ -110,7 +107,6 @@ struct SignInView: View {
                 .alert(isPresented: $showingAlert) {
                     Alert(title: Text(alertText))
                 }
-
             }
             if let versionNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
                let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
@@ -121,16 +117,26 @@ struct SignInView: View {
         }
         .padding()
     }
+    private func logInToApplication() {
+        if KeyChainServiceUtil.shared[userBasicAuthToken] != nil {
+            app.currentView = .dashboard(false)
+            authorizedUser = 1
+        } else {
+            alertText = "Sorry something went wrong, " +
+                "try again or reach out to an Addressable " +
+                "representative if the problem persists."
+            showingAlert = true
+        }
+    }
 }
 
 struct EyeImage: View {
-    // 1
     private var imageName: String
+
     init(name: String) {
         self.imageName = name
     }
 
-    // 2
     var body: some View {
         Image(imageName)
             .resizable()
@@ -142,7 +148,7 @@ struct EyeImage: View {
 #if DEBUG
 struct SignInView_Previews: PreviewProvider {
     static var previews: some View {
-        SignInView(viewModel: SignInViewModel(addressableDataFetcher: AddressableDataFetcher()))
+        SignInView(viewModel: SignInViewModel(provider: DependencyProvider()))
     }
 }
 #endif

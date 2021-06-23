@@ -8,17 +8,17 @@
 import SwiftUI
 import Combine
 
-class TagIncomingLeadViewModel: ObservableObject, Identifiable {
+class TagIncomingLeadViewModel: ObservableObject {
     @Published var caller: String = ""
     @Published var isRealOrSpamSelectedTag: IncomingLeadTagOptions = .person
     @Published var isInterestedSelectedTag: IncomingLeadTagOptions = .lowInterest
     @Published var isRemovalSelectedTag: IncomingLeadTagOptions = .removeNo
 
-    private let addressableDataFetcher: FetchableData
+    private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
 
-    init(addressableDataFetcher: FetchableData) {
-        self.addressableDataFetcher = addressableDataFetcher
+    init(provider: DependencyProviding) {
+        apiService = provider.register(provider: provider)
     }
 
     func tagIncomingLead(for leadID: Int, completion: @escaping (IncomingLead?) -> Void) {
@@ -33,7 +33,7 @@ class TagIncomingLeadViewModel: ObservableObject, Identifiable {
             return
         }
 
-        addressableDataFetcher.tagIncomingLead(with: leadID, tagData)
+        apiService.tagIncomingLead(with: leadID, tagData)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { value in

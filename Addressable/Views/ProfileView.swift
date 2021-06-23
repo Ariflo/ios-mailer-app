@@ -4,21 +4,28 @@
 //
 //  Created by Ari on 12/30/20.
 //
-
 import SwiftUI
 
-struct ProfileView: View {
+struct ProfileView: View, Equatable {
+    static func == (lhs: ProfileView, rhs: ProfileView) -> Bool {
+        lhs.selectedMenuItem == rhs.selectedMenuItem
+    }
+
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: ProfileViewModel
 
     @State var showingAlert = false
     @State var successfullyLoggedOut: Int?
 
-    init(viewModel: ProfileViewModel) {
+    @Binding var selectedMenuItem: MainMenu
+
+    init(viewModel: ProfileViewModel, selectedMenuItem: Binding<MainMenu>) {
         self.viewModel = viewModel
+        self._selectedMenuItem = selectedMenuItem
     }
 
     var body: some View {
-        NavigationLink(destination: AppView(), tag: 1, selection: $successfullyLoggedOut) {
+        NavigationLink(destination: AppView().environmentObject(app), tag: 1, selection: $successfullyLoggedOut) {
             VStack {
                 Button(action: {
                     showingAlert = true
@@ -39,25 +46,37 @@ struct ProfileView: View {
                                 }
                                 KeyChainServiceUtil.shared[userBasicAuthToken] = nil
                                 KeyChainServiceUtil.shared[userMobileClientIdentity] = nil
-                                successfullyLoggedOut = 1
+                                logOutOfApplication()
                             }
                         },
                         secondaryButton: .cancel()
                     )
                 }
-                if let versionNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
-                   let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-                    Text("v\(appVersion) (\(versionNumber))")
-                        .foregroundColor(Color.black)
-                        .padding()
-                }
-            }
+            }.frame(
+                minWidth: 0,
+                maxWidth: .infinity,
+                minHeight: 0,
+                maxHeight: .infinity,
+                alignment: .center
+            )
+        }
+    }
+    private func logOutOfApplication() {
+        if KeyChainServiceUtil.shared[userBasicAuthToken] == nil &&
+            KeyChainServiceUtil.shared[userMobileClientIdentity] == nil {
+            app.currentView = .signIn
+            successfullyLoggedOut = 1
         }
     }
 }
 
+#if DEBUG
 struct ProfileView_Previews: PreviewProvider {
     static var previews: some View {
-        ProfileView(viewModel: ProfileViewModel(addressableDataFetcher: AddressableDataFetcher()))
+        let selectedMenuItem = Binding<MainMenu>(
+            get: { MainMenu.campaigns }, set: { _ in }
+        )
+        ProfileView(viewModel: ProfileViewModel(provider: DependencyProvider()), selectedMenuItem: selectedMenuItem)
     }
 }
+#endif

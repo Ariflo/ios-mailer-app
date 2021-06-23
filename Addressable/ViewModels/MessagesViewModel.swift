@@ -8,23 +8,23 @@
 import SwiftUI
 import Combine
 
-class MessagesViewModel: ObservableObject, Identifiable {
+class MessagesViewModel: ObservableObject {
     @Published var incomingLeadsWithMessages: IncomingLeadsResponse = []
     @Published var messages: [Message] = []
     @Published var loading: Bool = false
 
-    private let addressableDataFetcher: FetchableData
+    private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
 
     var messageSid: String = ""
 
-    init(addressableDataFetcher: FetchableData) {
-        self.addressableDataFetcher = addressableDataFetcher
+    init(provider: DependencyProviding) {
+        self.apiService = provider.register(provider: provider)
     }
 
     func getIncomingLeadsWithMessages() {
         loading = true
-        addressableDataFetcher.getIncomingLeadsWithMessages()
+        apiService.getIncomingLeadsWithMessages()
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] value in
@@ -47,11 +47,15 @@ class MessagesViewModel: ObservableObject, Identifiable {
     }
 
     func getMessages(for leadId: Int) {
-        addressableDataFetcher.getLeadMessages(for: leadId)
+        apiService.getLeadMessages(for: leadId)
             .map { $0.leadMessages
                 .compactMap { msg -> Message? in
                     do {
-                        return try JSONDecoder().decode(Message.self, from: msg.data(using: .utf8)!)
+                        if let msgData = msg.data(using: .utf8) {
+                            return try JSONDecoder().decode(Message.self, from: msgData)
+                        } else {
+                            return nil
+                        }
                     } catch {
                         print("getMessages(for leadID: \(leadId)) JSON decoding error: \(error)")
                         return nil
@@ -73,7 +77,7 @@ class MessagesViewModel: ObservableObject, Identifiable {
                 receiveValue: { [weak self] messages in
                     guard let self = self else { return }
                     self.messages = messages
-                    self.messageSid = messages.count > 0 ? messages[0].messageSid : ""
+                    self.messageSid = !messages.isEmpty ? messages[0].messageSid : ""
                 })
             .store(in: &disposables)
     }
@@ -83,11 +87,15 @@ class MessagesViewModel: ObservableObject, Identifiable {
             print("Message Encoding Error")
             return
         }
-        addressableDataFetcher.sendLeadMessage(encodedMessage)
+        apiService.sendLeadMessage(encodedMessage)
             .map { $0.leadMessages
                 .compactMap { msg -> Message? in
                     do {
-                        return try JSONDecoder().decode(Message.self, from: msg.data(using: .utf8)!)
+                        if let msgData = msg.data(using: .utf8) {
+                            return try JSONDecoder().decode(Message.self, from: msgData)
+                        } else {
+                            return nil
+                        }
                     } catch {
                         print("getMessages(_ message: \(message)) JSON decoding error: \(error)")
                         return nil

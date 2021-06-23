@@ -27,24 +27,27 @@ extension UIColor {
 
 extension Color {
     public static var addressablePurple: Color {
-        return Color(UIColor(red: 126/255, green: 0/255, blue: 181/255, alpha: 1.0))
+        return Color(UIColor(red: 126 / 255, green: 0 / 255, blue: 181 / 255, alpha: 1.0))
     }
     public static var addressableLightGray: Color {
-        return Color(UIColor(red: 250/255, green: 250/255, blue: 250/255, alpha: 1.0))
+        return Color(UIColor(red: 240 / 255, green: 240 / 255, blue: 240 / 255, alpha: 1.0))
     }
     public static var addressableLighterGray: Color {
-        return Color(UIColor(red: 221/255, green: 221/255, blue: 221/255, alpha: 1.0))
+        return Color(UIColor(red: 221 / 255, green: 221 / 255, blue: 221 / 255, alpha: 1.0))
     }
     public static var addressableDarkGray: Color {
-        return Color(UIColor(red: 112/255, green: 112/255, blue: 112/255, alpha: 1.0))
+        return Color(UIColor(red: 112 / 255, green: 112 / 255, blue: 112 / 255, alpha: 1.0))
     }
     public static var addressableLightestGray: Color {
-        return Color(UIColor(red: 203/255, green: 203/255, blue: 203/255, alpha: 1.0))
+        return Color(UIColor(red: 203 / 255, green: 203 / 255, blue: 203 / 255, alpha: 1.0))
     }
     public static var addressableFadedBlack: Color {
-        return Color(UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.5))
+        return Color(UIColor(red: 0 / 255, green: 0 / 255, blue: 0 / 255, alpha: 0.5))
     }
     public static var addressableDarkerGray: Color {
-        return Color(UIColor(red: 235/255, green: 235/255, blue: 235/255, alpha: 1.0))
+        return Color(UIColor(red: 235 / 255, green: 235 / 255, blue: 235 / 255, alpha: 1.0))
+    }
+    public static var addressableRed: Color {
+        return Color(UIColor(red: 208 / 255, green: 0 / 255, blue: 72 / 255, alpha: 1.0))
     }
 }

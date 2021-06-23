@@ -10,7 +10,6 @@ import SwiftUI
 
 // swiftlint:disable identifier_name
 struct EdgeBorder: Shape {
-
     var width: CGFloat
     var edges: [Edge]
 

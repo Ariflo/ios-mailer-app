@@ -7,88 +7,66 @@
 
 import SwiftUI
 
+enum AddressableView {
+    case signIn
+    case dashboard(Bool)
+    case activeCall
+    case composeRadius
+}
+
 struct AppView: View {
     @EnvironmentObject var app: Application
-    @State var displayIncomingLeadSurvey: Bool = false
+
+    init() {
+        UITableView.appearance().backgroundColor = UIColor(
+            red: 240 / 255,
+            green: 240 / 255,
+            blue: 240 / 255,
+            alpha: 1.0
+        )
+        UITextField.appearance().clearButtonMode = .whileEditing
+        UIPageControl.appearance().currentPageIndicatorTintColor = .black
+        UIPageControl.appearance().pageIndicatorTintColor = UIColor(rgb: 0xDDDDDD)
+    }
 
     var body: some View {
-        if KeyChainServiceUtil.shared[userBasicAuthToken] != nil {
-            if app.displayCallView {
-                AddressableCallView(viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher()))
+        NavigationView {
+            switch app.currentView {
+            case .signIn:
+                SignInView(
+                    viewModel: SignInViewModel(provider: app.dependencyProvider)
+                )
+                .navigationBarHidden(true)
+                .environmentObject(app)
+            case .dashboard(let shouldDisplayIncomingLeadSurvey):
+                DashboardView(
+                    viewModel: DashboardViewModel(provider: app.dependencyProvider),
+                    displayIncomingLeadSurvey: shouldDisplayIncomingLeadSurvey)
                     .environmentObject(app)
                     .navigationBarHidden(true)
-            } else if app.displayComposeRadiusMailing {
-                ComposeRadiusMailingView(
-                    viewModel: ComposeRadiusMailingViewModel(
-                        selectedRadiusMailing: app.selectedRadiusMailing)
-                ).environmentObject(app)
-            } else {
-                TabView {
-                    MailingsView(
-                        viewModel: MailingsViewModel(addressableDataFetcher: AddressableDataFetcher())
-                    )
+            case .activeCall:
+                AddressableCallView(viewModel: CallsViewModel(provider: app.dependencyProvider))
                     .environmentObject(app)
                     .navigationBarHidden(true)
-                    .tabItem {
-                        Image(systemName: "mail")
-                        Text("Campaigns")
-                    }
-                    CallListView(
-                        viewModel: CallsViewModel(addressableDataFetcher: AddressableDataFetcher())
-                    )
-                    .environmentObject(app)
-                    .navigationBarHidden(true)
-                    .tabItem {
-                        Image(systemName: "phone")
-                        Text("Calls")
-                    }
-                    MessageListView(
-                        viewModel: MessagesViewModel(addressableDataFetcher: AddressableDataFetcher())
-                    )
-                    .navigationBarHidden(true)
-                    .tabItem {
-                        Image(systemName: "message")
-                        Text("Messages")
-                    }
-                    ProfileView(viewModel: ProfileViewModel(addressableDataFetcher: AddressableDataFetcher()))
-                        .navigationBarHidden(true)
-                        .tabItem {
-                            Image(systemName: "person")
-                            Text("Profile")
-                        }
-                }.onAppear {
-                    app.verifyPermissions {
-                        DispatchQueue.main.async {
-                            UIApplication.shared.registerForRemoteNotifications()
-                        }
-                    }
-                    if let callManager = app.callManager,
-                       let knownLead = callManager.getLeadFromLatestCall() {
-                        displayIncomingLeadSurvey = knownLead.status == "unknown" && !app.fromAddressableCallView
-                    }
-                }.sheet(isPresented: $displayIncomingLeadSurvey) {
-                    TagIncomingLeadView(
-                        viewModel: TagIncomingLeadViewModel(
-                            addressableDataFetcher: AddressableDataFetcher()),
-                        taggingComplete: { displayIncomingLeadSurvey = false }
-                    ).environmentObject(app)
-                }
+            case .composeRadius:
+                ComposeRadiusView(
+                    viewModel: ComposeRadiusViewModel(provider: app.dependencyProvider,
+                                                      selectedMailing: app.selectedMailing)
+                )
+                .environmentObject(app)
+                .navigationBarHidden(true)
             }
-        } else {
-            SignInView(
-                viewModel: SignInViewModel(addressableDataFetcher: AddressableDataFetcher())
-            )
-            .environmentObject(app)
-            .navigationBarHidden(true)
         }
     }
 }
 
+#if DEBUG
 struct AppView_Previews: PreviewProvider {
     static var previews: some View {
         AppView().environmentObject(Application())
     }
 }
+#endif
 
 #if canImport(UIKit)
 extension View {
