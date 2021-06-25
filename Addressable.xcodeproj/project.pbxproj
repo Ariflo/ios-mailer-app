@@ -135,6 +135,7 @@
 		CACFA5DD26333B04007AA8E4 /* FontUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACFA5DC26333B04007AA8E4 /* FontUtils.swift */; };
 		CACFA5E7263350D4007AA8E4 /* BordersUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACFA5E6263350D4007AA8E4 /* BordersUtils.swift */; };
 		CADA001C25C0D09000004B4B /* EnumUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADA001B25C0D09000004B4B /* EnumUtil.swift */; };
+		CAF36E9A26866C4A00AF5744 /* CallListSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF36E9926866C4A00AF5744 /* CallListSectionHeaderView.swift */; };
 		CAFDBEA925D5DDD5002D17B4 /* ComposeRadiusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFDBEA825D5DDD5002D17B4 /* ComposeRadiusView.swift */; };
 		CAFDBEAE25D5DF0D002D17B4 /* GoogleMapsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFDBEAD25D5DF0D002D17B4 /* GoogleMapsView.swift */; };
 		CAFDBEC525D6F3D3002D17B4 /* ComposeRadiusViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFDBEC425D6F3D3002D17B4 /* ComposeRadiusViewModel.swift */; };
@@ -298,6 +299,7 @@
 		CACFA5DC26333B04007AA8E4 /* FontUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontUtils.swift; sourceTree = "<group>"; };
 		CACFA5E6263350D4007AA8E4 /* BordersUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BordersUtils.swift; sourceTree = "<group>"; };
 		CADA001B25C0D09000004B4B /* EnumUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumUtil.swift; sourceTree = "<group>"; };
+		CAF36E9926866C4A00AF5744 /* CallListSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallListSectionHeaderView.swift; sourceTree = "<group>"; };
 		CAFDBEA825D5DDD5002D17B4 /* ComposeRadiusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusView.swift; sourceTree = "<group>"; };
 		CAFDBEAD25D5DF0D002D17B4 /* GoogleMapsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapsView.swift; sourceTree = "<group>"; };
 		CAFDBEC425D6F3D3002D17B4 /* ComposeRadiusViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusViewModel.swift; sourceTree = "<group>"; };
@@ -553,6 +555,7 @@
 				CA93F49D25C9E41000271404 /* AddressableCallView.swift */,
 				CAC8B0AA259D017E00D4447F /* CallListView.swift */,
 				CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */,
+				CAF36E9926866C4A00AF5744 /* CallListSectionHeaderView.swift */,
 			);
 			path = CallViews;
 			sourceTree = "<group>";
@@ -931,6 +934,7 @@
 				CA4A0F4825F1A75D00BF89CF /* TagIncomingLeadViewModel.swift in Sources */,
 				CACE58BC266BF99A00BDD0A9 /* CalendarTileView.swift in Sources */,
 				CA121010263728200077D743 /* TargetCriteriaSliderView.swift in Sources */,
+				CAF36E9A26866C4A00AF5744 /* CallListSectionHeaderView.swift in Sources */,
 				CA1210002634C0240077D743 /* SliderView.swift in Sources */,
 				CACE58BA266AABDA00BDD0A9 /* MailingCardItemView.swift in Sources */,
 				CA8555D625A81B330063274D /* CallManager.swift in Sources */,
@@ -1102,7 +1106,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;
@@ -1132,7 +1136,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;

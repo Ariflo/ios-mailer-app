@@ -50,6 +50,15 @@ struct TagIncomingLeadView: View {
                                 }
                                 taggingComplete()
                             }
+                        } else if viewModel.subjectLead != nil {
+                            // swiftlint:disable force_unwrapping
+                            viewModel.tagIncomingLead(for: viewModel.subjectLead!.id) { taggedLead in
+                                guard taggedLead != nil else {
+                                    print("Unable to tagIncomingLead() in TagIncomingLeadView")
+                                    return
+                                }
+                                taggingComplete()
+                            }
                         }
                     }
                 ) {
@@ -102,9 +111,12 @@ struct TagIncomingLeadView: View {
 #if DEBUG
 struct TagIncomingLeadView_Previews: PreviewProvider {
     static var previews: some View {
+        let selectLead = Binding<IncomingLead?>(
+            get: { nil }, set: { _ in }
+        )
         TagIncomingLeadView(
             viewModel: TagIncomingLeadViewModel(
-                provider: DependencyProvider()
+                provider: DependencyProvider(), lead: selectLead
             )) {}.environmentObject(Application())
     }
 }

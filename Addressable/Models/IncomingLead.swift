@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - IncomingLead
-struct IncomingLead: Codable, Identifiable {
+struct IncomingLead: Codable, Identifiable, Equatable {
     let id: Int
     let md5, fromNumber, toNumber, firstName, lastName: String?
     let streetLine1, streetLine2, city, state: String?

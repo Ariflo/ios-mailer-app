@@ -14,11 +14,14 @@ class TagIncomingLeadViewModel: ObservableObject {
     @Published var isInterestedSelectedTag: IncomingLeadTagOptions = .lowInterest
     @Published var isRemovalSelectedTag: IncomingLeadTagOptions = .removeNo
 
+    @Binding var subjectLead: IncomingLead?
+
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
 
-    init(provider: DependencyProviding) {
+    init(provider: DependencyProviding, lead: Binding<IncomingLead?>) {
         apiService = provider.register(provider: provider)
+        _subjectLead = lead
     }
 
     func tagIncomingLead(for leadID: Int, completion: @escaping (IncomingLead?) -> Void) {

@@ -19,7 +19,8 @@ struct DashboardView: View {
     @State var showNavMenu = false
     @State var displayIncomingLeadSurvey: Bool = false
     @State var selectedMenuItem: MainMenu = .campaigns
-    @State  var refreshData: Bool = false
+    @State var refreshData: Bool = false
+    @State var subjectLead: IncomingLead?
 
     var shouldDisplayIncomingLeadSurvey: Bool = false
 
@@ -74,7 +75,9 @@ struct DashboardView: View {
                     case .calls:
                         CallListView(
                             viewModel: CallsViewModel(provider: app.dependencyProvider),
-                            selectedMenuItem: $selectedMenuItem
+                            selectedMenuItem: $selectedMenuItem,
+                            displayIncomingLeadSurvey: $displayIncomingLeadSurvey,
+                            lead: $subjectLead
                         )
                         .equatable()
                         .environmentObject(app)
@@ -122,7 +125,10 @@ struct DashboardView: View {
             }
             .sheet(isPresented: $displayIncomingLeadSurvey) {
                 TagIncomingLeadView(
-                    viewModel: TagIncomingLeadViewModel(provider: app.dependencyProvider)) {
+                    viewModel: TagIncomingLeadViewModel(
+                        provider: app.dependencyProvider,
+                        lead: $subjectLead
+                    )) {
                     displayIncomingLeadSurvey = false
                 }.environmentObject(app)
             }

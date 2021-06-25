@@ -65,11 +65,12 @@ struct CustomSegmentedPickerView: View {
 }
 #if DEBUG
 struct CustomSegmentedPickerView_Previews: PreviewProvider {
-    @State var isFairSegmentOption = SegmentedControlIconOptionView(option: .fair)
-
     static var previews: some View {
+        let selectedLead = Binding<IncomingLead?>(
+            get: { nil }, set: { _ in }
+        )
         CustomSegmentedPickerView(
-            viewModel: TagIncomingLeadViewModel(provider: DependencyProvider()),
+            viewModel: TagIncomingLeadViewModel(provider: DependencyProvider(), lead: selectedLead),
             tagOptions: [.fair]
         )
     }
