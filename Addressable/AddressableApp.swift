@@ -26,7 +26,7 @@ protocol PushKitEventDelegate: AnyObject {
 class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, ObservableObject {
     @Published var currentView: AddressableView = KeyChainServiceUtil.shared[userBasicAuthToken] != nil ?
         .dashboard(false) : .signIn
-    @Published var selectedMailing: RadiusMailing?
+    @Published var selectedMailing: Mailing?
     @Published var callState: String = CallState.connecting.rawValue
 
     var callKitProvider: CallService?

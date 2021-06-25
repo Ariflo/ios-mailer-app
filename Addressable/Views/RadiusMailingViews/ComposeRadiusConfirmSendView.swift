@@ -27,6 +27,9 @@ struct ComposeRadiusConfirmSendView: View {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle())
                                 .frame(width: 350, height: 200)
+                                .onDisappear {
+                                    viewModel.getMailingInsideCardImageTask.cancel()
+                                }
                         } else if viewModel.touchOneInsideCardImageData != nil &&
                                     viewModel.touchTwoInsideCardImageData != nil {
                             CustomNote.CoverImage(imageData: getInsideCardImageData(for: touch))
@@ -99,12 +102,13 @@ struct ComposeRadiusConfirmSendView: View {
         return Data()
     }
     private func getRadiusMailingSiteAddress() -> String {
-        if let mailing = viewModel.touchOneMailing {
-            return "\(mailing.subjectListEntry.siteAddressLine1.trimmingCharacters(in: .whitespacesAndNewlines))" +
-                "\(mailing.subjectListEntry.siteAddressLine2 ?? "".trimmingCharacters(in: .whitespacesAndNewlines)) " +
-                "\(mailing.subjectListEntry.siteCity.trimmingCharacters(in: .whitespacesAndNewlines)) " +
-                "\(mailing.subjectListEntry.siteState.trimmingCharacters(in: .whitespacesAndNewlines)), " +
-                "\(mailing.subjectListEntry.siteZipcode.trimmingCharacters(in: .whitespacesAndNewlines))"
+        if let mailing = viewModel.touchOneMailing,
+           let subjectListEntry = mailing.subjectListEntry {
+            return "\(subjectListEntry.siteAddressLine1.trimmingCharacters(in: .whitespacesAndNewlines))" +
+                "\(subjectListEntry.siteAddressLine2 ?? "".trimmingCharacters(in: .whitespacesAndNewlines)) " +
+                "\(subjectListEntry.siteCity.trimmingCharacters(in: .whitespacesAndNewlines)) " +
+                "\(subjectListEntry.siteState.trimmingCharacters(in: .whitespacesAndNewlines)), " +
+                "\(subjectListEntry.siteZipcode.trimmingCharacters(in: .whitespacesAndNewlines))"
         } else {
             return ""
         }

@@ -17,22 +17,22 @@ struct RecipientResponse: Codable {
 // MARK: - Recipient
 struct Recipient: Codable, Identifiable {
     let id: Int
-    let fullName, status, siteAddress, mailingAddress: String
+    let fullName, listMembership, siteAddress, mailingAddress: String
 
     enum CodingKeys: String, CodingKey {
         case id
         case fullName = "full_name"
-        case status
+        case listMembership = "list_membership"
         case siteAddress = "site_address"
         case mailingAddress = "mailing_address"
     }
 }
 // MARK: - OutgoingRecipientStatus
 struct OutgoingRecipientStatus: Codable {
-    let status: String
+    let listMembership: String
 
     enum CodingKeys: String, CodingKey {
-        case status
+        case listMembership = "list_membership"
     }
 }
 // MARK: - UpdateRecipientStatusResponse
@@ -55,13 +55,15 @@ struct RemoveRecipientResponse: Codable {
 // MARK: - ListEntry
 struct ListEntry: Codable {
     let id: Int
-    let status, toAddress, firstName, lastName: String
+    let status: String?
+    let toAddress, firstName, lastName: String
     let secondFirstName, secondLastName: String?
     let addressLine1, addressLine2, city, state: String
     let zipcode, zipLastFour, deliveryPointCode: String
 
     enum CodingKeys: String, CodingKey {
-        case id, status
+        case id
+        case status
         case toAddress = "to_address"
         case firstName = "first_name"
         case lastName = "last_name"

@@ -16,6 +16,7 @@ struct TextFieldModifier: ViewModifier {
             .autocapitalization(.none)
             .disableAutocorrection(true)
             .background(Color.white)
+            .foregroundColor(.black)
             .overlay(
                 RoundedRectangle(cornerRadius: 5)
                     .stroke(Color.addressableLightestGray, lineWidth: 1)

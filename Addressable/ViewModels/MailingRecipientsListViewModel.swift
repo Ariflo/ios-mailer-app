@@ -12,22 +12,22 @@ import Combine
 class MailingRecipientsListViewModel: ObservableObject {
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
-    var mailing: RadiusMailing
+    var mailing: Mailing
 
     @Published var recipients: [Recipient] = []
     @Published var loadingRecipients: Bool = true
 
-    init(provider: DependencyProviding, selectedMailing: RadiusMailing) {
+    init(provider: DependencyProviding, selectedMailing: Mailing) {
         apiService = provider.register(provider: provider)
         mailing = selectedMailing
     }
 
     func updateListEntry(
         with listEntryId: Int,
-        with status: String
+        with listMembership: String
     ) {
         guard let encodedUpdateListEntryData = try? JSONEncoder().encode(
-            OutgoingRecipientStatus(status: status)
+            OutgoingRecipientStatus(listMembership: listMembership)
         ) else {
             print("Update List Entry Encoding Error")
             return
@@ -41,7 +41,7 @@ class MailingRecipientsListViewModel: ObservableObject {
                     case .failure(let error):
                         print("updateListEntry(" +
                                 "with listEntryId: \(listEntryId), " +
-                                "with status: \(status), receiveCompletion error: \(error)")
+                                "with listMembership: \(listMembership), receiveCompletion error: \(error)")
                     case .finished:
                         break
                     }

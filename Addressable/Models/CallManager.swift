@@ -18,6 +18,10 @@ enum CallState: String {
     case ended = "Call Ended"
 }
 
+enum CallerName: String {
+    case defaultName = "Addressable Mailing Caller"
+}
+
 class CallManager {
     private var app: Application
     private let callController = CXCallController()
@@ -260,7 +264,7 @@ struct TwilioAccessTokenData: Codable {
 }
 
 struct CallerID {
-    var caller: String = "Addressable Mailing Caller"
+    var caller: String = CallerName.defaultName.rawValue
     var relatedMailingName: String = ""
 }
 

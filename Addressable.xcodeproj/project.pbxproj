@@ -14,7 +14,6 @@
 		B370BC342576BAC20066624A /* AddressableUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370BC332576BAC20066624A /* AddressableUITests.swift */; };
 		B370BC872576DE9F0066624A /* SignInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B370BC862576DE9F0066624A /* SignInView.swift */; };
 		B3DB527F257992F8004196A6 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB527E257992F8004196A6 /* DashboardView.swift */; };
-		B3DB52872579A84B004196A6 /* Mailing.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3DB52862579A84B004196A6 /* Mailing.swift */; };
 		CA054A7F265C2F4E00729D13 /* NavigationMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA054A7E265C2F4E00729D13 /* NavigationMenuView.swift */; };
 		CA054A81265C309800729D13 /* CampaignsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA054A80265C309800729D13 /* CampaignsView.swift */; };
 		CA054A83265C310300729D13 /* CampaignsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA054A82265C310300729D13 /* CampaignsViewModel.swift */; };
@@ -29,7 +28,7 @@
 		CA3B8F8A265430AC005A12EF /* DataTreeSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3B8F89265430AC005A12EF /* DataTreeSearch.swift */; };
 		CA3B8F8C26557FEE005A12EF /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3B8F8B26557FEE005A12EF /* ProfileViewModel.swift */; };
 		CA3CE817259BC38500A230E1 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3CE816259BC38500A230E1 /* DashboardViewModel.swift */; };
-		CA48C83F2656DBB5003A23EC /* RadiusMailing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA48C83E2656DBB5003A23EC /* RadiusMailing.swift */; };
+		CA48C83F2656DBB5003A23EC /* Mailing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA48C83E2656DBB5003A23EC /* Mailing.swift */; };
 		CA48C8412656DE93003A23EC /* CustomNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA48C8402656DE93003A23EC /* CustomNote.swift */; };
 		CA48C8432656DF57003A23EC /* MessageTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA48C8422656DF57003A23EC /* MessageTemplate.swift */; };
 		CA48C8452656DF86003A23EC /* MultiTouchTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA48C8442656DF86003A23EC /* MultiTouchTopic.swift */; };
@@ -179,7 +178,6 @@
 		B370BC4C2576C2860066624A /* Addressable.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Addressable.entitlements; sourceTree = "<group>"; };
 		B370BC862576DE9F0066624A /* SignInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInView.swift; sourceTree = "<group>"; };
 		B3DB527E257992F8004196A6 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
-		B3DB52862579A84B004196A6 /* Mailing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailing.swift; sourceTree = "<group>"; };
 		CA054A7E265C2F4E00729D13 /* NavigationMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationMenuView.swift; sourceTree = "<group>"; };
 		CA054A80265C309800729D13 /* CampaignsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignsView.swift; sourceTree = "<group>"; };
 		CA054A82265C310300729D13 /* CampaignsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignsViewModel.swift; sourceTree = "<group>"; };
@@ -194,7 +192,7 @@
 		CA3B8F89265430AC005A12EF /* DataTreeSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTreeSearch.swift; sourceTree = "<group>"; };
 		CA3B8F8B26557FEE005A12EF /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		CA3CE816259BC38500A230E1 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
-		CA48C83E2656DBB5003A23EC /* RadiusMailing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadiusMailing.swift; sourceTree = "<group>"; };
+		CA48C83E2656DBB5003A23EC /* Mailing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailing.swift; sourceTree = "<group>"; };
 		CA48C8402656DE93003A23EC /* CustomNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNote.swift; sourceTree = "<group>"; };
 		CA48C8422656DF57003A23EC /* MessageTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTemplate.swift; sourceTree = "<group>"; };
 		CA48C8442656DF86003A23EC /* MultiTouchTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultiTouchTopic.swift; sourceTree = "<group>"; };
@@ -462,13 +460,12 @@
 		CA3CE7F6259BBA1900A230E1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				B3DB52862579A84B004196A6 /* Mailing.swift */,
 				CA88420625A3A7D200E0D75A /* Authorization.swift */,
 				CA8555D525A81B330063274D /* CallManager.swift */,
 				CA85565725AFC4910063274D /* IncomingLead.swift */,
 				CA85567B25B0E5C50063274D /* Message.swift */,
 				CA3B8F89265430AC005A12EF /* DataTreeSearch.swift */,
-				CA48C83E2656DBB5003A23EC /* RadiusMailing.swift */,
+				CA48C83E2656DBB5003A23EC /* Mailing.swift */,
 				CA48C8402656DE93003A23EC /* CustomNote.swift */,
 				CA48C8422656DF57003A23EC /* MessageTemplate.swift */,
 				CA48C8442656DF86003A23EC /* MultiTouchTopic.swift */,
@@ -856,7 +853,7 @@
 				CA85567725B0E34F0063274D /* MessagesViewModel.swift in Sources */,
 				CA85567C25B0E5C50063274D /* Message.swift in Sources */,
 				CAFECD3226320B78009A7837 /* ComposeRadiusConfirmSendView.swift in Sources */,
-				CA48C83F2656DBB5003A23EC /* RadiusMailing.swift in Sources */,
+				CA48C83F2656DBB5003A23EC /* Mailing.swift in Sources */,
 				CA48C8452656DF86003A23EC /* MultiTouchTopic.swift in Sources */,
 				CAB4F985267A66AE00B44D02 /* ArrayUtil.swift in Sources */,
 				CAC8B086259BE6D400D4447F /* KeychainServiceUtil.swift in Sources */,
@@ -907,7 +904,6 @@
 				CA8555D125A81AF80063274D /* CallService.swift in Sources */,
 				CA3CE817259BC38500A230E1 /* DashboardViewModel.swift in Sources */,
 				CACFA5E7263350D4007AA8E4 /* BordersUtils.swift in Sources */,
-				B3DB52872579A84B004196A6 /* Mailing.swift in Sources */,
 				CACE58C2266EE47700BDD0A9 /* MailingDetailViewModel.swift in Sources */,
 				CAB4F98F267B1FD900B44D02 /* EditMailingInsideCardView.swift in Sources */,
 				CAC8B0AB259D017E00D4447F /* CallListView.swift in Sources */,
@@ -1106,7 +1102,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 0;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;
@@ -1120,7 +1116,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 0.0.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1136,7 +1132,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 0;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;
@@ -1150,7 +1146,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 0.0.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

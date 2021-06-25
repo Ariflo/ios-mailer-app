@@ -187,10 +187,12 @@ extension CallService: CXProviderDelegate {
 
         if let fullName = callInvite.customParameters?["lead_full_name"],
            let mailingName = callInvite.customParameters?["related_mailing_name"] {
-            callManager.currentCallerID.caller = fullName.contains("UNKNOWN") ? "Addressable Mailing Caller" : fullName
+            callManager.currentCallerID.caller = fullName.contains("UNKNOWN") ?
+                CallerName.defaultName.rawValue : fullName
             callManager.currentCallerID.relatedMailingName = mailingName
         } else if let fullName = callInvite.customParameters?["lead_full_name"] {
-            callManager.currentCallerID.caller = fullName.contains("UNKNOWN") ? "Addressable Mailing Caller" : fullName
+            callManager.currentCallerID.caller = fullName.contains("UNKNOWN") ?
+                CallerName.defaultName.rawValue : fullName
         }
         update.localizedCallerName = "\(callManager.currentCallerID.caller) " +
             " \(callManager.currentCallerID.relatedMailingName)"

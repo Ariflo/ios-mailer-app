@@ -115,8 +115,8 @@ struct CampaignsListView: View {
             ScrollView(showsIndicators: false) {
                 let isListFiltered = !(selectedFilters.isEmpty && mailingSearchTerm.isEmpty)
 
-                if viewModel.radiusMailings.filter { mailing in isRelatedToSearchQuery(mailing) }.isEmpty &&
-                    !viewModel.radiusMailings.isEmpty {
+                if viewModel.mailings.filter { mailing in isRelatedToSearchQuery(mailing) }.isEmpty &&
+                    !viewModel.mailings.isEmpty {
                     HStack {
                         Spacer()
                         Text("No mailings match '\(mailingSearchTerm)' search term")
@@ -149,7 +149,8 @@ struct CampaignsListView: View {
                                                         maxMailingsDisplayCount) {
                                         let mailing = mailingList[mailingIndex]
                                         MailingRowItem(tapAction: {
-                                            if mailing.mailingStatus == MailingState.draft.rawValue {
+                                            if mailing.mailingStatus == MailingState.draft.rawValue &&
+                                                mailing.type == MailingType.radius.rawValue {
                                                 app.currentView = .composeRadius
                                             } else {
                                                 selectedMenuItem = .mailingDetail
@@ -179,15 +180,15 @@ struct CampaignsListView: View {
     private func getMailingStatusFromFilters(with status: MailingStatus) -> MailingStatus? {
         return selectedFilters.contains(status.rawValue) ? status : nil
     }
-    private func getMailings(with status: MailingStatus) -> [RadiusMailing] {
+    private func getMailings(with status: MailingStatus) -> [Mailing] {
         switch status {
         case .mailed:
-            return viewModel.radiusMailings.filter {
+            return viewModel.mailings.filter {
                 $0.mailingStatus == MailingState.mailed.rawValue ||
                     $0.mailingStatus == MailingState.remailed.rawValue
             }
         case .processing:
-            return viewModel.radiusMailings.filter {
+            return viewModel.mailings.filter {
                 $0.mailingStatus == MailingState.production.rawValue ||
                     $0.mailingStatus == MailingState.printReady.rawValue ||
                     $0.mailingStatus == MailingState.printing.rawValue ||
@@ -197,26 +198,26 @@ struct CampaignsListView: View {
                     $0.mailingStatus == MailingState.productionReady.rawValue
             }
         case .upcoming:
-            return viewModel.radiusMailings.filter {
+            return viewModel.mailings.filter {
                 $0.mailingStatus == MailingState.scheduled.rawValue
             }
 
         case .draft:
-            return viewModel.radiusMailings.filter {
+            return viewModel.mailings.filter {
                 $0.mailingStatus == MailingState.draft.rawValue ||
                     $0.mailingStatus == MailingState.listReady.rawValue ||
                     $0.mailingStatus == MailingState.listAdded.rawValue ||
                     $0.mailingStatus == MailingState.listApproved.rawValue
             }
         case .archived:
-            return viewModel.radiusMailings.filter {
+            return viewModel.mailings.filter {
                 $0.mailingStatus == MailingState.archived.rawValue
             }
         }
     }
-    private func isRelatedToSearchQuery(_ mailing: RadiusMailing) -> Bool {
+    private func isRelatedToSearchQuery(_ mailing: Mailing) -> Bool {
         if !mailingSearchTerm.isEmpty {
-            return mailing.subjectListEntry.siteAddressLine1.trimmingCharacters(
+            return mailing.subjectListEntry?.siteAddressLine1.trimmingCharacters(
                 in: .whitespacesAndNewlines
             )
             .range(of: mailingSearchTerm, options: .caseInsensitive) != nil
@@ -242,7 +243,7 @@ struct CampaignsListView_Previews: PreviewProvider {
 // MARK: - MailingRowItem
 struct MailingRowItem: View {
     var tapAction: () -> Void
-    var mailing: RadiusMailing
+    var mailing: Mailing
 
     var body: some View {
         Button(action: {

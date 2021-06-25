@@ -14,7 +14,7 @@ import WebKit
 // MARK: - PreviewView
 struct PreviewView: UIViewRepresentable {
     @ObservedObject var viewModel: PreviewViewModel
-    var radiusMailing: RadiusMailing
+    var radiusMailing: Mailing
     var messageTemplateId: Int
 
     // Make a coordinator to co-ordinate with WKWebView's default delegate functions

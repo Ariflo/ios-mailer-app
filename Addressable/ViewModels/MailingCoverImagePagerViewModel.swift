@@ -13,7 +13,7 @@ class MailingCoverImagePagerViewModel: ObservableObject {
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
 
-    var mailing: RadiusMailing
+    var mailing: Mailing
     var selectedCoverImageId: Int
 
     @Published var renderedImageType: MailingImages = .envelopeOutside
@@ -29,7 +29,7 @@ class MailingCoverImagePagerViewModel: ObservableObject {
 
     init(
         provider: DependencyProviding,
-        selectedMailing: RadiusMailing,
+        selectedMailing: Mailing,
         selectedFrontImageData: Binding<Data?>,
         selectedBackImageData: Binding<Data?>,
         selecteImageId: Int

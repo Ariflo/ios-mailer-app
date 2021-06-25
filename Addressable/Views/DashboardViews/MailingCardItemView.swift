@@ -7,22 +7,27 @@
 
 import SwiftUI
 
+enum MailingType: String {
+    case radius = "RadiusMailing"
+}
+
 struct MailingCardItemView: View {
-    var mailing: RadiusMailing
+    var mailing: Mailing
 
     var body: some View {
         HStack(spacing: 12) {
             CalendarTileView(date: mailing.targetDropDate)
                 .padding(.leading, 10)
             VStack(alignment: .leading, spacing: 8) {
-                Text(mailing.subjectListEntry.siteAddressLine1)
+                Text(mailing.subjectListEntry?.siteAddressLine1 ?? mailing.name)
                     .foregroundColor(Color.black)
                     .font(Font.custom("Silka-Bold", size: 14))
                     .padding(.top, 8)
-                Text("Touch \(isTouchTwoMailing() ? "2" : "1")")
+                mailing.type == MailingType.radius.rawValue ?
+                    Text("Touch \(isTouchTwoMailing() ? "2" : "1")")
                     .font(Font.custom("Silka-Regular", size: 12))
                     .foregroundColor(Color.addressableFadedBlack)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 8) : nil
             }
             Spacer()
             Image(systemName: "chevron.right")

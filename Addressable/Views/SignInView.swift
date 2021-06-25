@@ -140,8 +140,7 @@ struct EyeImage: View {
     var body: some View {
         Image(imageName)
             .resizable()
-            .foregroundColor(.black)
-            .frame(width: 44, height: 44, alignment: .trailing)
+            .frame(width: 34, height: 34, alignment: .trailing)
     }
 }
 

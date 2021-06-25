@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 class CampaignsViewModel: ObservableObject {
-    @Published var radiusMailings: [RadiusMailing] = []
+    @Published var mailings: [Mailing] = []
     @Published var loadingMailings: Bool = false
     @Published var loadingLeads: Bool = false
     @Published var loadingLeadsWithMessages: Bool = false
@@ -44,12 +44,12 @@ class CampaignsViewModel: ObservableObject {
                 },
                 receiveValue: { [weak self] campaignsData in
                     guard let self = self else { return }
-                    self.radiusMailings = campaignsData.campaigns.compactMap { $0.radiusMailing }
+                    self.mailings = campaignsData.campaigns.compactMap { $0.mailing }
                     // TODO: Include Audience, Sphere, and the rest when the features are added
-                    self.numOfCampaigns = campaignsData.campaigns.compactMap { $0.radiusMailing }
+                    self.numOfCampaigns = campaignsData.campaigns.compactMap { $0.mailing }
                         .filter { $0.relatedMailing == nil || $0.relatedMailing?.parentMailingID != nil }.count
                     self.numOfCards = campaignsData.campaigns
-                        .compactMap { $0.radiusMailing }
+                        .compactMap { $0.mailing }
                         .filter { $0.mailingStatus == "mailed" }
                         .reduce(0) { total, mailing in total + mailing.activeRecipientCount
                         }

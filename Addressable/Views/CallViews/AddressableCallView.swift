@@ -25,10 +25,10 @@ struct AddressableCallView: View {
         ZStack(alignment: .top) {
             Color(red: 78 / 255, green: 71 / 255, blue: 210 / 255)
                 .edgesIgnoringSafeArea(.all)
-
-            VStack(spacing: 25) {
+            VStack(spacing: 18) {
                 Text(app.callState)
                     .font(Font.custom("Silka-Medium", size: 22))
+                    .padding(.top, 65)
                     .foregroundColor(.white)
                 Image("ZippyIcon")
                     .resizable()
@@ -38,19 +38,22 @@ struct AddressableCallView: View {
                     .font(Font.custom("Silka-Medium", size: 22))
                     .foregroundColor(.white)
                     .multilineTextAlignment(.center)
-                Text(app.callManager?.currentCallerID.relatedMailingName ?? CallerID().relatedMailingName)
+                let callerId = app.callManager?.currentCallerID.relatedMailingName ?? CallerID().relatedMailingName
+                Text(callerId)
                     .font(Font.custom("Silka-Medium", size: 22))
                     .foregroundColor(.orange)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
-                Text("Addressable name matching is beta, information may not be accurate." +
-                        " Verify with caller to confirm accuracy")
-                    .font(Font.custom("Silka-Medium", size: 16))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding(.horizontal, 20)
-                Spacer()
+                if callerId == CallerName.defaultName.rawValue {
+                    Text("Addressable name matching is beta, information may not be accurate." +
+                            " Verify with caller to confirm accuracy.")
+                        .font(Font.custom("Silka-Medium", size: 16))
+                        .foregroundColor(.white)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 0)
+                }
                 HStack(spacing: 25) {
                     // MARK: - Mute
                     VStack(spacing: 8) {
@@ -172,7 +175,6 @@ struct AddressableCallView: View {
                             .foregroundColor(.white)
                     }
                 }
-                Spacer()
                 // MARK: - Hang Up Call
                 Button( action: {
                     guard let callManager = app.callManager else {
@@ -195,7 +197,7 @@ struct AddressableCallView: View {
                             RoundedRectangle(cornerRadius: 16)
                                 .stroke(Color.red, lineWidth: 4)
                         )
-                }
+                }.padding(.bottom, 45)
             }
         }.sheet(isPresented: $displayKeyPad) {
             KeyPadView(viewModel: CallsViewModel(provider: app.dependencyProvider))

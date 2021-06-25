@@ -53,17 +53,8 @@ struct MailingRecipientsListView: View, Equatable {
                 TextField("Search", text: $recipientSearchTerm)
                     .modifier(TextFieldModifier())
                     .padding(.bottom, 6)
-            }
-            if viewModel.loadingRecipients {
-                VStack {
-                    Spacer()
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                    Spacer()
-                }
-            } else {
                 // MARK: - List Tabs
-                HStack(spacing: 4) {
+                HStack(spacing: 22) {
                     ForEach(RecipientListCategory.allCases, id: \.self) { category in
                         Button(action: {
                             withAnimation {
@@ -84,11 +75,21 @@ struct MailingRecipientsListView: View, Equatable {
                                 edges: [.bottom],
                                 color: Color.black
                             )
-                        }.transition(.move(edge: .bottom))
+                        }
+                        .transition(.move(edge: .bottom))
                     }
                 }
+            }
+            if viewModel.loadingRecipients {
+                VStack {
+                    Spacer()
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle())
+                    Spacer()
+                }
+            } else {
                 // MARK: - List Of Recipients
-                ScrollView(showsIndicators: false) {
+                List {
                     ForEach(viewModel.recipients.filter {
                         isRelatedToSearchQuery($0) && isRelatedToCategory($0)
                     }) { recipient in
@@ -101,75 +102,76 @@ struct MailingRecipientsListView: View, Equatable {
                                 Text(recipient.mailingAddress).font(Font.custom("Silka-Regular", size: 13))
                                 .multilineTextAlignment(.leading)
                             if selectedListCategory != .unavailable && selectedListCategory != .all {
-                                Button(action: {
-                                    if viewModel.mailing.mailingStatus == MailingState.draft.rawValue ||
-                                        selectedListCategory == .removed {
-                                        showingAlert = true
-                                    } else {
-                                        showingActionSheet = true
+                                Image(systemName: selectedListCategory == .removed ? "arrow.uturn.left" : "xmark")
+                                    .imageScale(.small)
+                                    .foregroundColor(selectedListCategory == .removed ? .black : .red)
+                                    .onTapGesture {
+                                        if viewModel.mailing.mailingStatus == MailingState.draft.rawValue ||
+                                            selectedListCategory == .removed {
+                                            showingAlert = true
+                                        } else {
+                                            showingActionSheet = true
+                                        }
+                                        selectedRecipientID = recipient.id
                                     }
-                                    selectedRecipientID = recipient.id
-                                }) {
-                                    Image(systemName: selectedListCategory == .removed ? "arrow.uturn.left" : "xmark")
-                                        .imageScale(.small)
-                                        .foregroundColor(selectedListCategory == .removed ? .black : .red)
-                                }
-                                .disabled(getMailingStatus() == .mailed)
-                                .opacity(getMailingStatus() == .mailed ? 0.4 : 1)
+                                    .disabled(getMailingStatus() == .mailed)
+                                    .opacity(getMailingStatus() == .mailed ? 0.4 : 1)
+                                    .alert(isPresented: $showingAlert) {
+                                        Alert(
+                                            title: Text(selectedListCategory == .removed ?
+                                                            "Add Recipient to List?":
+                                                            "Remove Recipient from List?")
+                                                .font(Font.custom("Silka-Bold", size: 14)),
+                                            message: Text(selectedListCategory == .removed ?
+                                                            "Are you sure you want to add recipient to the list?" :
+                                                            "Are you sure you want to remove recipient from the list?")
+                                                .font(Font.custom("Silka-Medium", size: 12)),
+                                            primaryButton: .default(Text("Confirm")) {
+                                                guard selectedRecipientID != nil else { return }
+                                                // swiftlint:disable force_unwrapping
+                                                viewModel.updateListEntry(
+                                                    with: selectedRecipientID!,
+                                                    with: selectedListCategory == .removed ?
+                                                        ListEntryMembershipStatus.member.rawValue :
+                                                        ListEntryMembershipStatus.rejected.rawValue
+                                                )
+                                            }, secondaryButton: .cancel())
+                                    }
+                                    .actionSheet(isPresented: $showingActionSheet) {
+                                        ActionSheet(
+                                            title: Text("Remove Recipient from List?")
+                                                .font(Font.custom("Silka-Bold", size: 14)),
+                                            message: Text("Are you sure you want to remove recipient from the list?")
+                                                .font(Font.custom("Silka-Medium", size: 12)),
+                                            buttons: [
+                                                .default(Text("Remove From this Mailing List")
+                                                            .font(Font.custom("Silka-Medium", size: 14))) {
+                                                    viewModel.updateListEntry(
+                                                        with: selectedRecipientID!,
+                                                        with: selectedListCategory == .removed ?
+                                                            ListEntryMembershipStatus.member.rawValue :
+                                                            ListEntryMembershipStatus.rejected.rawValue
+                                                    )
+                                                },
+                                                .destructive(Text("Never Send Mail to this Address")
+                                                                .font(Font.custom("Silka-Medium", size: 14))) {
+                                                    // swiftlint:disable force_unwrapping
+                                                    viewModel.removeListEntry(
+                                                        with: selectedRecipientID!
+                                                    )
+                                                },
+                                                .cancel()
+                                            ])
+                                    }
                             }
-                        }
-                        .alert(isPresented: $showingAlert) {
-                            Alert(
-                                title: Text(selectedListCategory == .removed ?
-                                                "Add Recipient to List?":
-                                                "Remove Recipient from List?")
-                                    .font(Font.custom("Silka-Bold", size: 14)),
-                                message: Text(selectedListCategory == .removed ?
-                                                "Are you sure you want to add recipient to the list?" :
-                                                "Are you sure you want to remove recipient from the list?")
-                                    .font(Font.custom("Silka-Medium", size: 12)),
-                                primaryButton: .default(Text("Confirm")) {
-                                    guard selectedRecipientID != nil else { return }
-                                    // swiftlint:disable force_unwrapping
-                                    viewModel.updateListEntry(
-                                        with: selectedRecipientID!,
-                                        with: selectedListCategory == .removed ?
-                                            ListEntryStatus.active.rawValue :
-                                            ListEntryStatus.rejected.rawValue
-                                    )
-                                }, secondaryButton: .cancel())
-                        }
-                        .actionSheet(isPresented: $showingActionSheet) {
-                            ActionSheet(
-                                title: Text("Remove Recipient from List?")
-                                    .font(Font.custom("Silka-Bold", size: 14)),
-                                message: Text("Are you sure you want to remove recipient from the list?")
-                                    .font(Font.custom("Silka-Medium", size: 12)),
-                                buttons: [
-                                    .default(Text("Remove From this Mailing List")
-                                                .font(Font.custom("Silka-Medium", size: 14))) {
-                                        viewModel.updateListEntry(
-                                            with: selectedRecipientID!,
-                                            with: selectedListCategory == .removed ?
-                                                ListEntryStatus.active.rawValue :
-                                                ListEntryStatus.rejected.rawValue
-                                        )
-                                    },
-                                    .destructive(Text("Never Send Mail to this Address")
-                                                    .font(Font.custom("Silka-Medium", size: 14))) {
-                                        // swiftlint:disable force_unwrapping
-                                        viewModel.removeListEntry(
-                                            with: selectedRecipientID!
-                                        )
-                                    },
-                                    .cancel()
-                                ])
                         }
                         .padding(.vertical)
                         .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
                     }
+                    .listRowInsets(.init())
                     .listRowBackground(Color.addressableLightGray)
                 }
+                .listStyle(PlainListStyle())
                 .background(Color.addressableLightGray)
                 Spacer()
             }
@@ -202,11 +204,14 @@ struct MailingRecipientsListView: View, Equatable {
         }
     }
     private func isRelatedToCategory(_ recipient: Recipient) -> Bool {
-        let isActive = recipient.status == ListEntryStatus.active.rawValue && selectedListCategory == .mailingList
-        let isRemoved = ((recipient.status == ListEntryStatus.rejected.rawValue ||
-                            recipient.status == ListEntryStatus.removed.rawValue) && selectedListCategory == .removed)
-        let isUnavailable = recipient.status == ListEntryStatus.unavailable.rawValue &&
-            selectedListCategory == .unavailable
+        let isActive = recipient.listMembership ==
+            ListEntryMembershipStatus.member.rawValue && selectedListCategory == .mailingList
+        let isRemoved = ((recipient.listMembership ==
+                            ListEntryMembershipStatus.rejected.rawValue ||
+                            recipient.listMembership ==
+                            ListEntryMembershipStatus.removed.rawValue) && selectedListCategory == .removed)
+        let isUnavailable = recipient.listMembership ==
+            ListEntryMembershipStatus.reserved.rawValue && selectedListCategory == .unavailable
 
         return isActive || isRemoved || isUnavailable || selectedListCategory == .all
     }
@@ -217,15 +222,16 @@ struct MailingRecipientsListView: View, Equatable {
             count = viewModel.recipients.count
         case .removed:
             count = viewModel.recipients.filter {
-                $0.status == ListEntryStatus.rejected.rawValue || $0.status == ListEntryStatus.removed.rawValue
+                $0.listMembership == ListEntryMembershipStatus.rejected.rawValue ||
+                    $0.listMembership == ListEntryMembershipStatus.removed.rawValue
             }.count
         case .unavailable:
             count = viewModel.recipients.filter {
-                $0.status == ListEntryStatus.unavailable.rawValue
+                $0.listMembership == ListEntryMembershipStatus.reserved.rawValue
             }.count
         case .mailingList:
             count = viewModel.recipients.filter {
-                $0.status == ListEntryStatus.active.rawValue
+                $0.listMembership == ListEntryMembershipStatus.member.rawValue
             }.count
         }
         // swiftlint:disable empty_count

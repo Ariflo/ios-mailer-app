@@ -12,13 +12,13 @@ class MailingDetailViewModel: ObservableObject {
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
 
-    var mailing: RadiusMailing
+    var mailing: Mailing
 
     @Published var selectedFrontImageData: Data?
     @Published var selectedBackImageData: Data?
     @Published var selectedImageId: Int = 0
 
-    init(provider: DependencyProviding, selectedMailing: RadiusMailing) {
+    init(provider: DependencyProviding, selectedMailing: Mailing) {
         apiService = provider.register(provider: provider)
         mailing = selectedMailing
 

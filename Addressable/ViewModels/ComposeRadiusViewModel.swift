@@ -17,6 +17,8 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     private let locationManager = CLLocationManager()
     private var placesClient = GMSPlacesClient.shared()
 
+    @Published var getMailingInsideCardImageTask = DispatchWorkItem {}
+
     @Published var places: [GMSAutocompletePrediction] = []
     @Published var location: CLLocation? {
         willSet { objectWillChange.send() }
@@ -44,8 +46,8 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     @Published var touchTwoTemplate: MessageTemplate?
     @Published var touchOneTemplateMergeVariables: [String: String] = [:]
     @Published var touchTwoTemplateMergeVariables: [String: String] = [:]
-    @Published var touchOneMailing: RadiusMailing?
-    @Published var touchTwoMailing: RadiusMailing?
+    @Published var touchOneMailing: Mailing?
+    @Published var touchTwoMailing: Mailing?
 
     @Published var loadingImages: Bool = false
     @Published var loadingTopics: Bool = false
@@ -94,8 +96,9 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     @Published var touchTwoInsideCardImageData: Data?
 
     var selectedDropDate: String = ""
+    let mailingTouches: [Mailing] = []
 
-    init(provider: DependencyProviding, selectedMailing: RadiusMailing?) {
+    init(provider: DependencyProviding, selectedMailing: Mailing?) {
         apiService = provider.register(provider: provider)
 
         super.init()
@@ -104,6 +107,10 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.locationManager.requestWhenInUseAuthorization()
         self.locationManager.startUpdatingLocation()
+
+        getMailingInsideCardImageTask = DispatchWorkItem {
+            self.getMailingWithCardInsidePreview()
+        }
 
         if selectedMailing != nil {
             // In the case that the selected radius mailing is the touch two mailing,
@@ -140,21 +147,23 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
         }
     }
 
-    func populateForm(with radiusMailing: RadiusMailing) {
-        selectedDropDate = radiusMailing.targetDropDate!
+    func populateForm(with radiusMailing: Mailing) {
+        guard radiusMailing.subjectListEntry != nil else { return }
+
+        selectedDropDate = radiusMailing.targetDropDate
         touchOneMailing = radiusMailing
         selectedCoverImageID = radiusMailing.layoutTemplate?.id ?? 0
         topicSelectionID = radiusMailing.topicSelectionID ?? 0
-        locationEntry = "\(radiusMailing.subjectListEntry.siteAddressLine1), " +
-            "\(radiusMailing.subjectListEntry.siteAddressLine2 ?? "") " +
-            "\(radiusMailing.subjectListEntry.siteCity), " +
-            "\(radiusMailing.subjectListEntry.siteState), " +
-            "\(radiusMailing.subjectListEntry.siteZipcode) "
-        selectedLocationAddress1 = radiusMailing.subjectListEntry.siteAddressLine1
-        selectedLocationAddress2 = radiusMailing.subjectListEntry.siteAddressLine2 ?? " "
-        selectedLocationCity = radiusMailing.subjectListEntry.siteCity
-        selectedLocationState = radiusMailing.subjectListEntry.siteState
-        selectedLocationZipcode = radiusMailing.subjectListEntry.siteZipcode
+        locationEntry = "\(radiusMailing.subjectListEntry!.siteAddressLine1), " +
+            "\(radiusMailing.subjectListEntry!.siteAddressLine2 ?? "") " +
+            "\(radiusMailing.subjectListEntry!.siteCity), " +
+            "\(radiusMailing.subjectListEntry!.siteState), " +
+            "\(radiusMailing.subjectListEntry!.siteZipcode) "
+        selectedLocationAddress1 = radiusMailing.subjectListEntry!.siteAddressLine1
+        selectedLocationAddress2 = radiusMailing.subjectListEntry!.siteAddressLine2 ?? " "
+        selectedLocationCity = radiusMailing.subjectListEntry!.siteCity
+        selectedLocationState = radiusMailing.subjectListEntry!.siteState
+        selectedLocationZipcode = radiusMailing.subjectListEntry!.siteZipcode
     }
 
     func maybeInitializeMapWithCurrentLocation() {
@@ -270,9 +279,11 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
                     if self.mailingCoverImages.keys.count == coverImages.count {
                         self.loadingImages = false
 
-                        self.selectedCoverImageID = self.mailingCoverImages.keys.first {
-                            self.mailingCoverImages[$0]!.image.isDefaultCoverImage
-                        } ?? 0
+                        if self.selectedCoverImageID == 0 {
+                            self.selectedCoverImageID = self.mailingCoverImages.keys.first {
+                                self.mailingCoverImages[$0]!.image.isDefaultCoverImage
+                            } ?? 0
+                        }
                     }
                 }
             }
@@ -359,11 +370,11 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     }
 
     func getMessageTemplates(for topic: MultiTouchTopic) {
-        let touchOneTemplateId = touchOneMailing?.topicSelectionID != self.topicSelectionID ||
+        if let touchOneTemplateId = touchOneMailing?.topicSelectionID != self.topicSelectionID ||
             touchOneMailing?.topicSelectionID == nil ?
-            topic.touchOneTemplateID : touchOneMailing!.customNoteTemplateID!
-
-        getMessageTemplate(for: 1, with: touchOneTemplateId)
+            topic.touchOneTemplateID : touchOneMailing!.customNoteTemplateID {
+            getMessageTemplate(for: 1, with: touchOneTemplateId)
+        }
         getMessageTemplate(for: 2, with: topic.touchTwoTemplateID)
     }
 
@@ -427,7 +438,7 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
             .store(in: &disposables)
     }
 
-    func createRadiusMailing(completion: @escaping (_ updatedMailing: RadiusMailing?) -> Void) {
+    func createRadiusMailing(completion: @escaping (_ updatedMailing: Mailing?) -> Void) {
         guard let encodedNewRadiusData = try? JSONEncoder().encode(
             OutgoingRadiusMailingSiteWrapper(
                 subjectListEntry:
@@ -472,7 +483,7 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
 
     func updateRadiusMailingData(
         for radiusMailingComponent: RadiusMailingComponent,
-        completion: @escaping (_ updatedMailing: RadiusMailing?) -> Void
+        completion: @escaping (_ updatedMailing: Mailing?) -> Void
     ) {
         guard let radiusMailingID = touchOneMailing?.id else {
             print("No Radius Mailing Selected")
@@ -501,8 +512,7 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
             receiveValue: { mailing in
                 if radiusMailingComponent == .list {
                     self.touchTwoMailing = mailing
-                    self.getMailingWithCardInsidePreview(with: mailing.id, for: .touchTwo)
-                    self.getMailingWithCardInsidePreview(with: self.touchOneMailing!.id, for: .touchOne)
+                    self.getMailingWithCardInsidePreview()
                 } else {
                     self.touchOneMailing = mailing
                 }
@@ -573,7 +583,7 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
         }
     }
 
-    private func getRadiusMailing(with id: Int, completion: @escaping (RadiusMailing?) -> Void) {
+    private func getRadiusMailing(with id: Int, completion: @escaping (Mailing?) -> Void) {
         apiService.getSelectedRadiusMailing(for: id)
             .map { $0.radiusMailing }
             .receive(on: DispatchQueue.main)
@@ -593,35 +603,39 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
             .store(in: &disposables)
     }
 
-    private func getMailingWithCardInsidePreview(with id: Int, for touch: AddressableTouch) {
-        apiService.getSelectedRadiusMailing(for: id)
-            .map { $0.radiusMailing }
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { value in
-                    switch value {
-                    case .failure(let error):
-                        print("getMailingWithCardInsidePreview(for id: \(id), for touch: \(touch), " +
-                                "receiveCompletion error: \(error)")
-                    case .finished:
-                        break
-                    }
-                },
-                receiveValue: {radiusMailing in
-                    // Recurssively get mailing until illustrator_job_queue is finished building card inside preview image
-                    guard let insideCardPreviewUrl = radiusMailing.cardInsidePreviewUrl else {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
-                            self.getMailingWithCardInsidePreview(with: radiusMailing.id, for: touch)
+    private func getMailingWithCardInsidePreview() {
+        if touchOneMailing != nil && touchTwoMailing != nil {
+            apiService.getSelectedRadiusMailing(for: touchTwoMailing!.id)
+                .map { $0.radiusMailing }
+                .receive(on: DispatchQueue.main)
+                .sink(
+                    receiveCompletion: { value in
+                        switch value {
+                        case .failure(let error):
+                            print("getMailingWithCardInsidePreview(for id: \(self.touchTwoMailing!.id), " +
+                                    "receiveCompletion error: \(error)")
+                        case .finished:
+                            break
                         }
-                        return
-                    }
-                    if touch == .touchOne {
-                        self.getInsideCardImageData(for: .touchOne, url: insideCardPreviewUrl)
-                    } else {
-                        self.getInsideCardImageData(for: .touchTwo, url: insideCardPreviewUrl)
-                    }
-                })
-            .store(in: &disposables)
+                    },
+                    receiveValue: {radiusMailing in
+                        // Recurssively get mailing until illustrator_job_queue is finished building card inside preview image
+                        guard radiusMailing.cardInsidePreviewUrl != nil else {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 4.0,
+                                                          execute: self.getMailingInsideCardImageTask)
+                            return
+                        }
+                        self.getInsideCardImageData(
+                            for: .touchOne,
+                            url: self.touchOneMailing!.cardInsidePreviewUrl!
+                        )
+                        self.getInsideCardImageData(
+                            for: .touchTwo,
+                            url: self.touchTwoMailing!.cardInsidePreviewUrl!
+                        )
+                    })
+                .store(in: &disposables)
+        }
     }
 
     func updateMessageTemplate(
@@ -665,9 +679,10 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
         completion: @escaping (MessageTemplate?) -> Void
     ) {
         guard let selectedMailing = touchOneMailing,
+              let subjectListEntry = selectedMailing.subjectListEntry,
               let encodedMessageTemplateData = try? JSONEncoder().encode(
                 OutgoingMessageTemplateWrapper(messageTemplate: OutgoingMessageTemplate(
-                    title: "\(selectedMailing.subjectListEntry.siteAddressLine1) \(touch.rawValue) ",
+                    title: "\(subjectListEntry.siteAddressLine1) \(touch.rawValue) ",
                     body: newBody
                 ))
               ) else {

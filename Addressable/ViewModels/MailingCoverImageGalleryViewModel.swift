@@ -12,7 +12,7 @@ import Combine
 class MailingCoverImageGalleryViewModel: ObservableObject {
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
-    var mailing: RadiusMailing
+    var mailing: Mailing
 
     @Binding var selectedFrontCoverImageData: Data?
     @Binding var selectedBackCoverImageData: Data?
@@ -26,7 +26,7 @@ class MailingCoverImageGalleryViewModel: ObservableObject {
 
     init(
         provider: DependencyProviding,
-        selectedMailing: RadiusMailing,
+        selectedMailing: Mailing,
         selectedFrontImageData: Binding<Data?>,
         selectedBackImageData: Binding<Data?>,
         selectedImageId: Binding<Int>
@@ -127,7 +127,7 @@ class MailingCoverImageGalleryViewModel: ObservableObject {
         }
     }
 
-    func updateMailingCoverImage(completion: @escaping (_ updatedMailing: RadiusMailing?) -> Void) {
+    func updateMailingCoverImage(completion: @escaping (_ updatedMailing: Mailing?) -> Void) {
         guard let updatedImageData = try? JSONEncoder().encode(
             OutgoingRadiusMailingCoverArtWrapper(
                 cover: OutgoingRadiusMailingCoverArtData(layoutTemplateID: selectedCoverImageId)

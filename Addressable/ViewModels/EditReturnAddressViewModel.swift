@@ -13,7 +13,7 @@ class EditReturnAddressViewModel: ObservableObject {
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
 
-    private var mailing: RadiusMailing
+    private var mailing: Mailing
 
     @Published var fromFirstName: String = ""
     @Published var fromLastName: String = ""
@@ -24,12 +24,12 @@ class EditReturnAddressViewModel: ObservableObject {
     @Published var fromState: String = ""
     @Published var fromZipcode: String = ""
 
-    init(provider: DependencyProviding, selectedMailing: RadiusMailing) {
+    init(provider: DependencyProviding, selectedMailing: Mailing) {
         apiService = provider.register(provider: provider)
         mailing = selectedMailing
     }
 
-    func updateMailingReturnAddress(completionHandler: @escaping (RadiusMailing?) -> Void) {
+    func updateMailingReturnAddress(completionHandler: @escaping (Mailing?) -> Void) {
         guard let updateReturnAddressData = try? JSONEncoder().encode(
             OutgoingRadiusMailingFromAddress(radiusMailing: ReturnAddress(
                 fromFirstName: fromFirstName,

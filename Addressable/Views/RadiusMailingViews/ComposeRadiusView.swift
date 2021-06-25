@@ -8,8 +8,8 @@ import SwiftUI
 import GoogleMaps
 
 // MARK: - ListEntryStatus
-enum ListEntryStatus: String {
-    case active, rejected, unavailable, removed
+enum ListEntryMembershipStatus: String {
+    case member, rejected, reserved, removed
 }
 // MARK: - ComposeRadiusSteps
 enum ComposeRadiusSteps: String, CaseIterable {
@@ -258,7 +258,7 @@ struct ComposeRadiusView: View {
         }.edgesIgnoringSafeArea([.bottom])
     }
 
-    private func hasCompletedAllSteps(for mailing: RadiusMailing) -> Bool {
+    private func hasCompletedAllSteps(for mailing: Mailing) -> Bool {
         return mailing.layoutTemplate != nil && mailing.topicSelectionID != nil
     }
 

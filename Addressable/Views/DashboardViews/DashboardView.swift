@@ -104,6 +104,7 @@ struct DashboardView: View {
                         }
                     }
                 }
+                .adaptsToKeyboard()
                 .offset(x: showNavMenu ? -(geometry.size.width / 2) : 0)
                 .disabled(showNavMenu)
             }
