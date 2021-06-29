@@ -19,7 +19,6 @@ struct DashboardView: View {
     @State var showNavMenu = false
     @State var displayIncomingLeadSurvey: Bool = false
     @State var selectedMenuItem: MainMenu = .campaigns
-    @State var refreshData: Bool = false
     @State var subjectLead: IncomingLead?
 
     var shouldDisplayIncomingLeadSurvey: Bool = false

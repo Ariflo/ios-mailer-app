@@ -17,10 +17,8 @@ struct CallListView: View, Equatable {
             lhs.displayInboxCalls == rhs.displayInboxCalls &&
             lhs.displayRemovalCalls == rhs.displayRemovalCalls &&
             lhs.displaySpamCalls == rhs.displaySpamCalls &&
-            lhs.subjectLead == rhs.subjectLead &&
             lhs.displayIncomingLeadSurvey == rhs.displayIncomingLeadSurvey
     }
-
     @EnvironmentObject var app: Application
     @ObservedObject var viewModel: CallsViewModel
     @Binding var selectedMenuItem: MainMenu
@@ -36,6 +34,10 @@ struct CallListView: View, Equatable {
         self._selectedMenuItem = selectedMenuItem
         self._displayIncomingLeadSurvey = displayIncomingLeadSurvey
         self._subjectLead = lead
+
+        if !self.displayIncomingLeadSurvey && self.subjectLead != nil {
+            self.viewModel.getLeads()
+        }
     }
 
     var body: some View {
@@ -52,10 +54,6 @@ struct CallListView: View, Equatable {
                     maxHeight: .infinity,
                     alignment: .center
                 )
-                .onAppear {
-                    // HACK: Find better solution here
-                    viewModel.getLeads()
-                }
             } else if viewModel.loading {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())
@@ -89,45 +87,59 @@ struct CallListView: View, Equatable {
                                             .font(Font.custom("Silka-Medium", size: 14))
                                     }.padding(.vertical, 8)
                                     Spacer()
-                                    score > 0 ?
+                                    switch score {
+                                    case 1,
+                                         2,
+                                         3:
                                         Image(systemName: "phone")
-                                        .foregroundColor(Color.addressablePurple)
-                                        .padding(.trailing, 10)
-                                        .imageScale(.large)
-                                        .onTapGesture {
-                                            app.verifyPermissions {
-                                                // In the case a user disallowed PN permissions on initial launch
-                                                // register for remote PN + Twilio here
-                                                DispatchQueue.main.async {
-                                                    UIApplication.shared.registerForRemoteNotifications()
-                                                }
-                                                // Display Outgoing Call View
-                                                DispatchQueue.main.async {
-                                                    app.currentView = .activeCall
-                                                }
+                                            .foregroundColor(Color.addressablePurple)
+                                            .padding(.trailing, 10)
+                                            .imageScale(.large)
+                                            .onTapGesture {
+                                                app.verifyPermissions {
+                                                    // In the case a user disallowed PN permissions on initial launch
+                                                    // register for remote PN + Twilio here
+                                                    DispatchQueue.main.async {
+                                                        UIApplication.shared.registerForRemoteNotifications()
+                                                    }
+                                                    // Display Outgoing Call View
+                                                    DispatchQueue.main.async {
+                                                        app.currentView = .activeCall
+                                                    }
 
-                                                guard let callManager = app.callManager else {
-                                                    print("No CallManager to make phone call in CallListView")
-                                                    return
+                                                    guard let callManager = app.callManager else {
+                                                        print("No CallManager to make phone call in CallListView")
+                                                        return
+                                                    }
+                                                    // Get latest list of leads
+                                                    callManager.getLatestIncomingLeadsList()
+                                                    // Make outgoing call
+                                                    callManager.startCall(to: lead)
                                                 }
-                                                // Get latest list of leads
-                                                callManager.getLatestIncomingLeadsList()
-                                                // Make outgoing call
-                                                callManager.startCall(to: lead)
                                             }
-                                        } : nil
-                                    score < 0 ?
-                                        Text("Tag Lead")
-                                        .font(Font.custom("Silka-Medium", size: 14))
-                                        .padding()
-                                        .multilineTextAlignment(.center)
-                                        .foregroundColor(Color.white)
-                                        .background(Color.addressablePurple)
-                                        .cornerRadius(5)
-                                        .onTapGesture {
-                                            subjectLead = lead
-                                            displayIncomingLeadSurvey = true
-                                        } : nil
+                                    default:
+                                        if callLabel == .inbox {
+                                            Text("Tag Lead")
+                                                .font(Font.custom("Silka-Medium", size: 14))
+                                                .padding()
+                                                .multilineTextAlignment(.center)
+                                                .foregroundColor(Color.white)
+                                                .background(Color.addressablePurple)
+                                                .cornerRadius(5)
+                                                .onTapGesture {
+                                                    subjectLead = lead
+                                                    displayIncomingLeadSurvey = true
+                                                }
+                                        } else {
+                                            Image(systemName: "arrow.uturn.left")
+                                                .foregroundColor(Color.addressablePurple)
+                                                .imageScale(.large)
+                                                .onTapGesture {
+                                                    subjectLead = lead
+                                                    displayIncomingLeadSurvey = true
+                                                }
+                                        }
+                                    }
                                 }
                                 .padding()
                                 .transition(.move(edge: .bottom))
@@ -194,7 +206,12 @@ struct CallListView_Previews: PreviewProvider {
         let selectLead = Binding<IncomingLead?>(
             get: { nil }, set: { _ in }
         )
-        CallListView(viewModel: CallsViewModel(provider: DependencyProvider()), selectedMenuItem: selectedMenuItem, displayIncomingLeadSurvey: displayIncomingLeadSurveyBinding, lead: selectLead)
+        CallListView(
+            viewModel: CallsViewModel(provider: DependencyProvider()),
+            selectedMenuItem: selectedMenuItem,
+            displayIncomingLeadSurvey: displayIncomingLeadSurveyBinding,
+            lead: selectLead
+        )
     }
 }
 #endif

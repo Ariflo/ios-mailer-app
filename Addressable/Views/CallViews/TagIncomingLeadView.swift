@@ -89,7 +89,7 @@ struct TagIncomingLeadView: View {
                         isInterestedSegmentView
                     }.padding() : nil
 
-                viewModel.isRealOrSpamSelectedTag != .spam ?                 VStack(alignment: .center) {
+                viewModel.isRealOrSpamSelectedTag != .spam ? VStack(alignment: .center) {
                     Text("Did they request to be removed from the mailing list?")
                         .multilineTextAlignment(.center)
                         .padding()

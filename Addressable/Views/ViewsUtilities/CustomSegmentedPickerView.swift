@@ -56,10 +56,19 @@ struct CustomSegmentedPickerView: View {
             }
             .animation(.default)
             .background(Capsule().stroke(Color.gray, lineWidth: 1))
+        }.onAppear {
+            for index in tagOptions.indices where isSelectedTagOption(tag: tagOptions[index]) {
+                selectedIndex = index
+            }
         }
     }
+    private func isSelectedTagOption(tag: IncomingLeadTagOptions) -> Bool {
+        return tag == self.viewModel.isInterestedSelectedTag ||
+            tag == self.viewModel.isRealOrSpamSelectedTag ||
+            tag == self.viewModel.isRemovalSelectedTag
+    }
 
-    func setFrame(index: Int, frame: CGRect) {
+    private func setFrame(index: Int, frame: CGRect) {
         self.frames[index] = frame
     }
 }

@@ -22,6 +22,19 @@ class TagIncomingLeadViewModel: ObservableObject {
     init(provider: DependencyProviding, lead: Binding<IncomingLead?>) {
         apiService = provider.register(provider: provider)
         _subjectLead = lead
+        // swiftlint:disable force_unwrapping
+        if subjectLead != nil {
+            switch subjectLead!.qualityScore {
+            case 1:
+                isInterestedSelectedTag = .lowInterest
+            case 2:
+                isInterestedSelectedTag = .fair
+            default:
+                isInterestedSelectedTag = .lead
+            }
+            isRealOrSpamSelectedTag = subjectLead!.status == "spam" ? .spam : .person
+            isRemovalSelectedTag = subjectLead!.status == "removed" ? .removeYes : .removeNo
+        }
     }
 
     func tagIncomingLead(for leadID: Int, completion: @escaping (IncomingLead?) -> Void) {
