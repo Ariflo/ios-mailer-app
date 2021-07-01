@@ -269,7 +269,7 @@ struct CampaignsView: View, Equatable {
         }
     }
 }
-
+#if DEBUG
 struct CampaignsView_Previews: PreviewProvider {
     static var previews: some View {
         let selectedMenuItem = Binding<MainMenu>(
@@ -281,3 +281,4 @@ struct CampaignsView_Previews: PreviewProvider {
         )
     }
 }
+#endif

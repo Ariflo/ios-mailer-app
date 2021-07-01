@@ -226,7 +226,7 @@ struct CampaignsListView: View {
     }
 }
 
-
+#if DEBUG
 struct CampaignsListView_Previews: PreviewProvider {
     static var previews: some View {
         let selectedMenuItem = Binding<MainMenu>(
@@ -239,6 +239,7 @@ struct CampaignsListView_Previews: PreviewProvider {
         )
     }
 }
+#endif
 
 // MARK: - MailingRowItem
 struct MailingRowItem: View {

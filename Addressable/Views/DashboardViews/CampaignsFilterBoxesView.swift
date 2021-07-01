@@ -95,7 +95,7 @@ struct CampaignsFilterBoxesView: View {
         return Image(systemName: "exclamationmark.triangle")
     }
 }
-
+#if DEBUG
 struct CampaignsFilterBoxesView_Previews: PreviewProvider {
     static var previews: some View {
         let selectedFiltersPreview = Binding<[String]>(
@@ -107,3 +107,4 @@ struct CampaignsFilterBoxesView_Previews: PreviewProvider {
         )
     }
 }
+#endif

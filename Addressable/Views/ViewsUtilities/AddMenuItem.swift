@@ -38,9 +38,10 @@ struct AddMenuItem: View {
         .padding()
     }
 }
-
+#if DEBUG
 struct AddMenuItem_Previews: PreviewProvider {
     static var previews: some View {
         AddMenuItem(icon: "mappin.and.ellipse", label: "Radius Mailer")
     }
 }
+#endif

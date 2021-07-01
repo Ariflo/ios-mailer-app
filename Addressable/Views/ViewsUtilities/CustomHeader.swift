@@ -24,7 +24,7 @@ struct CustomHeader: View {
         }.background(backgroundColor)
     }
 }
-
+#if DEBUG
 struct CustomHeader_Previews: PreviewProvider {
     static var previews: some View {
         CustomHeader(
@@ -34,3 +34,4 @@ struct CustomHeader_Previews: PreviewProvider {
         )
     }
 }
+#endif

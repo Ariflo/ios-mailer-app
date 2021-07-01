@@ -77,6 +77,8 @@ struct SignInView: View {
                             }
 
                             KeyChainServiceUtil.shared[userBasicAuthToken] = loginData.base64EncodedString()
+                            // swiftlint:disable force_unwrapping
+                            KeyChainServiceUtil.shared[userAppToken] = authenticatedUserInfo!.userToken
 
                             // For the case where a user signs into the application on a previously registered device
                             // register said user with the device on Addressable's DB

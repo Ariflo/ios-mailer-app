@@ -13,6 +13,7 @@ struct ContentMessageView: View {
 
     var body: some View {
         Text(contentMessage)
+            .font(Font.custom("Silka-Regular", size: 16))
             .padding(10)
             .foregroundColor(isCurrentUser ? Color.white : Color.black)
             .background(isCurrentUser ?

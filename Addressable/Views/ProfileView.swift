@@ -45,6 +45,7 @@ struct ProfileView: View, Equatable {
                                     return
                                 }
                                 KeyChainServiceUtil.shared[userBasicAuthToken] = nil
+                                KeyChainServiceUtil.shared[userAppToken] = nil
                                 KeyChainServiceUtil.shared[userMobileClientIdentity] = nil
                                 logOutOfApplication()
                             }
@@ -63,7 +64,8 @@ struct ProfileView: View, Equatable {
     }
     private func logOutOfApplication() {
         if KeyChainServiceUtil.shared[userBasicAuthToken] == nil &&
-            KeyChainServiceUtil.shared[userMobileClientIdentity] == nil {
+            KeyChainServiceUtil.shared[userMobileClientIdentity] == nil &&
+            KeyChainServiceUtil.shared[userAppToken] == nil {
             app.currentView = .signIn
             successfullyLoggedOut = 1
         }

@@ -47,9 +47,10 @@ struct CalendarTileView: View {
         }
     }
 }
-
+#if DEBUG
 struct CalendarTileView_Previews: PreviewProvider {
     static var previews: some View {
         CalendarTileView(date: "2020-06-18")
     }
 }
+#endif

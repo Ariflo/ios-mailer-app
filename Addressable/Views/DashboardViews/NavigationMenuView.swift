@@ -65,7 +65,7 @@ struct NavigationMenuView: View {
         }
     }
 }
-
+#if DEBUG
 struct NavigationMenuView_Previews: PreviewProvider {
     static var previews: some View {
         let selectedPreviewMenuItem = Binding<MainMenu>(
@@ -77,3 +77,4 @@ struct NavigationMenuView_Previews: PreviewProvider {
         NavigationMenuView(showNavMenu: showPreviewNavMenu, selectedMenuItem: selectedPreviewMenuItem)
     }
 }
+#endif

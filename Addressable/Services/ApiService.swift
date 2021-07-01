@@ -50,6 +50,8 @@ enum ApiError: Error {
 
 class ApiService: Service {
     private let session: URLSession
+    // swiftlint:disable implicitly_unwrapped_optional
+    private var socket: URLSessionWebSocketTask!
 
     required init(provider: DependencyProviding) {
         self.session = .shared
@@ -224,6 +226,69 @@ extension ApiService: FetchableData {
                 decode(pair.data)
             }
             .eraseToAnyPublisher()
+    }
+    func connectToWebSocket(userToken: String, completionHandler: @escaping (Data?) -> Void) {
+        if let url = getWebSocketRequestComponents(with: userToken).url {
+            var request = URLRequest(url: url)
+            request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+
+            if let authToken = KeyChainServiceUtil.shared[userBasicAuthToken] {
+                request.setValue("Basic \(authToken)", forHTTPHeaderField: "Authorization")
+            } else {
+                print("Unable to attach Authorization Header for Socket")
+                return
+            }
+
+            socket = session.webSocketTask(with: request)
+            listen(completionHandler)
+            socket.resume()
+        }
+    }
+
+    func disconnectFromWebSocket() {
+        if let cancelTask = URLSessionWebSocketTask.CloseCode(rawValue: 0) {
+            socket.cancel(with: cancelTask, reason: nil)
+        }
+    }
+
+    func subscribe(command: String, identifier: String) {
+        guard let encodedSubscribeCommandData = try? JSONEncoder().encode(
+            MessageSocketCommand(command: command, identifier: identifier)
+        ) else {
+            print("Message Socket Subscription Data Encoding Error")
+            return
+        }
+        // swiftlint:disable force_unwrapping
+        socket.send(
+            URLSessionWebSocketTask
+                .Message
+                .string(String(data: encodedSubscribeCommandData, encoding: .utf8)!)) { error in
+            if let error = error {
+                print("WebSocket couldn’t send message because: \(error)")
+            }
+        }
+    }
+
+    private func listen(_ completionHandler: @escaping (Data?) -> Void) {
+        socket.receive { result in
+            switch result {
+            case .failure(let error):
+                print("connectToSocket() receive error: \(error)")
+                completionHandler(nil)
+                return
+            case .success(let message):
+                switch message {
+                case .data(let data):
+                    completionHandler(data)
+                case .string(let str):
+                    guard let data = str.data(using: .utf8) else { return }
+                    completionHandler(data)
+                @unknown default:
+                    break
+                }
+            }
+            self.listen(completionHandler)
+        }
     }
 }
 
@@ -512,6 +577,16 @@ private extension ApiService {
         components.host = AddressableAPI.host
         components.path = AddressableAPI.path + "/accounts/\(accountId)/removals/\(recipientId)" +
             "/create_removal_from_list_entry"
+
+        return components
+    }
+    func getWebSocketRequestComponents(with userToken: String) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = "ws"
+        components.host = AddressableAPI.host
+        components.path = "/cable"
+        components.queryItems = [URLQueryItem(name: "user_token", value: userToken)]
 
         return components
     }

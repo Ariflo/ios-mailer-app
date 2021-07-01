@@ -68,3 +68,20 @@ struct OutgoingMessage: Codable {
         case messageSid = "message_sid"
     }
 }
+// MARK: - MessageSocketCommand
+struct MessageSocketCommand: Codable {
+    let command, identifier: String
+}
+// MARK: - MessageSubscribeResponse
+struct MessageSubscribeResponse: Codable {
+    let identifier: String?
+    let message: MessagesResponse?
+    let type: SocketReponseTypes?
+}
+
+// MARK: - MessageSubscribeResponse
+struct MessageSubscribePingResponse: Codable {
+    let identifier: String?
+    let message: Int?
+    let type: SocketReponseTypes?
+}

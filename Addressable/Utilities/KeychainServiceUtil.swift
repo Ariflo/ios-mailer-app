@@ -7,6 +7,7 @@
 import Foundation
 
 let userBasicAuthToken = "userBasicAuthToken"
+let userAppToken = "userApplicationToken"
 let userMobileClientIdentity = "userMobileClientIdentity"
 
 open class KeyChainServiceUtil {

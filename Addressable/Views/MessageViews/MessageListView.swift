@@ -60,12 +60,24 @@ struct MessageListView: View, Equatable {
                         selectedLead = lead
                         navigateToChat = true
                     }) {
-                        VStack(alignment: .leading, spacing: 6) {
-                            if let name = lead.firstName {
-                                Text("\(name.contains("unknown")  ? "Unknown Name" : name)").font(.title2)
+                        HStack {
+                            VStack(alignment: .leading, spacing: 6) {
+                                if let name = lead.firstName {
+                                    Text("\(name.contains("unknown")  ? "Unknown Name" : name)")
+                                        .foregroundColor(Color.black)
+                                        .font(Font.custom("Silka-Bold", size: 18))
+                                        .padding(.top, 8)
+                                }
+                                Text(lead.fromNumber ?? "Unknown Number")
+                                    .font(Font.custom("Silka-Regular", size: 16))
+                                    .foregroundColor(Color.addressableFadedBlack)
                             }
-                            Text(lead.fromNumber ?? "Unknown Number").font(.subheadline)
-                        }.padding(.vertical, 8)
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(Color.addressableFadedBlack)
+                                .imageScale(.medium)
+                                .padding()
+                        }.padding(.vertical)
                     }
                 }
                 .listStyle(PlainListStyle())

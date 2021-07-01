@@ -37,7 +37,7 @@ struct CampaignSectionHeaderView: View {
         }.padding(.top, 10)
     }
 }
-
+#if DEBUG
 struct CampaignSectionHeaderView_Previews: PreviewProvider {
     static var previews: some View {
         let selectedFiltersPreview = Binding<[String]>(
@@ -50,3 +50,4 @@ struct CampaignSectionHeaderView_Previews: PreviewProvider {
         )
     }
 }
+#endif

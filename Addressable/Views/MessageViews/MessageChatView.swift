@@ -19,10 +19,17 @@ struct MessageChatView: View {
 
     var body: some View {
         VStack {
-            ScrollView {
-                ForEach(viewModel.messages) { msg in
-                    MessageView(currentMessage: msg)
-                        .hideRowSeparator()
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack {
+                        ForEach(viewModel.messages) { msg in
+                            MessageView(currentMessage: msg)
+                                .hideRowSeparator()
+                                .id(msg.id)
+                        }
+                    }.onChange(of: viewModel.messages.count) { _ in
+                        proxy.scrollTo(viewModel.messages.last?.id, anchor: .bottom)
+                    }
                 }
             }
             HStack {
@@ -44,7 +51,11 @@ struct MessageChatView: View {
             displayMode: .inline
         )
         .onAppear {
+            viewModel.connectToSocket()
             viewModel.getMessages(for: lead.id)
+        }
+        .onDisappear {
+            viewModel.disconnectFromSocket()
         }
     }
 }
