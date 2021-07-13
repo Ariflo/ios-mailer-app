@@ -232,13 +232,6 @@ extension ApiService: FetchableData {
             var request = URLRequest(url: url)
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
 
-            if let authToken = KeyChainServiceUtil.shared[userBasicAuthToken] {
-                request.setValue("Basic \(authToken)", forHTTPHeaderField: "Authorization")
-            } else {
-                print("Unable to attach Authorization Header for Socket")
-                return
-            }
-
             socket = session.webSocketTask(with: request)
             listen(completionHandler)
             socket.resume()

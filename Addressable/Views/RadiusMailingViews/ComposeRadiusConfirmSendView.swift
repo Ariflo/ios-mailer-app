@@ -21,17 +21,14 @@ struct ComposeRadiusConfirmSendView: View {
                     // MARK: - Touch Inside Card Preview
                     HStack(alignment: .center) {
                         Spacer()
-                        if viewModel.loadingInsideCardPreview ||
-                            (viewModel.touchOneInsideCardImageData == nil &&
-                                viewModel.touchTwoInsideCardImageData == nil) {
+                        if !isCardImageReady(for: touch) {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle())
                                 .frame(width: 350, height: 200)
                                 .onDisappear {
-                                    viewModel.getMailingInsideCardImageTask.cancel()
+                                    viewModel.getMailingInsideCardImageTask(touch).cancel()
                                 }
-                        } else if viewModel.touchOneInsideCardImageData != nil &&
-                                    viewModel.touchTwoInsideCardImageData != nil {
+                        } else {
                             CustomNote.CoverImage(imageData: getInsideCardImageData(for: touch))
                                 .frame(maxWidth: 350, maxHeight: 200)
                         }
@@ -91,6 +88,13 @@ struct ComposeRadiusConfirmSendView: View {
                     }.padding(.horizontal, 40)
                 }
             }
+        }
+    }
+    private func isCardImageReady(for touch: AddressableTouch) -> Bool {
+        if touch == .touchOne {
+            return viewModel.touchOneInsideCardImageData != nil
+        } else {
+            return viewModel.touchTwoInsideCardImageData != nil
         }
     }
     private func getInsideCardImageData(for touch: AddressableTouch) -> Data {

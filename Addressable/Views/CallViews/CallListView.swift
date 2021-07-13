@@ -85,15 +85,25 @@ struct CallListView: View, Equatable {
                                             .font(Font.custom("Silka-Medium", size: 14)) :
                                             Text(lead.fromNumber ?? "Unknown Number")
                                             .font(Font.custom("Silka-Medium", size: 14))
+                                        if callLabel == .inbox {
+                                            Text(score > 0 ? "Update Tag" : "Tag Lead")
+                                                .font(Font.custom("Silka-Medium", size: 14))
+                                                .padding(8)
+                                                .multilineTextAlignment(.center)
+                                                .foregroundColor(Color.white)
+                                                .background(Color.addressablePurple)
+                                                .cornerRadius(5)
+                                                .onTapGesture {
+                                                    subjectLead = lead
+                                                    displayIncomingLeadSurvey = true
+                                                }
+                                        }
                                     }.padding(.vertical, 8)
                                     Spacer()
-                                    switch score {
-                                    case 1,
-                                         2,
-                                         3:
+                                    if callLabel == .inbox {
                                         Image(systemName: "phone")
                                             .foregroundColor(Color.addressablePurple)
-                                            .padding(.trailing, 10)
+                                            .padding(.trailing, 20)
                                             .imageScale(.large)
                                             .onTapGesture {
                                                 app.verifyPermissions {
@@ -117,28 +127,15 @@ struct CallListView: View, Equatable {
                                                     callManager.startCall(to: lead)
                                                 }
                                             }
-                                    default:
-                                        if callLabel == .inbox {
-                                            Text("Tag Lead")
-                                                .font(Font.custom("Silka-Medium", size: 14))
-                                                .padding()
-                                                .multilineTextAlignment(.center)
-                                                .foregroundColor(Color.white)
-                                                .background(Color.addressablePurple)
-                                                .cornerRadius(5)
-                                                .onTapGesture {
-                                                    subjectLead = lead
-                                                    displayIncomingLeadSurvey = true
-                                                }
-                                        } else {
-                                            Image(systemName: "arrow.uturn.left")
-                                                .foregroundColor(Color.addressablePurple)
-                                                .imageScale(.large)
-                                                .onTapGesture {
-                                                    subjectLead = lead
-                                                    displayIncomingLeadSurvey = true
-                                                }
-                                        }
+                                    } else {
+                                        Image(systemName: "arrow.uturn.left")
+                                            .foregroundColor(Color.addressablePurple)
+                                            .padding(.trailing, 20)
+                                            .imageScale(.large)
+                                            .onTapGesture {
+                                                subjectLead = lead
+                                                displayIncomingLeadSurvey = true
+                                            }
                                     }
                                 }
                                 .padding()

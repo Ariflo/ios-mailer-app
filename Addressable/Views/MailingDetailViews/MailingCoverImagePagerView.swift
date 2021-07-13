@@ -23,6 +23,7 @@ struct MailingCoverImagePagerView: View, Equatable {
 
     @ObservedObject var viewModel: MailingCoverImagePagerViewModel
     @Binding var isEditingMailing: Bool
+    @Binding var minimizePagerView: Bool
     @Binding var selectedMailingImageIndex: Int
     @Binding var selectedCoverImageIndex: Int
 
@@ -31,12 +32,14 @@ struct MailingCoverImagePagerView: View, Equatable {
     init(
         viewModel: MailingCoverImagePagerViewModel,
         isEditingMailing: Binding<Bool>,
+        minimizePagerView: Binding<Bool>,
         selectedMailingImageIndex: Binding<Int>,
         isEditingMailingCoverImage: Bool,
         selectedCoverImageIndex: Binding<Int>
     ) {
         self.viewModel = viewModel
         self._isEditingMailing = isEditingMailing
+        self._minimizePagerView = minimizePagerView
         self.isEditingMailingCoverImage = isEditingMailingCoverImage
         self._selectedMailingImageIndex = selectedMailingImageIndex
         self._selectedCoverImageIndex = selectedCoverImageIndex
@@ -105,14 +108,15 @@ struct MailingCoverImagePagerView: View, Equatable {
                 )
             )
             .disabled(isEditingMailing && !isEditingMailingCoverImage)
-            .frame(maxHeight: isEditingMailing ? 165 : .infinity)
+            .frame(maxHeight: isEditingMailing || minimizePagerView ? 165 : .infinity)
             .id(mailingImages)
             // MARK: - Pager Label + Edit Button
-            VStack(spacing: 8) {
+            HStack {
                 !isEditingMailing || isEditingMailingCoverImage ?
                     Text(getLabel())
                     .font(Font.custom("Silka-Medium", size: 16))
                     .foregroundColor(Color.black.opacity(0.8)) : nil
+                Spacer()
                 !isEditingMailing ? Button(action: {
                     withAnimation(.easeIn(duration: 0.5)) {
                         isEditingMailing.toggle()
@@ -128,6 +132,7 @@ struct MailingCoverImagePagerView: View, Equatable {
                 .disabled(getMailingStatus() == .mailed || getMailingStatus() == .processing)
                 .opacity(getMailingStatus() == .mailed || getMailingStatus() == .processing ? 0.4 : 1) : nil
             }
+            .padding(.horizontal, 20)
         }.onAppear {
             if viewModel.envelopeOutsideImageData == nil ||
                 viewModel.cardFrontImageData == nil ||

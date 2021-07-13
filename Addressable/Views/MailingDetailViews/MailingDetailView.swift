@@ -20,6 +20,7 @@ struct MailingDetailView: View, Equatable {
     @ObservedObject var viewModel: MailingDetailViewModel
 
     @State var isEditingMailing: Bool = false
+    @State var expandMailingList: Bool = false
     @State var selectedMailingImageIndex: Int = 0
     @State var selectedCoverImageIndex: Int = 0
 
@@ -33,10 +34,17 @@ struct MailingDetailView: View, Equatable {
         VStack(alignment: .leading, spacing: 0) {
             // MARK: - Mailing Name Header
             HStack {
-                Text(viewModel.mailing.name)
-                    .font(Font.custom("Silka-Medium", size: 14))
-                    .foregroundColor(Color.addressablePurple)
-                    .padding(.vertical)
+                if let mailingName = viewModel.mailing.subjectListEntry?.siteAddressLine1 {
+                    Text(mailingName)
+                        .font(Font.custom("Silka-Medium", size: 14))
+                        .foregroundColor(Color.addressablePurple)
+                        .padding(.vertical)
+                } else {
+                    Text(viewModel.mailing.name)
+                        .font(Font.custom("Silka-Medium", size: 14))
+                        .foregroundColor(Color.addressablePurple)
+                        .padding(.vertical)
+                }
                 Spacer()
                 Text(getMailingStatus().rawValue)
                     .font(Font.custom("Silka-Medium", size: 12))
@@ -86,6 +94,13 @@ struct MailingDetailView: View, Equatable {
                 let isEditingBackCardCover = isEditingMailing &&
                     MailingImages.allCases[selectedMailingImageIndex] == .cardBack
 
+                let drag = DragGesture()
+                    .onEnded { _ in
+                        withAnimation {
+                            self.expandMailingList.toggle()
+                        }
+                    }
+
                 // MARK: - MailingCoverImagePagerView
                 isEditingInsideCard || isEditingReturnAddress ? nil :
                     MailingCoverImagePagerView(
@@ -97,6 +112,7 @@ struct MailingDetailView: View, Equatable {
                             selecteImageId: viewModel.selectedImageId
                         ),
                         isEditingMailing: $isEditingMailing,
+                        minimizePagerView: $expandMailingList,
                         selectedMailingImageIndex: $selectedMailingImageIndex,
                         isEditingMailingCoverImage: isEditingFrontCardCover || isEditingBackCardCover,
                         selectedCoverImageIndex: $selectedCoverImageIndex
@@ -131,6 +147,7 @@ struct MailingDetailView: View, Equatable {
                             .opacity(isEditingMailing ? 0.5 : 1)
                             : nil
                     )
+                    .gesture(drag)
 
                 // MARK: - MailingCoverImageGalleryView
                 isEditingFrontCardCover || isEditingBackCardCover ?

@@ -17,7 +17,7 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     private let locationManager = CLLocationManager()
     private var placesClient = GMSPlacesClient.shared()
 
-    @Published var getMailingInsideCardImageTask = DispatchWorkItem {}
+    @Published var getMailingInsideCardImageTask: (AddressableTouch) -> DispatchWorkItem = { _ in DispatchWorkItem {} }
 
     @Published var places: [GMSAutocompletePrediction] = []
     @Published var location: CLLocation? {
@@ -51,7 +51,6 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
 
     @Published var loadingImages: Bool = false
     @Published var loadingTopics: Bool = false
-    @Published var loadingInsideCardPreview: Bool = true
     @Published var isSelectingCoverImage: Bool = false
 
     // In the case that call to API fails set data tree search criteria defaults here
@@ -108,8 +107,10 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
         self.locationManager.requestWhenInUseAuthorization()
         self.locationManager.startUpdatingLocation()
 
-        getMailingInsideCardImageTask = DispatchWorkItem {
-            self.getMailingWithCardInsidePreview()
+        getMailingInsideCardImageTask = { touch in
+            DispatchWorkItem {
+                self.getMailingWithCardInsidePreview(for: touch)
+            }
         }
 
         if selectedMailing != nil {
@@ -311,7 +312,6 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
                     self.touchOneInsideCardImageData = data
                 } else {
                     self.touchTwoInsideCardImageData = data
-                    self.loadingInsideCardPreview = false
                 }
             }
         }
@@ -512,7 +512,9 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
             receiveValue: { mailing in
                 if radiusMailingComponent == .list {
                     self.touchTwoMailing = mailing
-                    self.getMailingWithCardInsidePreview()
+                    // HACK: Find a better approach
+                    self.getMailingWithCardInsidePreview(for: .touchOne)
+                    self.getMailingWithCardInsidePreview(for: .touchTwo)
                 } else {
                     self.touchOneMailing = mailing
                 }
@@ -603,39 +605,39 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
             .store(in: &disposables)
     }
 
-    private func getMailingWithCardInsidePreview() {
-        if touchOneMailing != nil && touchTwoMailing != nil {
-            apiService.getSelectedRadiusMailing(for: touchTwoMailing!.id)
-                .map { $0.radiusMailing }
-                .receive(on: DispatchQueue.main)
-                .sink(
-                    receiveCompletion: { value in
-                        switch value {
-                        case .failure(let error):
-                            print("getMailingWithCardInsidePreview(for id: \(self.touchTwoMailing!.id), " +
-                                    "receiveCompletion error: \(error)")
-                        case .finished:
-                            break
-                        }
-                    },
-                    receiveValue: {radiusMailing in
-                        // Recurssively get mailing until illustrator_job_queue is finished building card inside preview image
-                        guard radiusMailing.cardInsidePreviewUrl != nil else {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 4.0,
-                                                          execute: self.getMailingInsideCardImageTask)
-                            return
-                        }
+    func getMailingWithCardInsidePreview(for touch: AddressableTouch) {
+        apiService.getSelectedRadiusMailing(for: touch == .touchTwo ? touchTwoMailing!.id : touchOneMailing!.id)
+            .map { $0.radiusMailing }
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { value in
+                    switch value {
+                    case .failure(let error):
+                        print("getMailingWithCardInsidePreview(for touch: \(touch), " +
+                                "receiveCompletion error: \(error)")
+                    case .finished:
+                        break
+                    }
+                },
+                receiveValue: { radiusMailing in
+                    // Recurssively get mailing until illustrator_job_queue is finished building card inside preview image
+                    guard radiusMailing.cardInsidePreviewUrl != nil else {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 4.0,
+                                                      execute: self.getMailingInsideCardImageTask(touch))
+                        return
+                    }
+                    if let url = radiusMailing.cardInsidePreviewUrl {
                         self.getInsideCardImageData(
-                            for: .touchOne,
-                            url: self.touchOneMailing!.cardInsidePreviewUrl!
+                            for: touch,
+                            url: url
                         )
-                        self.getInsideCardImageData(
-                            for: .touchTwo,
-                            url: self.touchTwoMailing!.cardInsidePreviewUrl!
-                        )
-                    })
-                .store(in: &disposables)
-        }
+                    }
+                })
+            .store(in: &disposables)
+    }
+
+    private func getTouch() -> AddressableTouch {
+        return touchOneInsideCardImageData == nil ? .touchOne : .touchTwo
     }
 
     func updateMessageTemplate(

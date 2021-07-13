@@ -245,7 +245,12 @@ struct ComposeRadiusView: View {
             }
             .onAppear {
                 viewModel.getDataTreeDefaultSearchCriteria()
-                viewModel.getRadiusMailingCoverImageOptions()
+                if let currentStepIndex = ComposeRadiusSteps.allCases.firstIndex(of: viewModel.step),
+                   let cardSelectionStepIndex = ComposeRadiusSteps.allCases.firstIndex(of: .selectCard) {
+                    if currentStepIndex <= cardSelectionStepIndex {
+                        viewModel.getRadiusMailingCoverImageOptions()
+                    }
+                }
             }
             .alert(isPresented: $showingAlert) {
                 switch alertType {
