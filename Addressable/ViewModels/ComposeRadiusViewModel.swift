@@ -370,6 +370,9 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     }
 
     func getMessageTemplates(for topic: MultiTouchTopic) {
+        // Reset merge varibles with every update
+        touchOneTemplateMergeVariables = [:]
+        touchTwoTemplateMergeVariables = [:]
         if let touchOneTemplateId = touchOneMailing?.topicSelectionID != self.topicSelectionID ||
             touchOneMailing?.topicSelectionID == nil ?
             topic.touchOneTemplateID : touchOneMailing!.customNoteTemplateID {
