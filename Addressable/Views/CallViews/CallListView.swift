@@ -35,9 +35,7 @@ struct CallListView: View, Equatable {
         self._displayIncomingLeadSurvey = displayIncomingLeadSurvey
         self._subjectLead = lead
 
-        if !self.displayIncomingLeadSurvey && self.subjectLead != nil {
-            self.viewModel.getLeads()
-        }
+        self.viewModel.getLeads()
     }
 
     var body: some View {
@@ -150,9 +148,6 @@ struct CallListView: View, Equatable {
         }
         .background(Color.addressableLightGray)
         .padding(.top, -10)
-        .onAppear {
-            viewModel.getLeads()
-        }
     }
     private func getTag(for score: Int) -> String {
         switch score {

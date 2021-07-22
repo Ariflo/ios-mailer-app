@@ -150,7 +150,7 @@ struct DashboardView: View {
 
                 // After ending outgoing calls, return to call list
                 if let callManager = app.callManager {
-                    if !callManager.getIsCurrentCallIncoming() {
+                    if !callManager.getIsCurrentCallIncoming() && callManager.currentActiveCall != nil {
                         selectedMenuItem = .calls
                     }
                 }
