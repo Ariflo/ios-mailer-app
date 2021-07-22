@@ -186,10 +186,12 @@ extension CallService: CXProviderDelegate {
         update.hasVideo = hasVideo
 
         if let fullName = callInvite.customParameters?["lead_full_name"],
-           let mailingName = callInvite.customParameters?["related_mailing_name"] {
+           let mailingName = callInvite.customParameters?["related_mailing_name"],
+           let mailingId = callInvite.customParameters?["related_mailing_id"] {
             callManager.currentCallerID.caller = fullName.contains("UNKNOWN") ?
                 CallerName.defaultName.rawValue : fullName
             callManager.currentCallerID.relatedMailingName = mailingName
+            callManager.currentCallerID.relatedMailingId = Int(mailingId)
         } else if let fullName = callInvite.customParameters?["lead_full_name"] {
             callManager.currentCallerID.caller = fullName.contains("UNKNOWN") ?
                 CallerName.defaultName.rawValue : fullName
@@ -273,7 +275,7 @@ extension CallService: CallDelegate {
         app.callState = CallState.connecting.rawValue
     }
 
-    // MARK: Ringtone
+    // MARK: - Ringtone
     func playRingback() {
         if let path = Bundle.main.path(forResource: "ringtone", ofType: "wav") {
             let ringtonePath = URL(fileURLWithPath: path)
@@ -382,7 +384,6 @@ extension CallService: CallDelegate {
 }
 
 // MARK: - PushKitEventDelegate
-
 extension CallService: PushKitEventDelegate {
     func credentialsUpdated(credentials: PKPushCredentials, deviceID: String) {
         if registrationRequired() || UserDefaults.standard.data(forKey: kCachedDeviceToken) != credentials.token {

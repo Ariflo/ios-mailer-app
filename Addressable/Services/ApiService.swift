@@ -34,9 +34,9 @@ protocol FetchableData {
     func updateRadiusMailing(for component: RadiusMailingComponent, with id: Int, _ updateRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingResponse, ApiError>
     func getSelectedRadiusMailing(for id: Int) -> AnyPublisher<RadiusMailingResponse, ApiError>
     func getDefaultDataTreeSearchCriteria() -> AnyPublisher<DataTreeSearchCriteriaWrapper, ApiError>
-    func updateRadiusListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<UpdateRecipientStatusResponse, ApiError>
+    func updateRadiusListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<UpdateRecipientResponse, ApiError>
     func getMailingRecipients(for mailingId: Int) -> AnyPublisher<RecipientResponse, ApiError>
-    func addRecipientToRemovalList(accountId: Int, recipientId: Int) -> AnyPublisher<RemoveRecipientResponse, ApiError>
+    func addRecipientToRemovalList(accountId: Int, recipientId: Int) -> AnyPublisher<UpdateRecipientResponse, ApiError>
 }
 
 enum RadiusMailingComponent {
@@ -59,7 +59,7 @@ class ApiService: Service {
 }
 
 extension ApiService: FetchableData {
-    func addRecipientToRemovalList(accountId: Int, recipientId: Int) -> AnyPublisher<RemoveRecipientResponse, ApiError> {
+    func addRecipientToRemovalList(accountId: Int, recipientId: Int) -> AnyPublisher<UpdateRecipientResponse, ApiError> {
         return makeApiRequest(
             with: getRemoveRecipientFromListRequestComponents(
                 accountId: accountId,
@@ -120,7 +120,7 @@ extension ApiService: FetchableData {
         }
     }
 
-    func updateRadiusListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<UpdateRecipientStatusResponse, ApiError> {
+    func updateRadiusListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<UpdateRecipientResponse, ApiError> {
         return makeApiRequest(with: updateListEntryRequestComponents(for: id),
                               postRequestBodyData: nil,
                               patchRequestBodyData: updateListEntryData)

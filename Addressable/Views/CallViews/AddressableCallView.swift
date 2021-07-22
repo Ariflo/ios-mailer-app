@@ -25,7 +25,7 @@ struct AddressableCallView: View {
         ZStack(alignment: .top) {
             Color(red: 78 / 255, green: 71 / 255, blue: 210 / 255)
                 .edgesIgnoringSafeArea(.all)
-            VStack(spacing: 18) {
+            VStack {
                 Text(app.callState)
                     .font(Font.custom("Silka-Medium", size: 22))
                     .padding(.top, 65)
@@ -33,27 +33,28 @@ struct AddressableCallView: View {
                 Image("ZippyIcon")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 200, height: 200)
+                    .frame(width: 150, height: 150)
+                Spacer()
                 Text(app.callManager?.currentCallerID.caller ?? CallerID().caller)
-                    .font(Font.custom("Silka-Medium", size: 22))
+                    .font(Font.custom("Silka-Bold", size: 22))
                     .foregroundColor(.white)
+                    .padding(.horizontal, 20)
                     .multilineTextAlignment(.center)
                 let callerId = app.callManager?.currentCallerID.relatedMailingName ?? CallerID().relatedMailingName
                 Text(callerId)
-                    .font(Font.custom("Silka-Medium", size: 22))
-                    .foregroundColor(.orange)
+                    .font(Font.custom("Silka-Bold", size: 22))
+                    .foregroundColor(.white)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 20)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text("Addressable name matching is beta, information may not be accurate." +
+                        " Verify with caller to confirm accuracy.")
+                    .font(Font.custom("Silka-Medium", size: 14))
+                    .foregroundColor(.white)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
-                if callerId == CallerName.defaultName.rawValue {
-                    Text("Addressable name matching is beta, information may not be accurate." +
-                            " Verify with caller to confirm accuracy.")
-                        .font(Font.custom("Silka-Medium", size: 16))
-                        .foregroundColor(.white)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 0)
-                }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 10)
                 HStack(spacing: 25) {
                     // MARK: - Mute
                     VStack(spacing: 8) {

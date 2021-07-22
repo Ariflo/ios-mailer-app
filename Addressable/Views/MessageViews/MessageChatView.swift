@@ -112,6 +112,7 @@ struct MessageChatView_Previews: PreviewProvider {
                             MessagesViewModel(provider: DependencyProvider()),
                         lead: IncomingLead(
                             id: 1,
+                            createdAt: "",
                             md5: nil,
                             fromNumber: nil,
                             toNumber: nil,

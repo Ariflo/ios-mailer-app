@@ -86,28 +86,6 @@ struct CampaignsView: View, Equatable {
                         .foregroundColor(Color.addressablePurple)
                         .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
                     }
-                    // MARK: - Current Call Banner
-                    if app.callManager?.currentActiveCall != nil {
-                        Button(action: {
-                            app.currentView = .activeCall
-                        }) {
-                            HStack(spacing: 12) {
-                                Image(systemName: "phone")
-                                    .imageScale(.large)
-                                    .padding(.leading, 8)
-                                Text("Return To Call")
-                                    .font(Font.custom("Silka-Medium", size: 12))
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(Color.black)
-                                    .imageScale(.medium)
-                                    .padding()
-                            }.padding(.bottom, 8)
-                        }
-                        .frame(maxHeight: 34)
-                        .foregroundColor(Color.addressablePurple)
-                        .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
-                    }
                     // MARK: - Campaigns Overview Header
                     if !viewModel.loadingLeads &&
                         !viewModel.loadingLeadsWithMessages &&

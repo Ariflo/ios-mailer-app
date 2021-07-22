@@ -25,11 +25,8 @@ struct ComposeRadiusConfirmSendView: View {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle())
                                 .frame(width: 350, height: 200)
-                                .onDisappear {
-                                    viewModel.getMailingInsideCardImageTask(touch).cancel()
-                                }
                         } else {
-                            CustomNote.CoverImage(imageData: getInsideCardImageData(for: touch))
+                            CustomNote.CoverImage(imageData: getInsideCardImageDataFromStore(for: touch))
                                 .frame(maxWidth: 350, maxHeight: 200)
                         }
                         Spacer()
@@ -88,20 +85,36 @@ struct ComposeRadiusConfirmSendView: View {
                     }.padding(.horizontal, 40)
                 }
             }
+        }.onDisappear {
+            viewModel.disconnectFromSocket()
         }
     }
     private func isCardImageReady(for touch: AddressableTouch) -> Bool {
+        // swiftlint:disable force_unwrapping
         if touch == .touchOne {
+            if viewModel.touchOneMailing?.cardInsidePreviewUrl != nil &&
+                viewModel.touchOneInsideCardImageData == nil {
+                viewModel.getInsideCardImageData(
+                    for: touch,
+                    url: (viewModel.touchOneMailing?.cardInsidePreviewUrl!)!
+                )
+            }
             return viewModel.touchOneInsideCardImageData != nil
         } else {
+            if viewModel.touchTwoMailing?.cardInsidePreviewUrl != nil && viewModel.touchTwoInsideCardImageData == nil {
+                viewModel.getInsideCardImageData(
+                    for: touch,
+                    url: (viewModel.touchTwoMailing?.cardInsidePreviewUrl!)!
+                )
+            }
             return viewModel.touchTwoInsideCardImageData != nil
         }
     }
-    private func getInsideCardImageData(for touch: AddressableTouch) -> Data {
-        if let image = touch == .touchOne ?
+    private func getInsideCardImageDataFromStore(for touch: AddressableTouch) -> Data {
+        if let imageData = touch == .touchOne ?
             viewModel.touchOneInsideCardImageData :
             viewModel.touchTwoInsideCardImageData {
-            return image
+            return imageData
         }
         return Data()
     }

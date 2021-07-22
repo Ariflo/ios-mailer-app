@@ -287,3 +287,21 @@ struct TargetDropDate: Codable {
         case tagetDropDate = "target_drop_date"
     }
 }
+
+// MARK: - InsideCardImageSubscribedResponse
+struct InsideCardImageSubscribedResponse: Codable {
+    let identifier: String?
+    let message: InsideCardImageURLResponse?
+    let type: SocketReponseTypes?
+}
+
+// MARK: - InsideCardImageURLResponse
+struct InsideCardImageURLResponse: Codable {
+    let mailingId: Int
+    let cardInsidePreviewUrl: String
+
+    enum CodingKeys: String, CodingKey {
+        case mailingId = "mailing_id"
+        case cardInsidePreviewUrl = "card_inside_preview_url"
+    }
+}

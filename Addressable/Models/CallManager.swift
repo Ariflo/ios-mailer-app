@@ -117,6 +117,11 @@ class CallManager {
     }
 
     func endCall(with uuid: UUID) {
+        if currentCallerID.relatedMailingId != nil {
+            // Reset Caller ID
+            currentCallerID = CallerID()
+        }
+
         let endCallAction = CXEndCallAction(call: uuid)
         let transaction = CXTransaction(action: endCallAction)
 
@@ -266,6 +271,7 @@ struct TwilioAccessTokenData: Codable {
 struct CallerID {
     var caller: String = CallerName.defaultName.rawValue
     var relatedMailingName: String = ""
+    var relatedMailingId: Int?
 }
 
 // MARK: - CallParticipantResponse

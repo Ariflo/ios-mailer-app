@@ -10,6 +10,7 @@ import Foundation
 // MARK: - IncomingLead
 struct IncomingLead: Codable, Identifiable, Equatable {
     let id: Int
+    let createdAt: String
     let md5, fromNumber, toNumber, firstName, lastName: String?
     let streetLine1, streetLine2, city, state: String?
     let zipcode, crmID: String?
@@ -17,7 +18,9 @@ struct IncomingLead: Codable, Identifiable, Equatable {
     let qualityScore: Int?
 
     enum CodingKeys: String, CodingKey {
-        case id, md5
+        case id
+        case createdAt = "created_at"
+        case md5
         case fromNumber = "from_number"
         case toNumber = "to_number"
         case firstName = "first_name"

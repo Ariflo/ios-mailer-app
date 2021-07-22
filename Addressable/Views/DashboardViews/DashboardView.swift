@@ -62,6 +62,28 @@ struct DashboardView: View {
                     .padding(12)
                     .background(Color.white)
                     .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
+                    // MARK: - Current Call Banner
+                    if app.callManager?.currentActiveCall != nil {
+                        Button(action: {
+                            app.currentView = .activeCall
+                        }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "phone")
+                                    .imageScale(.large)
+                                    .padding(.leading, 8)
+                                Text("Return To Call")
+                                    .font(Font.custom("Silka-Medium", size: 12))
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(Color.black)
+                                    .imageScale(.medium)
+                                    .padding()
+                            }.padding(.bottom, 8)
+                        }
+                        .frame(maxHeight: 34)
+                        .foregroundColor(Color.addressablePurple)
+                        .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
+                    }
                     // MARK: - Main Menu
                     switch selectedMenuItem {
                     case .campaigns:
@@ -121,6 +143,17 @@ struct DashboardView: View {
                    let knownLead = callManager.getLeadFromLatestCall() {
                     displayIncomingLeadSurvey = knownLead.status == "unknown" && shouldDisplayIncomingLeadSurvey
                 }
+
+                if let activeCallMailingId = app.callManager?.currentCallerID.relatedMailingId {
+                    navigateToMailingDetailView(with: activeCallMailingId)
+                }
+
+                // After ending outgoing calls, return to call list
+                if let callManager = app.callManager {
+                    if !callManager.getIsCurrentCallIncoming() {
+                        selectedMenuItem = .calls
+                    }
+                }
             }
             .sheet(isPresented: $displayIncomingLeadSurvey) {
                 TagIncomingLeadView(
@@ -131,6 +164,13 @@ struct DashboardView: View {
                     displayIncomingLeadSurvey = false
                 }.environmentObject(app)
             }
+        }
+    }
+    private func navigateToMailingDetailView(with mailingId: Int) {
+        viewModel.getRadiusMailing(with: mailingId) { mailing in
+            guard mailing != nil else { return }
+            app.selectedMailing = mailing
+            selectedMenuItem = .mailingDetail
         }
     }
 }

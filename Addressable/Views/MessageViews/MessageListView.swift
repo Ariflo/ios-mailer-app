@@ -16,6 +16,7 @@ struct MessageListView: View, Equatable {
     @State var navigateToChat = false
     @State var selectedLead = IncomingLead(
         id: 0,
+        createdAt: "",
         md5: "",
         fromNumber: "",
         toNumber: "",

@@ -98,6 +98,8 @@ struct CallListView: View, Equatable {
                                                     displayIncomingLeadSurvey = true
                                                 }
                                         }
+                                        Text(lead.createdAt)
+                                            .font(Font.custom("Silka-Medium", size: 14))
                                     }.padding(.vertical, 8)
                                     Spacer()
                                     if callLabel == .inbox {
@@ -116,12 +118,10 @@ struct CallListView: View, Equatable {
                                                     DispatchQueue.main.async {
                                                         app.currentView = .activeCall
                                                     }
-
                                                     guard let callManager = app.callManager else {
                                                         print("No CallManager to make phone call in CallListView")
                                                         return
                                                     }
-                                                    // Get latest list of leads
                                                     callManager.getLatestIncomingLeadsList()
                                                     // Make outgoing call
                                                     callManager.startCall(to: lead)

@@ -17,8 +17,6 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     private let locationManager = CLLocationManager()
     private var placesClient = GMSPlacesClient.shared()
 
-    @Published var getMailingInsideCardImageTask: (AddressableTouch) -> DispatchWorkItem = { _ in DispatchWorkItem {} }
-
     @Published var places: [GMSAutocompletePrediction] = []
     @Published var location: CLLocation? {
         willSet { objectWillChange.send() }
@@ -75,7 +73,7 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
         includeLotSize: false,
         landUseSingleFamily: true,
         landUseMultiFamily: false,
-        landUseCondos: false,
+        landUseCondos: true,
         landUseVacantLot: false,
         minPercentEquity: 20,
         maxPercentEquity: 100,
@@ -84,7 +82,7 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
         maxYearsOwned: 20,
         includeYearsOwned: true,
         ownerOccupiedOccupied: true,
-        ownerOccupiedAbsentee: false,
+        ownerOccupiedAbsentee: true,
         zipcodes: "",
         includeZipcodes: false,
         city: "",
@@ -106,12 +104,6 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
         self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.locationManager.requestWhenInUseAuthorization()
         self.locationManager.startUpdatingLocation()
-
-        getMailingInsideCardImageTask = { touch in
-            DispatchWorkItem {
-                self.getMailingWithCardInsidePreview(for: touch)
-            }
-        }
 
         if selectedMailing != nil {
             // In the case that the selected radius mailing is the touch two mailing,
@@ -515,9 +507,14 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
             receiveValue: { mailing in
                 if radiusMailingComponent == .list {
                     self.touchTwoMailing = mailing
-                    // HACK: Find a better approach
-                    self.getMailingWithCardInsidePreview(for: .touchOne)
-                    self.getMailingWithCardInsidePreview(for: .touchTwo)
+                    self.connectToSocket { socketResponseData in
+                        if self.touchOneMailing?.cardInsidePreviewUrl == nil {
+                            self.subscribeToInsideCardImage(for: .touchOne, with: socketResponseData)
+                        }
+                        if self.touchTwoMailing?.cardInsidePreviewUrl == nil {
+                            self.subscribeToInsideCardImage(for: .touchTwo, with: socketResponseData)
+                        }
+                    }
                 } else {
                     self.touchOneMailing = mailing
                 }
@@ -604,37 +601,6 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
                 },
                 receiveValue: {radiusMailing in
                     completion(radiusMailing)
-                })
-            .store(in: &disposables)
-    }
-
-    func getMailingWithCardInsidePreview(for touch: AddressableTouch) {
-        apiService.getSelectedRadiusMailing(for: touch == .touchTwo ? touchTwoMailing!.id : touchOneMailing!.id)
-            .map { $0.radiusMailing }
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { value in
-                    switch value {
-                    case .failure(let error):
-                        print("getMailingWithCardInsidePreview(for touch: \(touch), " +
-                                "receiveCompletion error: \(error)")
-                    case .finished:
-                        break
-                    }
-                },
-                receiveValue: { radiusMailing in
-                    // Recurssively get mailing until illustrator_job_queue is finished building card inside preview image
-                    guard radiusMailing.cardInsidePreviewUrl != nil else {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 4.0,
-                                                      execute: self.getMailingInsideCardImageTask(touch))
-                        return
-                    }
-                    if let url = radiusMailing.cardInsidePreviewUrl {
-                        self.getInsideCardImageData(
-                            for: touch,
-                            url: url
-                        )
-                    }
                 })
             .store(in: &disposables)
     }
@@ -741,6 +707,66 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
                     self.dataTreeSearchCriteria = defaultCriteria
                 })
             .store(in: &disposables)
+    }
+
+    private func connectToSocket(connectionCompletion: @escaping (Data) -> Void) {
+        if let userToken = KeyChainServiceUtil.shared[userAppToken] {
+            apiService.connectToWebSocket(userToken: userToken) { data in
+                guard data != nil else {
+                    print("No data to confirm connection to socket")
+                    return
+                }
+                connectionCompletion(data!)
+            }
+        }
+    }
+
+    private func subscribeToInsideCardImage(for touch: AddressableTouch, with socketResponseData: Data) {
+        // Subscribe to inside card image channel
+        self.apiService.subscribe(
+            command: "subscribe",
+            identifier: "{\"channel\": \"CardInsideImageChannel\", \"id\": " +
+                "\"\(touch == .touchOne ? touchOneMailing!.id : touchTwoMailing!.id)\"}"
+        )
+        guard let socketResponseData = try? JSONDecoder()
+                .decode(InsideCardImageSubscribedResponse.self, from: socketResponseData)
+        else {
+            // Log Socket Pings
+            #if DEBUG
+            do {
+                let socketPingResponseData = try JSONDecoder()
+                    .decode(
+                        MessageSubscribePingResponse.self,
+                        from: socketResponseData
+                    )
+
+                switch socketPingResponseData.type {
+                case .confirm:
+                    print("User Successfully Subscribed -> socketResponseData: \(socketPingResponseData)")
+                case .ping:
+                    print("Socket Ping -> socketResponseData: \(socketPingResponseData)")
+                case .welcome:
+                    print("User Successfully Connected to Socket -> " +
+                            "socketResponseData: \(socketPingResponseData)")
+                case .none:
+                    print("Unknown -> socketResponseData: \(socketPingResponseData)")
+                }
+            } catch {
+                print("connectToSocket MessageSubscribeResponse decoding error: \(error)")
+            }
+            #endif
+            return
+        }
+        if let imageDataResponse = socketResponseData.message,
+           let relevantMailingId = touch == .touchOne ? touchOneMailing?.id : touchTwoMailing?.id {
+            if relevantMailingId == imageDataResponse.mailingId {
+                self.getInsideCardImageData(for: touch, url: imageDataResponse.cardInsidePreviewUrl)
+            }
+        }
+    }
+
+    func disconnectFromSocket() {
+        apiService.disconnectFromWebSocket()
     }
 }
 
