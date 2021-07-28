@@ -141,7 +141,10 @@ struct DashboardView: View {
                 }
                 if let callManager = app.callManager,
                    let knownLead = callManager.getLeadFromLatestCall() {
-                    displayIncomingLeadSurvey = knownLead.status == "unknown" && shouldDisplayIncomingLeadSurvey
+                    if knownLead.status == "unknown" && shouldDisplayIncomingLeadSurvey {
+                        subjectLead = knownLead
+                        displayIncomingLeadSurvey = true
+                    }
                 }
 
                 if let activeCallMailingId = app.callManager?.currentCallerID.relatedMailingId {

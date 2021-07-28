@@ -25,6 +25,9 @@
 		CA1210052634D2310077D743 /* NumberUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1210042634D2310077D743 /* NumberUtils.swift */; };
 		CA121010263728200077D743 /* TargetCriteriaSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA12100F263728200077D743 /* TargetCriteriaSliderView.swift */; };
 		CA121015263742D00077D743 /* CheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA121014263742D00077D743 /* CheckView.swift */; };
+		CA36D90226AB851500CCD114 /* MultilineTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA36D90126AB851500CCD114 /* MultilineTextView.swift */; };
+		CA36D90426B0B24000CCD114 /* ConfirmAndSendMailingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA36D90326B0B24000CCD114 /* ConfirmAndSendMailingView.swift */; };
+		CA36D90626B0B3F600CCD114 /* ConfirmAndSendMailingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA36D90526B0B3F600CCD114 /* ConfirmAndSendMailingViewModel.swift */; };
 		CA3B8F8A265430AC005A12EF /* DataTreeSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3B8F89265430AC005A12EF /* DataTreeSearch.swift */; };
 		CA3B8F8C26557FEE005A12EF /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3B8F8B26557FEE005A12EF /* ProfileViewModel.swift */; };
 		CA3CE817259BC38500A230E1 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3CE816259BC38500A230E1 /* DashboardViewModel.swift */; };
@@ -56,7 +59,7 @@
 		CA85568E25B0EB230063274D /* MessageChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA85568D25B0EB230063274D /* MessageChatView.swift */; };
 		CA88420225A39F2700E0D75A /* SignInViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88420125A39F2700E0D75A /* SignInViewModel.swift */; };
 		CA88420725A3A7D200E0D75A /* Authorization.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88420625A3A7D200E0D75A /* Authorization.swift */; };
-		CA88422925A3D52F00E0D75A /* CustomRefreshableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */; };
+		CA88422925A3D52F00E0D75A /* RefreshableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA88422825A3D52F00E0D75A /* RefreshableScrollView.swift */; };
 		CA93F49E25C9E41000271404 /* AddressableCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93F49D25C9E41000271404 /* AddressableCallView.swift */; };
 		CA9504DD2627834500F0245E /* PreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9504DC2627834500F0245E /* PreviewViewModel.swift */; };
 		CA9504E2262783F200F0245E /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9504E1262783F200F0245E /* PreviewView.swift */; };
@@ -190,6 +193,9 @@
 		CA1210042634D2310077D743 /* NumberUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberUtils.swift; sourceTree = "<group>"; };
 		CA12100F263728200077D743 /* TargetCriteriaSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetCriteriaSliderView.swift; sourceTree = "<group>"; };
 		CA121014263742D00077D743 /* CheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckView.swift; sourceTree = "<group>"; };
+		CA36D90126AB851500CCD114 /* MultilineTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextView.swift; sourceTree = "<group>"; };
+		CA36D90326B0B24000CCD114 /* ConfirmAndSendMailingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmAndSendMailingView.swift; sourceTree = "<group>"; };
+		CA36D90526B0B3F600CCD114 /* ConfirmAndSendMailingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmAndSendMailingViewModel.swift; sourceTree = "<group>"; };
 		CA3B8F89265430AC005A12EF /* DataTreeSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTreeSearch.swift; sourceTree = "<group>"; };
 		CA3B8F8B26557FEE005A12EF /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		CA3CE816259BC38500A230E1 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
@@ -220,7 +226,7 @@
 		CA85568D25B0EB230063274D /* MessageChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageChatView.swift; sourceTree = "<group>"; };
 		CA88420125A39F2700E0D75A /* SignInViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInViewModel.swift; sourceTree = "<group>"; };
 		CA88420625A3A7D200E0D75A /* Authorization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Authorization.swift; sourceTree = "<group>"; };
-		CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CustomRefreshableScrollView.swift; path = Addressable/Views/ViewsUtilities/CustomRefreshableScrollView.swift; sourceTree = SOURCE_ROOT; };
+		CA88422825A3D52F00E0D75A /* RefreshableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = RefreshableScrollView.swift; path = Addressable/Views/ViewsUtilities/RefreshableScrollView.swift; sourceTree = SOURCE_ROOT; };
 		CA93F49D25C9E41000271404 /* AddressableCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressableCallView.swift; sourceTree = "<group>"; };
 		CA9504DC2627834500F0245E /* PreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewModel.swift; sourceTree = "<group>"; };
 		CA9504E1262783F200F0245E /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
@@ -495,6 +501,7 @@
 				CAB4F992267BC60100B44D02 /* EditMailingInsideCardViewModel.swift */,
 				CAB4F994267BCA1C00B44D02 /* EditReturnAddressViewModel.swift */,
 				CAB4F996267BCC1100B44D02 /* MailingCoverImagePagerViewModel.swift */,
+				CA36D90526B0B3F600CCD114 /* ConfirmAndSendMailingViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -537,13 +544,14 @@
 				CA121014263742D00077D743 /* CheckView.swift */,
 				CA120FFF2634C0240077D743 /* SliderView.swift */,
 				CA4A0F4C25F1AF8000BF89CF /* SegmentedControlIconOptionView.swift */,
-				CA88422825A3D52F00E0D75A /* CustomRefreshableScrollView.swift */,
+				CA88422825A3D52F00E0D75A /* RefreshableScrollView.swift */,
 				CA4A0F5125F2CE3200BF89CF /* CustomSegmentedPickerView.swift */,
 				CA9504E1262783F200F0245E /* PreviewView.swift */,
 				CA651919265EF00D00DFE90E /* AddMenuItem.swift */,
 				CACE58AD2668311F00BDD0A9 /* AdaptsToKeyboard.swift */,
 				CACE58BD266C08B700BDD0A9 /* ListSeparatorStyle.swift */,
 				CACE58C72672BB3400BDD0A9 /* TextFieldModifier.swift */,
+				CA36D90126AB851500CCD114 /* MultilineTextView.swift */,
 			);
 			path = ViewsUtilities;
 			sourceTree = "<group>";
@@ -625,6 +633,7 @@
 				CAB4F988267B1ED600B44D02 /* MailingImagePreviewView.swift */,
 				CAB4F98C267B1FA400B44D02 /* MailingCoverImagePagerView.swift */,
 				CAB4F98E267B1FD900B44D02 /* EditMailingInsideCardView.swift */,
+				CA36D90326B0B24000CCD114 /* ConfirmAndSendMailingView.swift */,
 			);
 			path = MailingDetailViews;
 			sourceTree = "<group>";
@@ -860,6 +869,7 @@
 				CA48C8452656DF86003A23EC /* MultiTouchTopic.swift in Sources */,
 				CAB4F985267A66AE00B44D02 /* ArrayUtil.swift in Sources */,
 				CAC8B086259BE6D400D4447F /* KeychainServiceUtil.swift in Sources */,
+				CA36D90626B0B3F600CCD114 /* ConfirmAndSendMailingViewModel.swift in Sources */,
 				CA62A7A425DED59B005BF410 /* DictionaryUtil.swift in Sources */,
 				CA4AE34125CD95E8003B6CE8 /* KeyPadView.swift in Sources */,
 				CA120FFB2634BFBB0077D743 /* SliderUtils.swift in Sources */,
@@ -875,6 +885,7 @@
 				CA85568E25B0EB230063274D /* MessageChatView.swift in Sources */,
 				CAFDBEAE25D5DF0D002D17B4 /* GoogleMapsView.swift in Sources */,
 				CABE7A5E2639E5FC00B1B9AE /* DetectScrollView.swift in Sources */,
+				CA36D90426B0B24000CCD114 /* ConfirmAndSendMailingView.swift in Sources */,
 				CAB4F98D267B1FA400B44D02 /* MailingCoverImagePagerView.swift in Sources */,
 				CA48C8432656DF57003A23EC /* MessageTemplate.swift in Sources */,
 				CAB4F983267A5FF200B44D02 /* MailingCoverImageGalleryViewModel.swift in Sources */,
@@ -902,6 +913,7 @@
 				CA054A83265C310300729D13 /* CampaignsViewModel.swift in Sources */,
 				CACE58B82669A6C600BDD0A9 /* CampaignSectionHeaderView.swift in Sources */,
 				CAFECD192632091C009A7837 /* ComposeRadiusSelectLocationView.swift in Sources */,
+				CA36D90226AB851500CCD114 /* MultilineTextView.swift in Sources */,
 				B3DB527F257992F8004196A6 /* DashboardView.swift in Sources */,
 				CADA001C25C0D09000004B4B /* EnumUtil.swift in Sources */,
 				CA8555D125A81AF80063274D /* CallService.swift in Sources */,
@@ -927,7 +939,7 @@
 				CA48C8492656E0FD003A23EC /* Recipient.swift in Sources */,
 				CA121015263742D00077D743 /* CheckView.swift in Sources */,
 				B370BC172576BAC10066624A /* AddressableApp.swift in Sources */,
-				CA88422925A3D52F00E0D75A /* CustomRefreshableScrollView.swift in Sources */,
+				CA88422925A3D52F00E0D75A /* RefreshableScrollView.swift in Sources */,
 				CA85564D25AFB9B40063274D /* PermissionsUtil.swift in Sources */,
 				CAB4F993267BC60100B44D02 /* EditMailingInsideCardViewModel.swift in Sources */,
 				CAB4F989267B1ED600B44D02 /* MailingImagePreviewView.swift in Sources */,
@@ -1106,7 +1118,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;
@@ -1120,7 +1132,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 0.1.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1136,7 +1148,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;
@@ -1150,7 +1162,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.0.1;
+				MARKETING_VERSION = 0.1.1;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

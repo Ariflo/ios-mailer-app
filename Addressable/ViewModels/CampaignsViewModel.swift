@@ -19,6 +19,16 @@ class CampaignsViewModel: ObservableObject {
     @Published var numOfCalls: Int = 0
     @Published var numOfTextMessages: Int = 0
 
+    @Published var refreshMailingData: Bool = false {
+        didSet {
+            if oldValue == false && refreshMailingData == true {
+                getAllMailingCampaigns()
+                // When finished refreshing data (must be done on the main thread)
+                self.refreshMailingData = false
+            }
+        }
+    }
+
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
 

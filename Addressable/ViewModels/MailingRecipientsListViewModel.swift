@@ -33,7 +33,7 @@ class MailingRecipientsListViewModel: ObservableObject {
             return
         }
 
-        apiService.updateRadiusListEntry(for: listEntryId, encodedUpdateListEntryData)
+        apiService.updateMailingListEntry(for: listEntryId, encodedUpdateListEntryData)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { value in

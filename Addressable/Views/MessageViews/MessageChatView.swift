@@ -112,6 +112,8 @@ struct MessageChatView_Previews: PreviewProvider {
                             MessagesViewModel(provider: DependencyProvider()),
                         lead: IncomingLead(
                             id: 1,
+                            userID: 1,
+                            accountID: 1,
                             createdAt: "",
                             md5: nil,
                             fromNumber: nil,
@@ -125,7 +127,8 @@ struct MessageChatView_Previews: PreviewProvider {
                             zipcode: nil,
                             crmID: nil,
                             status: "",
-                            qualityScore: nil)
+                            qualityScore: nil,
+                            userNotes: [])
         )
     }
 }

@@ -63,87 +63,90 @@ struct CallListView: View, Equatable {
                         alignment: .center
                     )
             } else {
-                List {
+                RefreshableScrollView(refreshing: $viewModel.refreshIncomingLeadsData) {
                     ForEach(CallLabel.allCases, id: \.self) { callLabel in
                         CallListSectionHeaderView(
                             label: callLabel,
                             count: getLeads(for: callLabel, forCount: true).count,
                             displaySection: getDisplaySection(for: callLabel)
                         )
-                        ForEach(getLeads(for: callLabel)) { lead in
-                            if let score = lead.qualityScore {
-                                HStack {
-                                    VStack(alignment: .leading, spacing: 6) {
-                                        if let name = lead.firstName {
-                                            Text("\(name.contains("unknown")  ? "Unknown Name" : name)")
-                                                .font(Font.custom("Silka-Bold", size: 18))
-                                        }
-                                        score > 0 ?
-                                            Text(getTag(for: score))
-                                            .font(Font.custom("Silka-Medium", size: 14)) :
-                                            Text(lead.fromNumber ?? "Unknown Number")
-                                            .font(Font.custom("Silka-Medium", size: 14))
-                                        if callLabel == .inbox {
-                                            Text(score > 0 ? "Update Tag" : "Tag Lead")
+                        VStack(spacing: 0) {
+                            ForEach(getLeads(for: callLabel)) { lead in
+                                if let score = lead.qualityScore {
+                                    HStack {
+                                        VStack(alignment: .leading, spacing: 6) {
+                                            if let name = lead.firstName {
+                                                Text("\(name.contains("unknown")  ? "Unknown Name" : name)")
+                                                    .font(Font.custom("Silka-Bold", size: 18))
+                                            }
+                                            score > 0 ?
+                                                Text(getTag(for: score))
+                                                .font(Font.custom("Silka-Medium", size: 14)) :
+                                                Text(lead.fromNumber ?? "Unknown Number")
                                                 .font(Font.custom("Silka-Medium", size: 14))
-                                                .padding(8)
-                                                .multilineTextAlignment(.center)
-                                                .foregroundColor(Color.white)
-                                                .background(Color.addressablePurple)
-                                                .cornerRadius(5)
+                                            if callLabel == .inbox {
+                                                Text(score > 0 ? "Update Tag" : "Tag Lead")
+                                                    .font(Font.custom("Silka-Medium", size: 14))
+                                                    .padding(8)
+                                                    .multilineTextAlignment(.center)
+                                                    .foregroundColor(Color.white)
+                                                    .background(Color.addressablePurple)
+                                                    .cornerRadius(5)
+                                                    .onTapGesture {
+                                                        subjectLead = lead
+                                                        displayIncomingLeadSurvey = true
+                                                    }
+                                            }
+                                            Text(lead.createdAt)
+                                                .font(Font.custom("Silka-Medium", size: 14))
+                                        }.padding(.vertical, 8)
+                                        Spacer()
+                                        if callLabel == .inbox {
+                                            Image(systemName: "phone")
+                                                .foregroundColor(Color.addressablePurple)
+                                                .padding(.trailing, 20)
+                                                .imageScale(.large)
+                                                .onTapGesture {
+                                                    app.verifyPermissions {
+                                                        // In the case a user disallowed PN permissions on initial launch
+                                                        // register for remote PN + Twilio here
+                                                        DispatchQueue.main.async {
+                                                            UIApplication.shared.registerForRemoteNotifications()
+                                                        }
+                                                        // Display Outgoing Call View
+                                                        DispatchQueue.main.async {
+                                                            app.currentView = .activeCall
+                                                        }
+                                                        guard let callManager = app.callManager else {
+                                                            print("No CallManager to make phone call in CallListView")
+                                                            return
+                                                        }
+                                                        callManager.getLatestIncomingLeadsList()
+                                                        // Make outgoing call
+                                                        callManager.startCall(to: lead)
+                                                    }
+                                                }
+                                        } else {
+                                            Image(systemName: "arrow.uturn.left")
+                                                .foregroundColor(Color.addressablePurple)
+                                                .padding(.trailing, 20)
+                                                .imageScale(.large)
                                                 .onTapGesture {
                                                     subjectLead = lead
                                                     displayIncomingLeadSurvey = true
                                                 }
                                         }
-                                        Text(lead.createdAt)
-                                            .font(Font.custom("Silka-Medium", size: 14))
-                                    }.padding(.vertical, 8)
-                                    Spacer()
-                                    if callLabel == .inbox {
-                                        Image(systemName: "phone")
-                                            .foregroundColor(Color.addressablePurple)
-                                            .padding(.trailing, 20)
-                                            .imageScale(.large)
-                                            .onTapGesture {
-                                                app.verifyPermissions {
-                                                    // In the case a user disallowed PN permissions on initial launch
-                                                    // register for remote PN + Twilio here
-                                                    DispatchQueue.main.async {
-                                                        UIApplication.shared.registerForRemoteNotifications()
-                                                    }
-                                                    // Display Outgoing Call View
-                                                    DispatchQueue.main.async {
-                                                        app.currentView = .activeCall
-                                                    }
-                                                    guard let callManager = app.callManager else {
-                                                        print("No CallManager to make phone call in CallListView")
-                                                        return
-                                                    }
-                                                    callManager.getLatestIncomingLeadsList()
-                                                    // Make outgoing call
-                                                    callManager.startCall(to: lead)
-                                                }
-                                            }
-                                    } else {
-                                        Image(systemName: "arrow.uturn.left")
-                                            .foregroundColor(Color.addressablePurple)
-                                            .padding(.trailing, 20)
-                                            .imageScale(.large)
-                                            .onTapGesture {
-                                                subjectLead = lead
-                                                displayIncomingLeadSurvey = true
-                                            }
                                     }
+                                    .transition(.move(edge: .top))
+                                    .padding(.horizontal)
+                                    .padding(.vertical, 10)
+                                    .background(Color.white)
+                                    .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
                                 }
-                                .padding()
-                                .transition(.move(edge: .bottom))
                             }
                         }
                     }
-                    .listRowInsets(.init())
                 }
-                .listStyle(PlainListStyle())
             }
         }
         .background(Color.addressableLightGray)

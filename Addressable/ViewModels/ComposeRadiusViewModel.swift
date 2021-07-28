@@ -580,8 +580,6 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
                 return nil
             }
             return updateData
-        case .returnAddress:
-            return nil
         }
     }
 

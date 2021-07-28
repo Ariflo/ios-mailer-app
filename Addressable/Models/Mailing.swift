@@ -99,8 +99,14 @@ struct Campaign: Codable {
         case mailing
     }
 }
+// MARK: - MailingResponse
+struct MailingResponse: Codable {
+    let mailing: Mailing
 
-
+    enum CodingKeys: String, CodingKey {
+        case mailing
+    }
+}
 // MARK: - ReturnAddress
 struct ReturnAddress: Codable {
     let fromFirstName, fromLastName, fromBusinessName, fromAddressLine1: String
@@ -187,12 +193,12 @@ struct RadiusMailingResponse: Codable {
         case radiusMailing = "radius_mailing"
     }
 }
-// MARK: - OutgoingRadiusMailingFromAddress
-struct OutgoingRadiusMailingFromAddress: Codable {
-    let radiusMailing: ReturnAddress
+// MARK: - OutgoingMailingFromAddress
+struct OutgoingMailingFromAddress: Codable {
+    let mailing: ReturnAddress
 
     enum CodingKeys: String, CodingKey {
-        case radiusMailing = "radius_mailing"
+        case mailing
     }
 }
 // MARK: - OutgoingRadiusMailingSiteWrapper
@@ -303,5 +309,26 @@ struct InsideCardImageURLResponse: Codable {
     enum CodingKeys: String, CodingKey {
         case mailingId = "mailing_id"
         case cardInsidePreviewUrl = "card_inside_preview_url"
+    }
+}
+// MARK: - SendMailing
+struct SendMailing: Codable {
+    let mailing: TargetDropDate
+    let approveForPrint: ApproveForPrint
+
+    enum CodingKeys: String, CodingKey {
+        case mailing
+        case approveForPrint = "approve_for_print"
+    }
+}
+
+// MARK: - ApproveForPrint
+struct ApproveForPrint: Codable {
+    let finalQuantity: Int
+    let status: String
+
+    enum CodingKeys: String, CodingKey {
+        case finalQuantity = "final_quantity"
+        case status
     }
 }

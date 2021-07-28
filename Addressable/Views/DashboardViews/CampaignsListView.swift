@@ -14,7 +14,7 @@ enum MailingStatus: String, CaseIterable {
     case draft = "Draft"
     case archived = "Archived"
 }
-enum MailingState: String {
+enum MailingState: String, CaseIterable {
     case draft
     case scheduled
     case pending = "pending_payment"
@@ -112,7 +112,7 @@ struct CampaignsListView: View {
             .padding(.horizontal, 20)
             .transition(.move(edge: .bottom))
             // MARK: - Campaigns Mailing List
-            ScrollView(showsIndicators: false) {
+            RefreshableScrollView(refreshing: $viewModel.refreshMailingData) {
                 let isListFiltered = !(selectedFilters.isEmpty && mailingSearchTerm.isEmpty)
 
                 if viewModel.mailings.filter { mailing in isRelatedToSearchQuery(mailing) }.isEmpty &&

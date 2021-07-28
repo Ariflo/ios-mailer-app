@@ -15,6 +15,16 @@ class CallsViewModel: ObservableObject {
     @Published var loading: Bool = false
     @Published var incomingLeads: IncomingLeadsResponse = []
 
+    @Published var refreshIncomingLeadsData: Bool = false {
+        didSet {
+            if oldValue == false && refreshIncomingLeadsData == true {
+                getLeads()
+                // When finished refreshing data (must be done on the main thread)
+                self.refreshIncomingLeadsData = false
+            }
+        }
+    }
+
     init(provider: DependencyProviding) {
         apiService = provider.register(provider: provider)
     }

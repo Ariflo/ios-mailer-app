@@ -12,7 +12,7 @@ class MailingDetailViewModel: ObservableObject {
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
 
-    var mailing: Mailing
+    @Published var mailing: Mailing
 
     @Published var selectedFrontImageData: Data?
     @Published var selectedBackImageData: Data?

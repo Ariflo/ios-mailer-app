@@ -8,17 +8,22 @@
 import Foundation
 
 // MARK: - IncomingLead
-struct IncomingLead: Codable, Identifiable, Equatable {
+struct IncomingLead: Codable, Identifiable {
     let id: Int
+    let userID: Int
+    let accountID: Int
     let createdAt: String
     let md5, fromNumber, toNumber, firstName, lastName: String?
     let streetLine1, streetLine2, city, state: String?
     let zipcode, crmID: String?
     let status: String?
     let qualityScore: Int?
+    let userNotes: [UserNote]
 
     enum CodingKeys: String, CodingKey {
         case id
+        case userID = "user_id"
+        case accountID = "account_id"
         case createdAt = "created_at"
         case md5
         case fromNumber = "from_number"
@@ -31,6 +36,7 @@ struct IncomingLead: Codable, Identifiable, Equatable {
         case crmID = "crm_id"
         case status
         case qualityScore = "quality_score"
+        case userNotes = "user_notes"
     }
 }
 
@@ -65,5 +71,39 @@ struct IncomingLeadTag: Codable {
         case spam
         case qualityScore = "quality_score"
         case removal
+    }
+}
+// MARK: - UserNote
+struct UserNote: Codable, Identifiable {
+    let id, userID: Int
+    let userName: String
+    let note, notableType: String
+    let notableID: Int
+    let createdAt, updatedAt: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case userID = "user_id"
+        case userName = "user_name"
+        case note
+        case notableType = "notable_type"
+        case notableID = "notable_id"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+}
+// MARK: - OutgoingUserNote
+struct OutgoingUserNote: Codable {
+    let note: Note
+}
+
+// MARK: - Note
+struct Note: Codable {
+    let userID: Int
+    let note: String
+
+    enum CodingKeys: String, CodingKey {
+        case userID = "user_id"
+        case note
     }
 }

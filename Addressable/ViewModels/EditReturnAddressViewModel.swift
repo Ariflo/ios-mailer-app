@@ -31,7 +31,7 @@ class EditReturnAddressViewModel: ObservableObject {
 
     func updateMailingReturnAddress(completionHandler: @escaping (Mailing?) -> Void) {
         guard let updateReturnAddressData = try? JSONEncoder().encode(
-            OutgoingRadiusMailingFromAddress(radiusMailing: ReturnAddress(
+            OutgoingMailingFromAddress(mailing: ReturnAddress(
                 fromFirstName: fromFirstName,
                 fromLastName: fromLastName,
                 fromBusinessName: fromBusinessName,
@@ -46,29 +46,23 @@ class EditReturnAddressViewModel: ObservableObject {
             return
         }
 
-        apiService.updateRadiusMailing(
-            for: .returnAddress,
-            with: mailing.id,
-            updateReturnAddressData
-        )
-        .map { resp in
-            resp.radiusMailing
-        }
-        .receive(on: DispatchQueue.main)
-        .sink(
-            receiveCompletion: { value in
-                switch value {
-                case .failure(let error):
-                    print("updateMailingReturnAddress(), receiveCompletion error: \(error)")
-                    completionHandler(nil)
-                case .finished:
-                    break
-                }
-            },
-            receiveValue: { mailing in
-                completionHandler(mailing)
-            })
-        .store(in: &disposables)
+        apiService.updateMailingReturnAddress(for: mailing.id, returnAddressData: updateReturnAddressData)
+            .map { resp in resp.mailing }
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { value in
+                    switch value {
+                    case .failure(let error):
+                        print("updateMailingReturnAddress(), receiveCompletion error: \(error)")
+                        completionHandler(nil)
+                    case .finished:
+                        break
+                    }
+                },
+                receiveValue: { mailing in
+                    completionHandler(mailing)
+                })
+            .store(in: &disposables)
     }
 
     func populateFields() {

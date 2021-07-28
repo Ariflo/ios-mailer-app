@@ -8,9 +8,15 @@
 import SwiftUI
 
 enum SettingsMenu: String, CaseIterable {
+    case sendMailing = "Send Mailing"
+    case addTokens = "Add Tokens"
+    case revert = "Revert to Draft"
+    case sendAgain = "Send Again"
+    case results = "Results"
+    case clone = "Clone"
     case cancelMailing = "Cancel Mailing"
 }
-
+// swiftlint:disable type_body_length
 struct MailingDetailView: View, Equatable {
     static func == (lhs: MailingDetailView, rhs: MailingDetailView) -> Bool {
         lhs.viewModel.mailing == rhs.viewModel.mailing
@@ -23,6 +29,7 @@ struct MailingDetailView: View, Equatable {
     @State var expandMailingList: Bool = false
     @State var selectedMailingImageIndex: Int = 0
     @State var selectedCoverImageIndex: Int = 0
+    @State var displayConfirmationSheet: Bool = false
 
     @State var isShowingInsideCardEditAlert: Bool = false
 
@@ -54,8 +61,8 @@ struct MailingDetailView: View, Equatable {
             .padding(.horizontal, 20)
             .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
             .background(Color.white)
-            // MARK: - Mailing Date and Size Header
             HStack {
+                // MARK: - Mailing Date and Size Header
                 Text("Mailing on: \(getFormattedTargetDropDate())")
                     .font(Font.custom("Silka-Medium", size: 14))
                     .foregroundColor(Color.black.opacity(0.8))
@@ -66,19 +73,31 @@ struct MailingDetailView: View, Equatable {
                     .foregroundColor(Color.black.opacity(0.8))
                     .padding(.vertical)
                 Spacer()
-                //                Menu {
-                //                    ForEach(SettingsMenu.allCases, id: \.self) { menuOption in
-                //                        Button {
-                //                            // Open Setting Option Menu
-                //                        } label: {
-                //                            Text(menuOption.rawValue).font(Font.custom("Silka-Medium", size: 14))
-                //                        }
-                //                    }
-                //                } label: {
-                //                    Image(systemName: "gear")
-                //                        .imageScale(.medium)
-                //                        .foregroundColor(Color.black.opacity(0.5))
-                //                }
+                // MARK: - Mailing Settings Menu
+                let mailingProcessing = getMailingStatus() == .processing &&
+                    viewModel.mailing.mailingStatus != MailingState.productionReady.rawValue
+                Menu {
+                    ForEach(SettingsMenu.allCases, id: \.self) { menuOption in
+                        if shouldDisplay(menuOption) {
+                            Button {
+                                triggerAction(for: menuOption)
+                            } label: {
+                                Text(menuOption.rawValue).font(Font.custom("Silka-Medium", size: 14))
+                            }
+                        }
+                    }
+                } label: {
+                    if mailingProcessing {
+                        Text("Mailing Processing...")
+                            .font(Font.custom("Silka-Medium", size: 14))
+                    } else {
+                        Image(systemName: "gear")
+                            .imageScale(.medium)
+                            .foregroundColor(Color.black.opacity(0.5))
+                    }
+                }
+                .disabled(mailingProcessing)
+                .opacity(mailingProcessing ? 0.6 : 1)
             }
             .padding(.horizontal, 20)
             .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
@@ -183,6 +202,14 @@ struct MailingDetailView: View, Equatable {
                 }
             }
         }
+        .sheet(isPresented: $displayConfirmationSheet) {
+            ConfirmAndSendMailingView(
+                viewModel: ConfirmAndSendMailingViewModel(
+                    provider: app.dependencyProvider,
+                    selectedMailing: $viewModel.mailing
+                )
+            )
+        }
         .alert(isPresented: $isShowingInsideCardEditAlert) {
             Alert(
                 title: Text("Cancel Edit")
@@ -196,6 +223,47 @@ struct MailingDetailView: View, Equatable {
                 }, secondaryButton: .cancel())
         }
         .background(Color.addressableLightGray)
+    }
+    private func shouldDisplay(_ option: SettingsMenu) -> Bool {
+        for state in MailingState.allCases where state.rawValue == viewModel.mailing.mailingStatus {
+            switch option {
+            case .sendMailing:
+                return state == .draft || state == .listReady || state == .listAdded || state == .listApproved
+            case .addTokens:
+                return state == .pending
+            case .revert:
+                return state == .productionReady
+            case .sendAgain:
+                return state == .mailed
+            case .results:
+                return state == .delivered || state == .archived
+            case .clone:
+                return state == .canceled
+            case .cancelMailing:
+                return state == .scheduled
+            }
+        }
+        return false
+    }
+    private func triggerAction(for menuOption: SettingsMenu) {
+        switch menuOption {
+        case .sendMailing:
+            displayConfirmationSheet = true
+        //        case .addTokens:
+        //            <#code#>
+        //        case .revert:
+        //            <#code#>
+        //        case .sendAgain:
+        //            <#code#>
+        //        case .results:
+        //            <#code#>
+        //        case .clone:
+        //            <#code#>
+        //        case .cancelMailing:
+        //            <#code#>
+        default:
+            break
+        }
     }
     private func getMailingStatus() -> MailingStatus {
         switch viewModel.mailing.mailingStatus {

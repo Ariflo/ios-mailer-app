@@ -52,8 +52,8 @@ struct ListEntry: Codable {
     let secondFirstName, secondLastName: String?
     let addressLine1: String
     let addressLine2: String?
-    let city, state, zipcode, zipLastFour: String
-    let deliveryPointCode: String
+    let city, state, zipcode, zipLastFour: String?
+    let deliveryPointCode: String?
 
     enum CodingKeys: String, CodingKey {
         case id, status

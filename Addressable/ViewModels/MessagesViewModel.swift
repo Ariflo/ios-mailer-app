@@ -19,6 +19,16 @@ class MessagesViewModel: ObservableObject {
     @Published var messages: [Message] = []
     @Published var loading: Bool = false
 
+    @Published var refreshMessagesData: Bool = false {
+        didSet {
+            if oldValue == false && refreshMessagesData == true {
+                getIncomingLeadsWithMessages()
+                // When finished refreshing data (must be done on the main thread)
+                self.refreshMessagesData = false
+            }
+        }
+    }
+
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
 

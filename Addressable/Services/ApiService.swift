@@ -21,6 +21,7 @@ protocol FetchableData {
     func sendLeadMessage(_ message: Data?) -> AnyPublisher<MessagesResponse, ApiError>
     func tagIncomingLead(with id: Int, _ tagData: Data?) -> AnyPublisher<IncomingLeadResponse, ApiError>
     func addCallParticipant(_ newCallData: Data?) -> AnyPublisher<CallParticipantResponse, ApiError>
+    func addUserNotes(accountId: Int, leadId: Int, _ noteData: Data?) -> AnyPublisher<IncomingLeadResponse, ApiError>
     // MARK: - Message Templates
     func createMessageTemplate(_ newMessageTemplateData: Data?) -> AnyPublisher<MessageTemplateResponse, ApiError>
     func getMessageTemplates() -> AnyPublisher<MessageTemplatesResponse, ApiError>
@@ -34,13 +35,15 @@ protocol FetchableData {
     func updateRadiusMailing(for component: RadiusMailingComponent, with id: Int, _ updateRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingResponse, ApiError>
     func getSelectedRadiusMailing(for id: Int) -> AnyPublisher<RadiusMailingResponse, ApiError>
     func getDefaultDataTreeSearchCriteria() -> AnyPublisher<DataTreeSearchCriteriaWrapper, ApiError>
-    func updateRadiusListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<UpdateRecipientResponse, ApiError>
+    func updateMailingListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<UpdateRecipientResponse, ApiError>
     func getMailingRecipients(for mailingId: Int) -> AnyPublisher<RecipientResponse, ApiError>
     func addRecipientToRemovalList(accountId: Int, recipientId: Int) -> AnyPublisher<UpdateRecipientResponse, ApiError>
+    func createTransaction(accountId: Int, mailingId: Int, transactionData: Data?) -> AnyPublisher<MailingResponse, ApiError>
+    func updateMailingReturnAddress(for mailingId: Int, returnAddressData: Data?) -> AnyPublisher<MailingResponse, ApiError>
 }
 
 enum RadiusMailingComponent {
-    case location, cover, topic, list, targetDate, returnAddress
+    case location, cover, topic, list, targetDate
 }
 
 enum ApiError: Error {
@@ -59,6 +62,20 @@ class ApiService: Service {
 }
 
 extension ApiService: FetchableData {
+    func createTransaction(accountId: Int, mailingId: Int, transactionData: Data?) -> AnyPublisher<MailingResponse, ApiError> {
+        return makeApiRequest(
+            with: createTransactionRequestComponents(accountId: accountId, mailingId: mailingId),
+            postRequestBodyData: transactionData
+        )
+    }
+
+    func addUserNotes(accountId: Int, leadId: Int, _ noteData: Data?) -> AnyPublisher<IncomingLeadResponse, ApiError> {
+        return makeApiRequest(
+            with: addUserNotesRequestComponents(accountId: accountId, leadId: leadId),
+            postRequestBodyData: noteData
+        )
+    }
+
     func addRecipientToRemovalList(accountId: Int, recipientId: Int) -> AnyPublisher<UpdateRecipientResponse, ApiError> {
         return makeApiRequest(
             with: getRemoveRecipientFromListRequestComponents(
@@ -113,14 +130,16 @@ extension ApiService: FetchableData {
             return makeApiRequest(with: updateRadiusMailingDateRequestComponents(for: id),
                                   postRequestBodyData: nil,
                                   patchRequestBodyData: updateRadiusMailingData)
-        case .returnAddress:
-            return makeApiRequest(with: updateRadiusMailingReturnAddressRequestComponents(for: id),
-                                  postRequestBodyData: nil,
-                                  patchRequestBodyData: updateRadiusMailingData)
         }
     }
 
-    func updateRadiusListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<UpdateRecipientResponse, ApiError> {
+    func updateMailingReturnAddress(for mailingId: Int, returnAddressData: Data?) -> AnyPublisher<MailingResponse, ApiError> {
+        return makeApiRequest(with: updateMailingReturnAddressRequestComponents(for: mailingId),
+                              postRequestBodyData: nil,
+                              patchRequestBodyData: returnAddressData)
+    }
+
+    func updateMailingListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<UpdateRecipientResponse, ApiError> {
         return makeApiRequest(with: updateListEntryRequestComponents(for: id),
                               postRequestBodyData: nil,
                               patchRequestBodyData: updateListEntryData)
@@ -503,12 +522,12 @@ private extension ApiService {
         return components
     }
 
-    func updateRadiusMailingReturnAddressRequestComponents(for id: Int) -> URLComponents {
+    func updateMailingReturnAddressRequestComponents(for id: Int) -> URLComponents {
         var components = URLComponents()
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/radius_mailings/\(id)/from_address"
+        components.path = AddressableAPI.path + "/mailings/\(id)/from_address"
 
         return components
     }
@@ -558,7 +577,7 @@ private extension ApiService {
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/radius_mailings/\(id)/recipients"
+        components.path = AddressableAPI.path + "/mailings/\(id)/recipients"
 
         return components
     }
@@ -573,6 +592,27 @@ private extension ApiService {
 
         return components
     }
+
+    func addUserNotesRequestComponents(accountId: Int, leadId: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/accounts/\(accountId)/incoming_leads/\(leadId)/add_note"
+
+        return components
+    }
+
+    func createTransactionRequestComponents(accountId: Int, mailingId: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/accounts/\(accountId)/mailings/\(mailingId)/create_transaction"
+
+        return components
+    }
+
     func getWebSocketRequestComponents(with userToken: String) -> URLComponents {
         var components = URLComponents()
 

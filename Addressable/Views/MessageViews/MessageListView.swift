@@ -16,6 +16,8 @@ struct MessageListView: View, Equatable {
     @State var navigateToChat = false
     @State var selectedLead = IncomingLead(
         id: 0,
+        userID: 0,
+        accountID: 0,
         createdAt: "",
         md5: "",
         fromNumber: "",
@@ -29,7 +31,8 @@ struct MessageListView: View, Equatable {
         zipcode: "",
         crmID: nil,
         status: "",
-        qualityScore: nil
+        qualityScore: nil,
+        userNotes: []
     )
     @Binding var selectedMenuItem: MainMenu
 
@@ -56,32 +59,34 @@ struct MessageListView: View, Equatable {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())
             } else {
-                List(viewModel.incomingLeadsWithMessages) { lead in
-                    Button(action: {
-                        selectedLead = lead
-                        navigateToChat = true
-                    }) {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 6) {
-                                if let name = lead.firstName {
-                                    Text("\(name.contains("unknown")  ? "Unknown Name" : name)")
-                                        .foregroundColor(Color.black)
-                                        .font(Font.custom("Silka-Bold", size: 18))
-                                        .padding(.top, 8)
+                RefreshableScrollView(refreshing: $viewModel.refreshMessagesData) {
+                    List(viewModel.incomingLeadsWithMessages) { lead in
+                        Button(action: {
+                            selectedLead = lead
+                            navigateToChat = true
+                        }) {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    if let name = lead.firstName {
+                                        Text("\(name.contains("unknown")  ? "Unknown Name" : name)")
+                                            .foregroundColor(Color.black)
+                                            .font(Font.custom("Silka-Bold", size: 18))
+                                            .padding(.top, 8)
+                                    }
+                                    Text(lead.fromNumber ?? "Unknown Number")
+                                        .font(Font.custom("Silka-Regular", size: 16))
+                                        .foregroundColor(Color.addressableFadedBlack)
                                 }
-                                Text(lead.fromNumber ?? "Unknown Number")
-                                    .font(Font.custom("Silka-Regular", size: 16))
+                                Spacer()
+                                Image(systemName: "chevron.right")
                                     .foregroundColor(Color.addressableFadedBlack)
-                            }
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(Color.addressableFadedBlack)
-                                .imageScale(.medium)
-                                .padding()
-                        }.padding(.vertical)
+                                    .imageScale(.medium)
+                                    .padding()
+                            }.padding(.bottom)
+                        }
                     }
-                }
-                .listStyle(PlainListStyle())
+                    .listStyle(PlainListStyle())
+                }.background(Color.addressableLightGray)
             }
         }
         .background(
