@@ -38,7 +38,7 @@ struct NavigationMenuView: View {
             Spacer()
             if let versionNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
                let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-                Text("Addressable v\(appVersion) (\(versionNumber))")
+                Text("Addressable v\(appVersion) (\(versionNumber)) - Beta")
                     .font(Font.custom("Silka-Medium", size: 18))
                     .multilineTextAlignment(.center)
                     .foregroundColor(Color.black)
@@ -62,6 +62,8 @@ struct NavigationMenuView: View {
             return "message"
         case .profile:
             return "person"
+        case .feedback:
+            return "exclamationmark.bubble"
         }
     }
 }

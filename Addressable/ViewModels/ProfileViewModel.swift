@@ -16,7 +16,7 @@ class ProfileViewModel: ObservableObject {
         self.apiService = provider.register(provider: provider)
     }
 
-    func logout(onCompletion: @escaping (MobileUserLoggedOutResponse?) -> Void) {
+    func logout(onCompletion: @escaping (GenericAPISuccessResponse?) -> Void) {
         apiService.logoutMobileUser()
             .receive(on: DispatchQueue.main)
             .sink(

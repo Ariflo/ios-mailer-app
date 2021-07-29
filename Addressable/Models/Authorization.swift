@@ -29,8 +29,8 @@ struct DeviceIDWrapper: Codable {
     }
 }
 
-// MARK: - MobileUserLoggedOutResponse
-struct MobileUserLoggedOutResponse: Codable {
+// MARK: - GenericAPISuccessResponse
+struct GenericAPISuccessResponse: Codable {
     let success: Bool
 
     enum CodingKeys: String, CodingKey {

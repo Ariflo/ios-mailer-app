@@ -12,7 +12,7 @@ import Combine
 protocol FetchableData {
     // MARK: - Authorization
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError>
-    func logoutMobileUser() -> AnyPublisher<MobileUserLoggedOutResponse, ApiError>
+    func logoutMobileUser() -> AnyPublisher<GenericAPISuccessResponse, ApiError>
     func getTwilioAccessToken(_ deviceIdData: Data?) -> AnyPublisher<TwilioAccessTokenData, ApiError>
     // MARK: - Incoming Leads
     func getIncomingLeads() -> AnyPublisher<IncomingLeadsResponse, ApiError>
@@ -40,6 +40,8 @@ protocol FetchableData {
     func addRecipientToRemovalList(accountId: Int, recipientId: Int) -> AnyPublisher<UpdateRecipientResponse, ApiError>
     func createTransaction(accountId: Int, mailingId: Int, transactionData: Data?) -> AnyPublisher<MailingResponse, ApiError>
     func updateMailingReturnAddress(for mailingId: Int, returnAddressData: Data?) -> AnyPublisher<MailingResponse, ApiError>
+    // MARK: - Feedback
+    func sendAppFeedback(feedbackData: Data?) -> AnyPublisher<GenericAPISuccessResponse, ApiError>
 }
 
 enum RadiusMailingComponent {
@@ -62,6 +64,13 @@ class ApiService: Service {
 }
 
 extension ApiService: FetchableData {
+    func sendAppFeedback(feedbackData: Data?) -> AnyPublisher<GenericAPISuccessResponse, ApiError> {
+        return makeApiRequest(
+            with: sendFeedbackRequestComponents(),
+            postRequestBodyData: feedbackData
+        )
+    }
+
     func createTransaction(accountId: Int, mailingId: Int, transactionData: Data?) -> AnyPublisher<MailingResponse, ApiError> {
         return makeApiRequest(
             with: createTransactionRequestComponents(accountId: accountId, mailingId: mailingId),
@@ -88,7 +97,7 @@ extension ApiService: FetchableData {
         return makeApiRequest(with: getMailingRecipientsRequestComponents(for: mailingId))
     }
 
-    func logoutMobileUser() -> AnyPublisher<MobileUserLoggedOutResponse, ApiError> {
+    func logoutMobileUser() -> AnyPublisher<GenericAPISuccessResponse, ApiError> {
         makeApiRequest(with: logoutMobileUserRequestComponents(), postRequestBodyData: Data())
     }
 
@@ -609,6 +618,16 @@ private extension ApiService {
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
         components.path = AddressableAPI.path + "/accounts/\(accountId)/mailings/\(mailingId)/create_transaction"
+
+        return components
+    }
+
+    func sendFeedbackRequestComponents() -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/feedback"
 
         return components
     }

@@ -112,7 +112,7 @@ struct SignInView: View {
             }
             if let versionNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
                let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-                Text("v\(appVersion) (\(versionNumber))")
+                Text("v\(appVersion) (\(versionNumber)) - Beta")
                     .foregroundColor(Color.black)
                     .padding()
             }

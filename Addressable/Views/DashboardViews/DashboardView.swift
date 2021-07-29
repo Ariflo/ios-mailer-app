@@ -9,7 +9,7 @@ import SwiftUI
 import GooglePlaces
 
 enum MainMenu: String, CaseIterable {
-    case campaigns, calls, messages, profile, mailingDetail
+    case campaigns, calls, messages, profile, mailingDetail, feedback
 }
 
 struct DashboardView: View {
@@ -29,7 +29,16 @@ struct DashboardView: View {
     }
 
     var body: some View {
-        GeometryReader { geometry in
+        let drag = DragGesture()
+            .onEnded {
+                if $0.translation.width > -100 {
+                    withAnimation {
+                        self.showNavMenu = false
+                    }
+                }
+            }
+
+        return GeometryReader { geometry in
             ZStack(alignment: .trailing) {
                 if showNavMenu {
                     NavigationMenuView(showNavMenu: $showNavMenu, selectedMenuItem: $selectedMenuItem)
@@ -126,6 +135,12 @@ struct DashboardView: View {
                             .equatable()
                             .environmentObject(app)
                         }
+                    case .feedback:
+                        SendFeedbackView(
+                            viewModel: SendFeedbackViewModel(
+                                provider: app.dependencyProvider
+                            )
+                        )
                     }
                 }
                 .adaptsToKeyboard()
@@ -167,6 +182,7 @@ struct DashboardView: View {
                     displayIncomingLeadSurvey = false
                 }.environmentObject(app)
             }
+            .gesture(drag)
         }
     }
     private func navigateToMailingDetailView(with mailingId: Int) {
