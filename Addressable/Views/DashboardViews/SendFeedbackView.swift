@@ -51,20 +51,19 @@ struct SendFeedbackView: View {
                 // MARK: - Confirm Edit Buttons
                 HStack {
                     Spacer()
-                    Button(action: {
-                        viewModel.sendFeedback(feedbackText: feedbackText) { feedbackResponse in
-                            guard feedbackResponse != nil else { return }
-                            feebackSent = true
+                    Text("Submit Feedback")
+                        .font(Font.custom("Silka-Medium", size: 16))
+                        .multilineTextAlignment(.center)
+                        .frame(minWidth: 145, minHeight: 40)
+                        .foregroundColor(Color.white)
+                        .background(Color.addressablePurple)
+                        .cornerRadius(5)
+                        .onTapGesture {
+                            viewModel.sendFeedback(feedbackText: feedbackText) { feedbackResponse in
+                                guard feedbackResponse != nil else { return }
+                                feebackSent = true
+                            }
                         }
-                    }) {
-                        Text("Submit Feedback")
-                            .font(Font.custom("Silka-Medium", size: 16))
-                            .multilineTextAlignment(.center)
-                            .frame(minWidth: 145, minHeight: 40)
-                            .foregroundColor(Color.white)
-                            .background(Color.addressablePurple)
-                            .cornerRadius(5)
-                    }
                     Spacer()
                 }.padding()
             }

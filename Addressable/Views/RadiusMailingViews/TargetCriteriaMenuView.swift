@@ -174,28 +174,36 @@ struct TargetCriteriaMenuView: View {
                             .opacity(viewModel.dataTreeSearchCriteria.includeCities ? 1 : 0.6)
                     }
                 }.padding()
-            }
-            .padding()
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(
-                        action: {
-                            // Reset Criteria
-                            viewModel.getDataTreeDefaultSearchCriteria()
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    ) {
-                        Text("Reset")
+                HStack(spacing: 14) {
+                    Button(action: {
+                        // Reset Criteria
+                        viewModel.getDataTreeDefaultSearchCriteria()
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Text("Cancel")
+                            .font(Font.custom("Silka-Medium", size: 18))
+                            .padding()
+                            .foregroundColor(Color.addressableDarkGray)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 5)
+                                    .stroke(Color.addressableDarkGray, lineWidth: 1)
+                            )
+                            .multilineTextAlignment(.center)
                     }
-                }
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button(
-                        action: {
-                            presentationMode.wrappedValue.dismiss()
-                        }
-                    ) {
-                        Text("Back")
+                    Button(action: {
+                        // Release to Production
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Text("Apply")
+                            .font(Font.custom("Silka-Medium", size: 18))
+                            .padding()
+                            .foregroundColor(Color.white)
+                            .background(Color.addressablePurple)
+                            .cornerRadius(5)
+                            .multilineTextAlignment(.center)
                     }
+                    .disabled(viewModel.isEditingTargetDropDate)
+                    .opacity(viewModel.isEditingTargetDropDate ? 0.4 : 1)
                 }
             }
             .navigationBarTitle("Building Your List")
