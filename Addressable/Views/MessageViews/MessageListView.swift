@@ -61,29 +61,29 @@ struct MessageListView: View, Equatable {
             } else {
                 RefreshableScrollView(refreshing: $viewModel.refreshMessagesData) {
                     List(viewModel.incomingLeadsWithMessages) { lead in
-                        Button(action: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 6) {
+                                if let name = lead.firstName {
+                                    Text("\(name.contains("unknown")  ? "Unknown Name" : name)")
+                                        .foregroundColor(Color.black)
+                                        .font(Font.custom("Silka-Bold", size: 18))
+                                        .padding(.top, 8)
+                                }
+                                Text(lead.fromNumber ?? "Unknown Number")
+                                    .font(Font.custom("Silka-Regular", size: 16))
+                                    .foregroundColor(Color.addressableFadedBlack)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(Color.addressableFadedBlack)
+                                .imageScale(.medium)
+                                .padding()
+                        }
+                        .onTapGesture {
                             selectedLead = lead
                             navigateToChat = true
-                        }) {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 6) {
-                                    if let name = lead.firstName {
-                                        Text("\(name.contains("unknown")  ? "Unknown Name" : name)")
-                                            .foregroundColor(Color.black)
-                                            .font(Font.custom("Silka-Bold", size: 18))
-                                            .padding(.top, 8)
-                                    }
-                                    Text(lead.fromNumber ?? "Unknown Number")
-                                        .font(Font.custom("Silka-Regular", size: 16))
-                                        .foregroundColor(Color.addressableFadedBlack)
-                                }
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(Color.addressableFadedBlack)
-                                    .imageScale(.medium)
-                                    .padding()
-                            }.padding(.bottom)
                         }
+                        .padding(.bottom)
                     }
                     .listStyle(PlainListStyle())
                 }.background(Color.addressableLightGray)

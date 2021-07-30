@@ -183,6 +183,13 @@ struct DashboardView: View {
                 }.environmentObject(app)
             }
             .gesture(drag)
+            .onTapGesture {
+                if showNavMenu {
+                    withAnimation {
+                        self.showNavMenu = false
+                    }
+                }
+            }
         }
     }
     private func navigateToMailingDetailView(with mailingId: Int) {
