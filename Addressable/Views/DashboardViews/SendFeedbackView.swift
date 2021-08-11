@@ -42,7 +42,7 @@ struct SendFeedbackView: View {
                     Text("Please note that for any issues with app functionality, " +
                             "the more information you can provide the better. For significantly " +
                             "pressing problems with the app, an Addressable associate will reach " +
-                            "out to resolve the issue as soon as possible.")
+                            "out to resolve the issue via email as soon as possible.")
                         .font(Font.custom("Silka-Regular", size: 16))
                         .foregroundColor(Color.addressableFadedBlack)
                         .multilineTextAlignment(.center)
