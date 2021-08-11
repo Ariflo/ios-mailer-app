@@ -31,6 +31,10 @@
 		CA3B8F8A265430AC005A12EF /* DataTreeSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3B8F89265430AC005A12EF /* DataTreeSearch.swift */; };
 		CA3B8F8C26557FEE005A12EF /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3B8F8B26557FEE005A12EF /* ProfileViewModel.swift */; };
 		CA3CE817259BC38500A230E1 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3CE816259BC38500A230E1 /* DashboardViewModel.swift */; };
+		CA4263BB26B9E20400F533A5 /* CloneMailingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4263BA26B9E20400F533A5 /* CloneMailingView.swift */; };
+		CA4263BD26B9E27000F533A5 /* CloneMailingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4263BC26B9E27000F533A5 /* CloneMailingViewModel.swift */; };
+		CA4263BF26BDCD7A00F533A5 /* MessageTemplateSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4263BE26BDCD7A00F533A5 /* MessageTemplateSelectionView.swift */; };
+		CA4263C126BDCDA500F533A5 /* MessageTemplateSelectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4263C026BDCDA500F533A5 /* MessageTemplateSelectionViewModel.swift */; };
 		CA48C83F2656DBB5003A23EC /* Mailing.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA48C83E2656DBB5003A23EC /* Mailing.swift */; };
 		CA48C8412656DE93003A23EC /* CustomNote.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA48C8402656DE93003A23EC /* CustomNote.swift */; };
 		CA48C8432656DF57003A23EC /* MessageTemplate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA48C8422656DF57003A23EC /* MessageTemplate.swift */; };
@@ -142,6 +146,8 @@
 		CACFA5E7263350D4007AA8E4 /* BordersUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACFA5E6263350D4007AA8E4 /* BordersUtils.swift */; };
 		CADA001C25C0D09000004B4B /* EnumUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CADA001B25C0D09000004B4B /* EnumUtil.swift */; };
 		CAF36E9A26866C4A00AF5744 /* CallListSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF36E9926866C4A00AF5744 /* CallListSectionHeaderView.swift */; };
+		CAF5A52026C1F83900F55B54 /* SelectAudienceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF5A51F26C1F83900F55B54 /* SelectAudienceView.swift */; };
+		CAF5A52226C1F8C900F55B54 /* SelectAudienceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF5A52126C1F8C900F55B54 /* SelectAudienceViewModel.swift */; };
 		CAFDBEA925D5DDD5002D17B4 /* ComposeRadiusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFDBEA825D5DDD5002D17B4 /* ComposeRadiusView.swift */; };
 		CAFDBEAE25D5DF0D002D17B4 /* GoogleMapsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFDBEAD25D5DF0D002D17B4 /* GoogleMapsView.swift */; };
 		CAFDBEC525D6F3D3002D17B4 /* ComposeRadiusViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFDBEC425D6F3D3002D17B4 /* ComposeRadiusViewModel.swift */; };
@@ -202,6 +208,10 @@
 		CA3B8F89265430AC005A12EF /* DataTreeSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTreeSearch.swift; sourceTree = "<group>"; };
 		CA3B8F8B26557FEE005A12EF /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		CA3CE816259BC38500A230E1 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		CA4263BA26B9E20400F533A5 /* CloneMailingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloneMailingView.swift; sourceTree = "<group>"; };
+		CA4263BC26B9E27000F533A5 /* CloneMailingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloneMailingViewModel.swift; sourceTree = "<group>"; };
+		CA4263BE26BDCD7A00F533A5 /* MessageTemplateSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTemplateSelectionView.swift; sourceTree = "<group>"; };
+		CA4263C026BDCDA500F533A5 /* MessageTemplateSelectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTemplateSelectionViewModel.swift; sourceTree = "<group>"; };
 		CA48C83E2656DBB5003A23EC /* Mailing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Mailing.swift; sourceTree = "<group>"; };
 		CA48C8402656DE93003A23EC /* CustomNote.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNote.swift; sourceTree = "<group>"; };
 		CA48C8422656DF57003A23EC /* MessageTemplate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTemplate.swift; sourceTree = "<group>"; };
@@ -312,6 +322,8 @@
 		CACFA5E6263350D4007AA8E4 /* BordersUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BordersUtils.swift; sourceTree = "<group>"; };
 		CADA001B25C0D09000004B4B /* EnumUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EnumUtil.swift; sourceTree = "<group>"; };
 		CAF36E9926866C4A00AF5744 /* CallListSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallListSectionHeaderView.swift; sourceTree = "<group>"; };
+		CAF5A51F26C1F83900F55B54 /* SelectAudienceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAudienceView.swift; sourceTree = "<group>"; };
+		CAF5A52126C1F8C900F55B54 /* SelectAudienceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAudienceViewModel.swift; sourceTree = "<group>"; };
 		CAFDBEA825D5DDD5002D17B4 /* ComposeRadiusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusView.swift; sourceTree = "<group>"; };
 		CAFDBEAD25D5DF0D002D17B4 /* GoogleMapsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapsView.swift; sourceTree = "<group>"; };
 		CAFDBEC425D6F3D3002D17B4 /* ComposeRadiusViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusViewModel.swift; sourceTree = "<group>"; };
@@ -468,6 +480,7 @@
 				CACE58B9266AABDA00BDD0A9 /* MailingCardItemView.swift */,
 				CACE58BB266BF99A00BDD0A9 /* CalendarTileView.swift */,
 				CAA2A73B26B3111D0007FAD6 /* SendFeedbackView.swift */,
+				CA4263BE26BDCD7A00F533A5 /* MessageTemplateSelectionView.swift */,
 			);
 			path = DashboardViews;
 			sourceTree = "<group>";
@@ -511,6 +524,8 @@
 				CAB4F996267BCC1100B44D02 /* MailingCoverImagePagerViewModel.swift */,
 				CA36D90526B0B3F600CCD114 /* ConfirmAndSendMailingViewModel.swift */,
 				CAA2A73D26B31BD70007FAD6 /* SendFeedbackViewModel.swift */,
+				CA4263C026BDCDA500F533A5 /* MessageTemplateSelectionViewModel.swift */,
+				CAF5A52126C1F8C900F55B54 /* SelectAudienceViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -561,6 +576,7 @@
 				CACE58BD266C08B700BDD0A9 /* ListSeparatorStyle.swift */,
 				CACE58C72672BB3400BDD0A9 /* TextFieldModifier.swift */,
 				CA36D90126AB851500CCD114 /* MultilineTextView.swift */,
+				CA4263BC26B9E27000F533A5 /* CloneMailingViewModel.swift */,
 			);
 			path = ViewsUtilities;
 			sourceTree = "<group>";
@@ -643,6 +659,8 @@
 				CAB4F98C267B1FA400B44D02 /* MailingCoverImagePagerView.swift */,
 				CAB4F98E267B1FD900B44D02 /* EditMailingInsideCardView.swift */,
 				CA36D90326B0B24000CCD114 /* ConfirmAndSendMailingView.swift */,
+				CA4263BA26B9E20400F533A5 /* CloneMailingView.swift */,
+				CAF5A51F26C1F83900F55B54 /* SelectAudienceView.swift */,
 			);
 			path = MailingDetailViews;
 			sourceTree = "<group>";
@@ -907,6 +925,7 @@
 				CAB4F997267BCC1100B44D02 /* MailingCoverImagePagerViewModel.swift in Sources */,
 				CACE58B62669731800BDD0A9 /* CampaignsFilterBoxesView.swift in Sources */,
 				CA85565D25AFC5ED0063274D /* CallsViewModel.swift in Sources */,
+				CAF5A52026C1F83900F55B54 /* SelectAudienceView.swift in Sources */,
 				CA48C8412656DE93003A23EC /* CustomNote.swift in Sources */,
 				CAB4F981267A5DF900B44D02 /* MailingCoverImageGalleryView.swift in Sources */,
 				CA054A81265C309800729D13 /* CampaignsView.swift in Sources */,
@@ -915,15 +934,18 @@
 				CAFDBEC525D6F3D3002D17B4 /* ComposeRadiusViewModel.swift in Sources */,
 				CAB4F97F26794EF900B44D02 /* EditReturnAddressView.swift in Sources */,
 				CAFECD2826320ACD009A7837 /* ComposeRadiusListConfirmationView.swift in Sources */,
+				CA4263C126BDCDA500F533A5 /* MessageTemplateSelectionViewModel.swift in Sources */,
 				CA88420725A3A7D200E0D75A /* Authorization.swift in Sources */,
 				CA054A7F265C2F4E00729D13 /* NavigationMenuView.swift in Sources */,
 				CAB4F995267BCA1C00B44D02 /* EditReturnAddressViewModel.swift in Sources */,
 				CA85565825AFC4910063274D /* IncomingLead.swift in Sources */,
 				CA054A83265C310300729D13 /* CampaignsViewModel.swift in Sources */,
 				CACE58B82669A6C600BDD0A9 /* CampaignSectionHeaderView.swift in Sources */,
+				CA4263BD26B9E27000F533A5 /* CloneMailingViewModel.swift in Sources */,
 				CAFECD192632091C009A7837 /* ComposeRadiusSelectLocationView.swift in Sources */,
 				CA36D90226AB851500CCD114 /* MultilineTextView.swift in Sources */,
 				B3DB527F257992F8004196A6 /* DashboardView.swift in Sources */,
+				CAF5A52226C1F8C900F55B54 /* SelectAudienceViewModel.swift in Sources */,
 				CADA001C25C0D09000004B4B /* EnumUtil.swift in Sources */,
 				CA8555D125A81AF80063274D /* CallService.swift in Sources */,
 				CA3CE817259BC38500A230E1 /* DashboardViewModel.swift in Sources */,
@@ -949,6 +971,7 @@
 				B370BC872576DE9F0066624A /* SignInView.swift in Sources */,
 				CA48C8492656E0FD003A23EC /* Recipient.swift in Sources */,
 				CA121015263742D00077D743 /* CheckView.swift in Sources */,
+				CA4263BB26B9E20400F533A5 /* CloneMailingView.swift in Sources */,
 				B370BC172576BAC10066624A /* AddressableApp.swift in Sources */,
 				CA88422925A3D52F00E0D75A /* RefreshableScrollView.swift in Sources */,
 				CA85564D25AFB9B40063274D /* PermissionsUtil.swift in Sources */,
@@ -956,6 +979,7 @@
 				CAB4F989267B1ED600B44D02 /* MailingImagePreviewView.swift in Sources */,
 				CA4A0F4825F1A75D00BF89CF /* TagIncomingLeadViewModel.swift in Sources */,
 				CACE58BC266BF99A00BDD0A9 /* CalendarTileView.swift in Sources */,
+				CA4263BF26BDCD7A00F533A5 /* MessageTemplateSelectionView.swift in Sources */,
 				CA121010263728200077D743 /* TargetCriteriaSliderView.swift in Sources */,
 				CAF36E9A26866C4A00AF5744 /* CallListSectionHeaderView.swift in Sources */,
 				CA1210002634C0240077D743 /* SliderView.swift in Sources */,
@@ -1130,7 +1154,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;
@@ -1144,7 +1168,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1160,7 +1184,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;
@@ -1174,7 +1198,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 0.1.2;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";

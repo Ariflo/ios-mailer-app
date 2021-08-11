@@ -9,14 +9,26 @@ import SwiftUI
 
 enum SettingsMenu: String, CaseIterable {
     case sendMailing = "Send Mailing"
-    case addTokens = "Add Tokens"
+    case addTokens = "Purchase Tokens"
     case revert = "Revert to Draft"
     case sendAgain = "Send Again"
-    case results = "Results"
     case clone = "Clone"
     case cancelMailing = "Cancel Mailing"
 }
-// swiftlint:disable type_body_length
+
+enum MailingDetailAlertTypes {
+    case confirmCancelEdit, confirmCancelMailing, mailingError, addTokensAlert
+}
+
+enum MailingDetailSheetTypes: Identifiable {
+    case confirmAndSendMailing, cloneMailing, addMessageTemplate, addAudience
+
+    var id: Int {
+        hashValue
+    }
+}
+
+// swiftlint:disable type_body_length file_length
 struct MailingDetailView: View, Equatable {
     static func == (lhs: MailingDetailView, rhs: MailingDetailView) -> Bool {
         lhs.viewModel.mailing == rhs.viewModel.mailing
@@ -27,11 +39,12 @@ struct MailingDetailView: View, Equatable {
 
     @State var isEditingMailing: Bool = false
     @State var expandMailingList: Bool = false
+    @State var shrinkMailingList: Bool = false
     @State var selectedMailingImageIndex: Int = 0
     @State var selectedCoverImageIndex: Int = 0
-    @State var displayConfirmationSheet: Bool = false
-
-    @State var isShowingInsideCardEditAlert: Bool = false
+    @State var isShowingAlert: Bool = false
+    @State var alertType: MailingDetailAlertTypes = .confirmCancelMailing
+    @State var activeSheetType: MailingDetailSheetTypes?
 
     init(viewModel: MailingDetailViewModel) {
         self.viewModel = viewModel
@@ -52,6 +65,11 @@ struct MailingDetailView: View, Equatable {
                         .foregroundColor(Color.addressablePurple)
                         .padding(.vertical)
                 }
+                viewModel.mailing.type == MailingType.radius.rawValue ?
+                    Text("Touch \(isTouchTwoMailing() ? "2" : "1")")
+                    .font(Font.custom("Silka-Regular", size: 12))
+                    .foregroundColor(Color.addressableFadedBlack)
+                    .padding(.vertical) : nil
                 Spacer()
                 Text(getMailingStatus().rawValue)
                     .font(Font.custom("Silka-Medium", size: 12))
@@ -68,7 +86,7 @@ struct MailingDetailView: View, Equatable {
                     .foregroundColor(Color.black.opacity(0.8))
                     .padding(.vertical)
                 Spacer()
-                Text("size: \(viewModel.mailing.activeRecipientCount)")
+                Text("size: \(viewModel.mailing.targetQuantity)")
                     .font(Font.custom("Silka-Medium", size: 12))
                     .foregroundColor(Color.black.opacity(0.8))
                     .padding(.vertical)
@@ -90,7 +108,7 @@ struct MailingDetailView: View, Equatable {
                     if mailingProcessing {
                         Text("Mailing Processing...")
                             .font(Font.custom("Silka-Medium", size: 14))
-                    } else {
+                    } else if getMailingStatus() != .archived {
                         Image(systemName: "gear")
                             .imageScale(.medium)
                             .foregroundColor(Color.black.opacity(0.5))
@@ -114,46 +132,69 @@ struct MailingDetailView: View, Equatable {
                     MailingImages.allCases[selectedMailingImageIndex] == .cardBack
 
                 let drag = DragGesture()
-                    .onEnded { _ in
-                        withAnimation {
-                            self.expandMailingList.toggle()
+                    .onEnded {
+                        if $0.translation.height > 0 {
+                            withAnimation {
+                                if !self.shrinkMailingList && !self.expandMailingList {
+                                    self.shrinkMailingList.toggle()
+                                } else {
+                                    self.shrinkMailingList = false
+                                    self.expandMailingList = false
+                                }
+                            }
+                        } else {
+                            withAnimation {
+                                if !self.shrinkMailingList && !self.expandMailingList {
+                                    self.expandMailingList.toggle()
+                                } else {
+                                    self.shrinkMailingList = false
+                                    self.expandMailingList = false
+                                }
+                            }
                         }
                     }
-
                 // MARK: - MailingCoverImagePagerView
                 isEditingInsideCard || isEditingReturnAddress ? nil :
                     MailingCoverImagePagerView(
                         viewModel: MailingCoverImagePagerViewModel(
                             provider: app.dependencyProvider,
-                            selectedMailing: viewModel.mailing,
+                            selectedMailing: $viewModel.mailing,
                             selectedFrontImageData: $viewModel.selectedFrontImageData,
                             selectedBackImageData: $viewModel.selectedBackImageData,
                             selecteImageId: viewModel.selectedImageId
                         ),
                         isEditingMailing: $isEditingMailing,
                         minimizePagerView: $expandMailingList,
+                        maximizePagerView: $shrinkMailingList,
                         selectedMailingImageIndex: $selectedMailingImageIndex,
                         isEditingMailingCoverImage: isEditingFrontCardCover || isEditingBackCardCover,
-                        selectedCoverImageIndex: $selectedCoverImageIndex
-                    ).equatable()
+                        selectedCoverImageIndex: $selectedCoverImageIndex,
+                        activeSheetType: $activeSheetType
+                    )
+                    .equatable()
+                    .environmentObject(app)
                 // MARK: - EditReturnAddressView
                 isEditingReturnAddress ?
                     EditReturnAddressView(
                         viewModel: EditReturnAddressViewModel(
                             provider: app.dependencyProvider,
-                            selectedMailing: viewModel.mailing
+                            selectedMailing: $viewModel.mailing
                         ),
                         isEditingReturnAddress: $isEditingMailing
                     )
                     .padding(20)
                     .transition(.move(edge: .top)) : nil
                 // MARK: - MailingRecipientsListView
-                isEditingInsideCard || isEditingBackCardCover || isEditingFrontCardCover ? nil :
+                isEditingInsideCard ||
+                    isEditingBackCardCover ||
+                    isEditingFrontCardCover ? nil :
                     MailingRecipientsListView(
                         viewModel: MailingRecipientsListViewModel(
                             provider: app.dependencyProvider,
-                            selectedMailing: viewModel.mailing
-                        )
+                            selectedMailing: $viewModel.mailing,
+                            numActiveRecipients: $viewModel.numActiveRecipients
+                        ),
+                        activeSheetType: $activeSheetType
                     )
                     .equatable()
                     .padding(.horizontal, 20)
@@ -167,13 +208,12 @@ struct MailingDetailView: View, Equatable {
                             : nil
                     )
                     .gesture(drag)
-
                 // MARK: - MailingCoverImageGalleryView
                 isEditingFrontCardCover || isEditingBackCardCover ?
                     MailingCoverImageGalleryView(
                         viewModel: MailingCoverImageGalleryViewModel(
                             provider: app.dependencyProvider,
-                            selectedMailing: viewModel.mailing,
+                            selectedMailing: $viewModel.mailing,
                             selectedFrontImageData: $viewModel.selectedFrontImageData,
                             selectedBackImageData: $viewModel.selectedBackImageData,
                             selectedImageId: $viewModel.selectedImageId
@@ -184,8 +224,6 @@ struct MailingDetailView: View, Equatable {
                     .equatable()
                     .padding(20)
                     .transition(.move(edge: .bottom)) : nil
-
-
                 // MARK: - EditMailingInsideCardView
                 if let templateId = viewModel.mailing.customNoteTemplateID {
                     isEditingInsideCard ?
@@ -195,32 +233,89 @@ struct MailingDetailView: View, Equatable {
                                 templateId: templateId
                             ),
                             isEditingMailing: $isEditingMailing,
-                            isShowingInsideCardEditAlert: $isShowingInsideCardEditAlert
+                            isShowingInsideCardEditAlert: $isShowingAlert
                         )
                         .equatable()
-                        .transition(.move(edge: .bottom)) : nil
+                        .transition(.move(edge: .bottom))
+                        .onAppear {
+                            alertType = .confirmCancelEdit
+                        }: nil
                 }
             }
         }
-        .sheet(isPresented: $displayConfirmationSheet) {
-            ConfirmAndSendMailingView(
-                viewModel: ConfirmAndSendMailingViewModel(
-                    provider: app.dependencyProvider,
-                    selectedMailing: $viewModel.mailing
+        .sheet(item: $activeSheetType) { item in
+            switch item {
+            case .confirmAndSendMailing:
+                ConfirmAndSendMailingView(
+                    viewModel: ConfirmAndSendMailingViewModel(
+                        provider: app.dependencyProvider,
+                        selectedMailing: $viewModel.mailing
+                    ),
+                    isMailingReady: viewModel.numActiveRecipients > 0 &&
+                        viewModel.mailing.layoutTemplate != nil &&
+                        (viewModel.mailing.customNoteTemplateID != nil &&
+                            viewModel.mailing.customNoteBody != nil)
                 )
-            )
+            case .cloneMailing:
+                CloneMailingView(
+                    viewModel: CloneMailingViewModel(
+                        provider: app.dependencyProvider,
+                        selectedMailing: $viewModel.mailing
+                    )
+                )
+            case .addMessageTemplate:
+                MessageTemplateSelectionView(
+                    viewModel: MessageTemplateSelectionViewModel(
+                        provider: app.dependencyProvider,
+                        selectedMailing: $viewModel.mailing
+                    )
+                ).equatable()
+            case .addAudience:
+                SelectAudienceView(
+                    viewModel: SelectAudienceViewModel(
+                        provider: app.dependencyProvider,
+                        selectedMailing: $viewModel.mailing)
+                )
+            }
         }
-        .alert(isPresented: $isShowingInsideCardEditAlert) {
-            Alert(
-                title: Text("Cancel Edit")
-                    .font(Font.custom("Silka-Bold", size: 14)),
-                message: Text("Want to undo your recent changes?")
-                    .font(Font.custom("Silka-Medium", size: 12)),
-                primaryButton: .default(Text("Confirm")) {
-                    withAnimation(.easeOut(duration: 0.5)) {
-                        isEditingMailing = false
-                    }
-                }, secondaryButton: .cancel())
+        .alert(isPresented: $isShowingAlert) {
+            switch alertType {
+            case .confirmCancelEdit:
+                return Alert(
+                    title: Text("Cancel Edit")
+                        .font(Font.custom("Silka-Bold", size: 14)),
+                    message: Text("Want to undo your recent changes?")
+                        .font(Font.custom("Silka-Medium", size: 12)),
+                    primaryButton: .default(Text("Confirm")) {
+                        withAnimation(.easeOut(duration: 0.5)) {
+                            isEditingMailing = false
+                        }
+                    }, secondaryButton: .cancel())
+            case .confirmCancelMailing:
+                return Alert(
+                    title: Text("Cancel '\(viewModel.mailing.name) \(getTouchNumber())'?")
+                        .font(Font.custom("Silka-Bold", size: 14)),
+                    message: Text("Do you want to cancel and remove this mailing from the production queue?")
+                        .font(Font.custom("Silka-Medium", size: 12)),
+                    primaryButton: .default(Text("Yes, Refund Tokens")) {
+                        viewModel.cancelMailing { updatedMailing in
+                            if let refundedMailing = updatedMailing {
+                                viewModel.mailing = refundedMailing
+                                isShowingAlert = false
+                            } else {
+                                alertType = .mailingError
+                                isShowingAlert = true
+                            }
+                        }
+                    }, secondaryButton: .cancel())
+            case .mailingError:
+                return Alert(title: Text("Sorry something went wrong, " +
+                                            "try again or reach out to an Addressable " +
+                                            "representative if the problem persists."))
+            case .addTokensAlert:
+                return Alert(title: Text("Please visit the 'Settings' section " +
+                                            "of the Addressable.app portal to buy more tokens and send this mailing."))
+            }
         }
         .background(Color.addressableLightGray)
     }
@@ -235,8 +330,6 @@ struct MailingDetailView: View, Equatable {
                 return state == .productionReady
             case .sendAgain:
                 return state == .mailed
-            case .results:
-                return state == .delivered || state == .archived
             case .clone:
                 return state == .canceled
             case .cancelMailing:
@@ -248,21 +341,16 @@ struct MailingDetailView: View, Equatable {
     private func triggerAction(for menuOption: SettingsMenu) {
         switch menuOption {
         case .sendMailing:
-            displayConfirmationSheet = true
-        //        case .addTokens:
-        //            <#code#>
-        //        case .revert:
-        //            <#code#>
-        //        case .sendAgain:
-        //            <#code#>
-        //        case .results:
-        //            <#code#>
-        //        case .clone:
-        //            <#code#>
-        //        case .cancelMailing:
-        //            <#code#>
-        default:
-            break
+            activeSheetType = .confirmAndSendMailing
+        case .revert,
+             .cancelMailing:
+            isShowingAlert = true
+        case .addTokens:
+            isShowingAlert = true
+            alertType = .addTokensAlert
+        case .clone,
+             .sendAgain:
+            activeSheetType = .cloneMailing
         }
     }
     private func getMailingStatus() -> MailingStatus {
@@ -285,8 +373,11 @@ struct MailingDetailView: View, Equatable {
              MailingState.listApproved.rawValue,
              MailingState.draft.rawValue:
             return MailingStatus.draft
-        default:
+        case MailingState.delivered.rawValue,
+             MailingState.archived.rawValue:
             return MailingStatus.archived
+        default:
+            return MailingStatus.canceled
         }
     }
     private func getFormattedTargetDropDate() -> String {
@@ -303,5 +394,15 @@ struct MailingDetailView: View, Equatable {
         } else {
             return Date()
         }
+    }
+    private func isTouchTwoMailing() -> Bool {
+        if let relatedTouchMailing = viewModel.mailing.relatedMailing {
+            return relatedTouchMailing.parentMailingID == nil
+        } else {
+            return false
+        }
+    }
+    private func getTouchNumber() -> String {
+        return viewModel.mailing.type == MailingType.radius.rawValue ? "| Touch \(isTouchTwoMailing() ? "2" : "1")" : ""
     }
 }

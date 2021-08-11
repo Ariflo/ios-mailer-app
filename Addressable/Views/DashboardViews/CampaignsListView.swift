@@ -13,6 +13,7 @@ enum MailingStatus: String, CaseIterable {
     case upcoming = "Upcoming"
     case draft = "Draft"
     case archived = "Archived"
+    case canceled = "Canceled"
 }
 enum MailingState: String, CaseIterable {
     case draft
@@ -149,8 +150,8 @@ struct CampaignsListView: View {
                                                         maxMailingsDisplayCount) {
                                         let mailing = mailingList[mailingIndex]
                                         MailingRowItem(tapAction: {
-                                            if mailing.mailingStatus == MailingState.draft.rawValue &&
-                                                mailing.type == MailingType.radius.rawValue {
+                                            if isIncompleteRadius(mailing) &&
+                                                mailing.mailingStatus != MailingState.canceled.rawValue {
                                                 app.currentView = .composeRadius
                                             } else {
                                                 selectedMenuItem = .mailingDetail
@@ -167,6 +168,9 @@ struct CampaignsListView: View {
         }
         .background(Color.addressableLightGray)
         .ignoresSafeArea(.all, edges: [.bottom])
+    }
+    private func isIncompleteRadius(_ mailing: Mailing) -> Bool {
+        return mailing.relatedMailing == nil && mailing.type == MailingType.radius.rawValue
     }
     private func isSearchTermMatchCountZero() -> Bool {
         var matchCount = 0
@@ -205,13 +209,19 @@ struct CampaignsListView: View {
         case .draft:
             return viewModel.mailings.filter {
                 $0.mailingStatus == MailingState.draft.rawValue ||
+                    $0.mailingStatus == MailingState.pending.rawValue ||
                     $0.mailingStatus == MailingState.listReady.rawValue ||
                     $0.mailingStatus == MailingState.listAdded.rawValue ||
                     $0.mailingStatus == MailingState.listApproved.rawValue
             }
         case .archived:
             return viewModel.mailings.filter {
-                $0.mailingStatus == MailingState.archived.rawValue
+                $0.mailingStatus == MailingState.archived.rawValue ||
+                    $0.mailingStatus == MailingState.delivered.rawValue
+            }
+        case .canceled:
+            return viewModel.mailings.filter {
+                $0.mailingStatus == MailingState.canceled.rawValue
             }
         }
     }
@@ -223,6 +233,13 @@ struct CampaignsListView: View {
             .range(of: mailingSearchTerm, options: .caseInsensitive) != nil
         }
         return true
+    }
+    private func isTouchTwoMailing(_ mailing: Mailing) -> Bool {
+        if let relatedTouchMailing = mailing.relatedMailing {
+            return relatedTouchMailing.parentMailingID == nil
+        } else {
+            return false
+        }
     }
 }
 

@@ -6,15 +6,25 @@
 //
 
 import SwiftUI
+// swiftlint:disable identifier_name
+enum TransactionStatus: String, Codable {
+    case ok
+    case created
+    case paymentRequired = "payment_required"
+}
 // MARK: - ConfirmAndSendMailingView
 struct ConfirmAndSendMailingView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var viewModel: ConfirmAndSendMailingViewModel
 
     @State var showingAlert: Bool = false
+    @State var alertText: String = ""
 
-    init(viewModel: ConfirmAndSendMailingViewModel) {
+    var isMailingReady: Bool = false
+
+    init(viewModel: ConfirmAndSendMailingViewModel, isMailingReady: Bool) {
         self.viewModel = viewModel
+        self.isMailingReady = isMailingReady
     }
 
     var body: some View {
@@ -90,8 +100,18 @@ struct ConfirmAndSendMailingView: View {
                         }
                         Button(action: {
                             // Release to Production
-                            viewModel.sendMailing { newMailing in
-                                guard newMailing != nil else {
+                            viewModel.sendMailing { newMailingTransactionReponse in
+                                guard newMailingTransactionReponse != nil else {
+                                    alertText = "Sorry something went wrong, " +
+                                        "try again or reach out to an Addressable " +
+                                        "representative if the problem persists."
+                                    showingAlert = true
+                                    return
+                                }
+                                guard newMailingTransactionReponse?.transactionStatus != .paymentRequired
+                                else {
+                                    alertText = "Insufficient tokens. Please visit the 'Settings' section " +
+                                        "of the Addressable.app portal to buy more tokens and send this mailing."
                                     showingAlert = true
                                     return
                                 }
@@ -106,17 +126,28 @@ struct ConfirmAndSendMailingView: View {
                                 .cornerRadius(5)
                                 .multilineTextAlignment(.center)
                         }
-                        .disabled(viewModel.isEditingTargetDropDate)
-                        .opacity(viewModel.isEditingTargetDropDate ? 0.4 : 1)
+                        .disabled(shouldDisableReleaseButton())
+                        .opacity(shouldDisableReleaseButton() ? 0.4 : 1)
                     }
                 }.padding(20)
             }
-            .navigationBarTitle("Release \"\(viewModel.mailing.name)\" to Print", displayMode: .inline)
+            .navigationBarTitle("Release '\(viewModel.mailing.name) \(getTouchNumber())' " +
+                                    "to Print", displayMode: .inline)
         }.alert(isPresented: $showingAlert) {
-            Alert(title: Text("Sorry something went wrong, " +
-                                "try again or reach out to an Addressable " +
-                                "representative if the problem persists."))
+            Alert(title: Text(alertText))
         }
+        .onAppear {
+            if !isMailingReady {
+                self.showingAlert = true
+                self.alertText = "Please complete the mailing setup to send."
+            }
+        }
+    }
+    private func shouldDisableReleaseButton() -> Bool {
+        return viewModel.isEditingTargetDropDate || !isMailingReady
+    }
+    private func getTouchNumber() -> String {
+        return viewModel.mailing.type == MailingType.radius.rawValue ? "| Touch \(isTouchTwoMailing() ? "2" : "1")" : ""
     }
     private func getMailingSiteAddress() -> String {
         if let subjectListEntry = viewModel.mailing.subjectListEntry {
@@ -143,6 +174,13 @@ struct ConfirmAndSendMailingView: View {
             return date
         } else {
             return Date()
+        }
+    }
+    private func isTouchTwoMailing() -> Bool {
+        if let relatedTouchMailing = viewModel.mailing.relatedMailing {
+            return relatedTouchMailing.parentMailingID == nil
+        } else {
+            return false
         }
     }
 }

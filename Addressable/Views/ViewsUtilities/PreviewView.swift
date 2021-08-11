@@ -14,7 +14,7 @@ import WebKit
 // MARK: - PreviewView
 struct PreviewView: UIViewRepresentable {
     @ObservedObject var viewModel: PreviewViewModel
-    var radiusMailing: Mailing
+    var mailing: Mailing
     var messageTemplateId: Int
 
     // Make a coordinator to co-ordinate with WKWebView's default delegate functions
@@ -46,8 +46,8 @@ struct PreviewView: UIViewRepresentable {
         }
 
         if let url = URL(string: "https://live.addressable.app/api/v1/mobile_views/custom_note_previews?" +
-                            "radius_mailing_id=\(radiusMailing.id)&" +
-                            "&user_token=\(radiusMailing.user.authenticationToken)" +
+                            "mailing_id=\(mailing.id)&" +
+                            "&user_token=\(mailing.user.authenticationToken)" +
                             "&message_template_id=\(messageTemplateId)") {
             webView.load(URLRequest(url: url))
         }

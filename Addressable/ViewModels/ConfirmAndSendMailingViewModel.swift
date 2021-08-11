@@ -20,6 +20,10 @@ class ConfirmAndSendMailingViewModel: ObservableObject {
     init(provider: DependencyProviding, selectedMailing: Binding<Mailing>) {
         apiService = provider.register(provider: provider)
         _mailing = selectedMailing
+        // Initialize selectedDropDate to current day + ten
+        if let datePlusTen = Calendar.current.date(byAdding: .day, value: 10, to: Date()) {
+            setSelectedDropDate(selectedDate: datePlusTen)
+        }
     }
 
     func setSelectedDropDate(selectedDate: Date) {
@@ -28,10 +32,10 @@ class ConfirmAndSendMailingViewModel: ObservableObject {
         selectedDropDate = dateFormatter.string(from: selectedDate)
     }
 
-    func sendMailing(completion: @escaping (Mailing?) -> Void) {
+    func sendMailing(completion: @escaping (MailingResponse?) -> Void) {
         guard let createTransactionData = try? JSONEncoder().encode(
-            SendMailing(
-                mailing: TargetDropDate(
+            CreateMailingTransaction(
+                customNote: TargetDropDate(
                     tagetDropDate: selectedDropDate
                 ),
                 approveForPrint: ApproveForPrint(
@@ -45,22 +49,20 @@ class ConfirmAndSendMailingViewModel: ObservableObject {
         }
 
         apiService.createTransaction(accountId: mailing.account.id, mailingId: mailing.id, transactionData: createTransactionData)
-            .map { $0.mailing }
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { value in
                     switch value {
                     case .failure(let error):
-                        print("sendMailing() receiveCompletion error: \(error)")
+                        print("createTransaction() in sendMailing() receiveCompletion error: \(error)")
                         completion(nil)
                     case .finished:
                         break
                     }
                 },
-                receiveValue: { [weak self] completeTransactionMailing in
-                    guard let self = self else { return }
-                    self.mailing = completeTransactionMailing
-                    completion(completeTransactionMailing)
+                receiveValue: { completeTransactionMailingResp in
+                    self.mailing = completeTransactionMailingResp.mailing
+                    completion(completeTransactionMailingResp)
                 })
             .store(in: &disposables)
     }

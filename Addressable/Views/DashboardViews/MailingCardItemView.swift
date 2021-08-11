@@ -19,7 +19,7 @@ struct MailingCardItemView: View {
             CalendarTileView(date: mailing.targetDropDate)
                 .padding(.leading, 10)
             VStack(alignment: .leading, spacing: 8) {
-                Text(mailing.subjectListEntry?.siteAddressLine1 ?? mailing.name)
+                Text(mailing.name)
                     .foregroundColor(Color.black)
                     .font(Font.custom("Silka-Bold", size: 14))
                     .padding(.top, 8)

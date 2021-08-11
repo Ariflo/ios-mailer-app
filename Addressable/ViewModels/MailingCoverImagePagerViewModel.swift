@@ -13,7 +13,7 @@ class MailingCoverImagePagerViewModel: ObservableObject {
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
 
-    var mailing: Mailing
+    @Binding var mailing: Mailing
     var selectedCoverImageId: Int
 
     @Published var renderedImageType: MailingImages = .envelopeOutside
@@ -29,13 +29,13 @@ class MailingCoverImagePagerViewModel: ObservableObject {
 
     init(
         provider: DependencyProviding,
-        selectedMailing: Mailing,
+        selectedMailing: Binding<Mailing>,
         selectedFrontImageData: Binding<Data?>,
         selectedBackImageData: Binding<Data?>,
         selecteImageId: Int
     ) {
         apiService = provider.register(provider: provider)
-        mailing = selectedMailing
+        _mailing = selectedMailing
         selectedCoverImageId = selecteImageId
 
         _selectedFrontCoverImageData = selectedFrontImageData
@@ -86,8 +86,8 @@ class MailingCoverImagePagerViewModel: ObservableObject {
     }
 
     func refreshMailing() {
-        apiService.getSelectedRadiusMailing(for: mailing.id)
-            .map { $0.radiusMailing }
+        apiService.getSelectedMailing(for: mailing.id)
+            .map { $0.mailing }
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { value in

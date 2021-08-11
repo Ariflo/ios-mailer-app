@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MailingCoverImageGalleryView: View, Equatable {
     static func == (lhs: MailingCoverImageGalleryView, rhs: MailingCoverImageGalleryView) -> Bool {
-        lhs.isEditingBackCardCover == rhs.isEditingBackCardCover
+        lhs.viewModel.mailing == rhs.viewModel.mailing
     }
 
     @ObservedObject var viewModel: MailingCoverImageGalleryViewModel
@@ -25,7 +25,6 @@ struct MailingCoverImageGalleryView: View, Equatable {
         self.viewModel = viewModel
         self._isEditingMailing = isEditingMailing
         self.isEditingBackCardCover = isEditingBackCardCover
-        self.viewModel.getMailingCoverImageOptions()
     }
 
     var body: some View {
@@ -55,12 +54,14 @@ struct MailingCoverImageGalleryView: View, Equatable {
                     withAnimation(.easeOut(duration: 0.5)) {
                         isEditingMailing = false
                         viewModel.updateMailingCoverImage { updatedMailing in
-                            guard updatedMailing != nil else { return }
-                            isEditingMailing = false
-                            // Reset Any Unsaved changes
-                            viewModel.selectedFrontCoverImageData = nil
-                            viewModel.selectedBackCoverImageData = nil
-                            viewModel.selectedCoverImageId = 0
+                            if let mailing = updatedMailing {
+                                viewModel.mailing = mailing
+                                isEditingMailing = false
+                                // Reset Any Unsaved changes
+                                viewModel.selectedFrontCoverImageData = nil
+                                viewModel.selectedBackCoverImageData = nil
+                                viewModel.selectedCoverImageId = 0
+                            }
                         }
                     }
                 }) {
@@ -105,6 +106,8 @@ struct MailingCoverImageGalleryView: View, Equatable {
                     }
                 }
             }
+        }.onAppear {
+            viewModel.getMailingCoverImageOptions()
         }
     }
 }

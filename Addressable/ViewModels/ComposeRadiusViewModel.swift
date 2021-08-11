@@ -91,6 +91,7 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     @Published var isEditingTargetDropDate: Bool = false
     @Published var touchOneInsideCardImageData: Data?
     @Published var touchTwoInsideCardImageData: Data?
+    @Published var numActiveRecipients: Int = 0
 
     var selectedDropDate: String = ""
     let mailingTouches: [Mailing] = []
@@ -143,7 +144,11 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     func populateForm(with radiusMailing: Mailing) {
         guard radiusMailing.subjectListEntry != nil else { return }
 
-        selectedDropDate = radiusMailing.targetDropDate
+        // Initialize TargetDropDate to current day + ten
+        if let datePlusTen = Calendar.current.date(byAdding: .day, value: 10, to: Date()) {
+            setSelectedDropDate(selectedDate: datePlusTen)
+        }
+
         touchOneMailing = radiusMailing
         selectedCoverImageID = radiusMailing.layoutTemplate?.id ?? 0
         topicSelectionID = radiusMailing.topicSelectionID ?? 0
@@ -546,8 +551,8 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
             return updateData
         case .cover:
             guard let updateData = try? JSONEncoder().encode(
-                OutgoingRadiusMailingCoverArtWrapper(
-                    cover: OutgoingRadiusMailingCoverArtData(layoutTemplateID: selectedCoverImageID)
+                OutgoingMailingCoverArtWrapper(
+                    cover: OutgoingMailingCoverArtData(layoutTemplateID: selectedCoverImageID)
                 )
             ) else {
                 print("Update Radius Mailing COVER Encoding Error")
@@ -584,8 +589,8 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     }
 
     private func getRadiusMailing(with id: Int, completion: @escaping (Mailing?) -> Void) {
-        apiService.getSelectedRadiusMailing(for: id)
-            .map { $0.radiusMailing }
+        apiService.getSelectedMailing(for: id)
+            .map { $0.mailing }
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { value in
@@ -721,11 +726,25 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
 
     private func subscribeToInsideCardImage(for touch: AddressableTouch, with socketResponseData: Data) {
         // Subscribe to inside card image channel
-        self.apiService.subscribe(
-            command: "subscribe",
-            identifier: "{\"channel\": \"CardInsideImageChannel\", \"id\": " +
-                "\"\(touch == .touchOne ? touchOneMailing!.id : touchTwoMailing!.id)\"}"
-        )
+        if let touchOneMailingId = touchOneMailing?.id,
+           let touchTwoMailingId = touchTwoMailing?.id {
+            self.apiService.subscribe(
+                command: "subscribe",
+                identifier: "{\"channel\": \"CardInsideImageChannel\", \"id\": " +
+                    "\"\(touch == .touchOne ? touchOneMailingId : touchTwoMailingId)\"}"
+            )
+            #if DEBUG
+            print("Socket Subscription made for Touch: \(touch) with " +
+                    "id \(touch == .touchOne ? touchOneMailingId : touchTwoMailingId)")
+            #endif
+        } else {
+            // Try re-subscribing
+            subscribeToInsideCardImage(for: touch, with: socketResponseData)
+            #if DEBUG
+            print("Socket Subscription re-attempted for Touch: \(touch)")
+            #endif
+            return
+        }
         guard let socketResponseData = try? JSONDecoder()
                 .decode(InsideCardImageSubscribedResponse.self, from: socketResponseData)
         else {

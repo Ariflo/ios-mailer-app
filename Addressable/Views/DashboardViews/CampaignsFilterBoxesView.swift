@@ -90,6 +90,8 @@ struct CampaignsFilterBoxesView: View {
                 return Image(systemName: "doc.plaintext")
             case .archived:
                 return Image(systemName: "archivebox")
+            case .canceled:
+                return Image(systemName: "bin.xmark")
             }
         }
         return Image(systemName: "exclamationmark.triangle")

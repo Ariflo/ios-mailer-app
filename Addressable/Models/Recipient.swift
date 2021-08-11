@@ -69,3 +69,45 @@ struct ListEntry: Codable {
         case deliveryPointCode = "delivery_point_code"
     }
 }
+
+// MARK: - ListUploadResponse
+struct ListUploadResponse: Codable {
+    let listUploads: [ListUploadWrapper]
+
+    enum CodingKeys: String, CodingKey {
+        case listUploads = "list_uploads"
+    }
+}
+
+// MARK: - ListUploadWrapper
+struct ListUploadWrapper: Codable {
+    let listUpload: ListUpload
+
+    enum CodingKeys: String, CodingKey {
+        case listUpload = "list_upload"
+    }
+}
+
+// MARK: - ListUpload
+struct ListUpload: Codable, Identifiable {
+    let id: Int
+    let createdAt, name: String
+    let status: ListUploadStatus
+    let mailingUsage, activeCount: Int
+    let createdBy: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case createdAt = "created_at"
+        case name, status
+        case mailingUsage = "mailing_usage"
+        case activeCount = "active_count"
+        case createdBy = "created_by"
+    }
+}
+
+enum ListUploadStatus: String, Codable {
+    case active
+    case deleted
+    case removed
+}

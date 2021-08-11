@@ -74,14 +74,13 @@ struct ComposeRadiusConfirmSendView: View {
                                 }
                             }
                         }
-                        if let mailing = viewModel.touchOneMailing {
-                            Text("We will send " +
-                                    "\(mailing.activeRecipientCount) " +
-                                    "cards to \(mailing.activeRecipientCount) " +
-                                    "recipients in the vicinity of \(getRadiusMailingSiteAddress()).")
-                                .font(Font.custom("Silka-Medium", size: 12))
-                                .foregroundColor(Color.addressableFadedBlack)
-                        }
+                        Text("We will send " +
+                                "\(viewModel.numActiveRecipients) " +
+                                "cards to \(viewModel.numActiveRecipients) " +
+                                "recipients in the vicinity of \(getRadiusMailingSiteAddress()).")
+                            .font(Font.custom("Silka-Medium", size: 12))
+                            .foregroundColor(Color.addressableFadedBlack)
+                            .lineLimit(nil)
                     }.padding(.horizontal, 40)
                 }
             }

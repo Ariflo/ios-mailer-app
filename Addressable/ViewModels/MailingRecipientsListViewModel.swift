@@ -12,14 +12,17 @@ import Combine
 class MailingRecipientsListViewModel: ObservableObject {
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
-    var mailing: Mailing
+
+    @Binding var mailing: Mailing
+    @Binding var numActiveRecipients: Int
 
     @Published var recipients: [Recipient] = []
     @Published var loadingRecipients: Bool = true
 
-    init(provider: DependencyProviding, selectedMailing: Mailing) {
+    init(provider: DependencyProviding, selectedMailing: Binding<Mailing>, numActiveRecipients: Binding<Int>) {
         apiService = provider.register(provider: provider)
-        mailing = selectedMailing
+        _mailing = selectedMailing
+        _numActiveRecipients = numActiveRecipients
     }
 
     func updateListEntry(
@@ -74,6 +77,9 @@ class MailingRecipientsListViewModel: ObservableObject {
                 receiveValue: { [weak self] recipients in
                     guard let self = self else { return }
                     self.recipients = recipients
+                    self.numActiveRecipients = recipients.filter {
+                        $0.listMembership == ListEntryMembershipStatus.member.rawValue
+                    }.count
                     self.loadingRecipients = false
                 })
             .store(in: &disposables)

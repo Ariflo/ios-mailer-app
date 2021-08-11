@@ -16,16 +16,22 @@ enum MailingImages: String, CaseIterable {
 
 struct MailingCoverImagePagerView: View, Equatable {
     static func == (lhs: MailingCoverImagePagerView, rhs: MailingCoverImagePagerView) -> Bool {
-        lhs.isEditingMailingCoverImage == rhs.isEditingMailingCoverImage &&
+        lhs.viewModel.mailing == rhs.viewModel.mailing &&
             lhs.viewModel.selectedFrontCoverImageData == rhs.viewModel.selectedFrontCoverImageData &&
-            lhs.viewModel.selectedBackCoverImageData == rhs.viewModel.selectedBackCoverImageData
+            lhs.viewModel.selectedBackCoverImageData == rhs.viewModel.selectedBackCoverImageData &&
+            lhs.viewModel.mailing.mailingStatus == rhs.viewModel.mailing.mailingStatus &&
+            lhs.isEditingMailingCoverImage == rhs.isEditingMailingCoverImage &&
+            lhs.activeSheetType == rhs.activeSheetType
     }
 
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: MailingCoverImagePagerViewModel
     @Binding var isEditingMailing: Bool
     @Binding var minimizePagerView: Bool
+    @Binding var maximizePagerView: Bool
     @Binding var selectedMailingImageIndex: Int
     @Binding var selectedCoverImageIndex: Int
+    @Binding var activeSheetType: MailingDetailSheetTypes?
 
     var isEditingMailingCoverImage: Bool = false
 
@@ -33,16 +39,20 @@ struct MailingCoverImagePagerView: View, Equatable {
         viewModel: MailingCoverImagePagerViewModel,
         isEditingMailing: Binding<Bool>,
         minimizePagerView: Binding<Bool>,
+        maximizePagerView: Binding<Bool>,
         selectedMailingImageIndex: Binding<Int>,
         isEditingMailingCoverImage: Bool,
-        selectedCoverImageIndex: Binding<Int>
+        selectedCoverImageIndex: Binding<Int>,
+        activeSheetType: Binding<MailingDetailSheetTypes?>
     ) {
         self.viewModel = viewModel
         self._isEditingMailing = isEditingMailing
         self._minimizePagerView = minimizePagerView
+        self._maximizePagerView = maximizePagerView
         self.isEditingMailingCoverImage = isEditingMailingCoverImage
         self._selectedMailingImageIndex = selectedMailingImageIndex
         self._selectedCoverImageIndex = selectedCoverImageIndex
+        self._activeSheetType = activeSheetType
     }
 
     var body: some View {
@@ -65,40 +75,73 @@ struct MailingCoverImagePagerView: View, Equatable {
                             }
                         ).tag(index)
                     case .cardFront:
-                        MailingImagePreviewView(
-                            imageData: viewModel.selectedFrontCoverImageData ?? viewModel.cardFrontImageData,
-                            refreshMailing: {
-                                viewModel.refreshMailing()
-                                viewModel.renderedImageType = mailingImages[index]
-                            },
-                            cancelRefreshMailingTask: {
-                                viewModel.refreshMailingTask.cancel()
-                            }
-                        )
-                        .tag(index)
+                        if viewModel.mailing.layoutTemplate == nil && viewModel.selectedFrontCoverImageData == nil {
+                            EmptyListView(
+                                message: "Please select a card template for your mailing."
+                            ).tag(index)
+                        } else {
+                            MailingImagePreviewView(
+                                imageData: viewModel.selectedFrontCoverImageData ?? viewModel.cardFrontImageData,
+                                refreshMailing: {
+                                    viewModel.refreshMailing()
+                                    viewModel.renderedImageType = mailingImages[index]
+                                },
+                                cancelRefreshMailingTask: {
+                                    viewModel.refreshMailingTask.cancel()
+                                }
+                            )
+                            .tag(index)
+                        }
                     case .cardInside:
-                        MailingImagePreviewView(
-                            imageData: viewModel.cardInsideImageData,
-                            refreshMailing: {
-                                viewModel.refreshMailing()
-                                viewModel.renderedImageType = mailingImages[index]
-                            },
-                            cancelRefreshMailingTask: {
-                                viewModel.refreshMailingTask.cancel()
+                        if viewModel.mailing.customNoteTemplateID == nil {
+                            VStack {
+                                Text("No Message Template for Mailing")
+                                    .font(Font.custom("Silka-Medium", size: 22))
+                                    .padding(.bottom)
+                                Button(action: {
+                                    activeSheetType = .addMessageTemplate
+                                }) {
+                                    Text("Select Message Template")
+                                        .font(Font.custom("Silka-Medium", size: 12))
+                                        .padding()
+                                        .foregroundColor(Color.white)
+                                        .background(Color.addressablePurple)
+                                        .cornerRadius(5)
+                                        .multilineTextAlignment(.center)
+                                }
                             }
-                        ).tag(index)
+                            .padding()
+                            .tag(index)
+                        } else {
+                            MailingImagePreviewView(
+                                imageData: viewModel.cardInsideImageData,
+                                refreshMailing: {
+                                    viewModel.refreshMailing()
+                                    viewModel.renderedImageType = mailingImages[index]
+                                },
+                                cancelRefreshMailingTask: {
+                                    viewModel.refreshMailingTask.cancel()
+                                }
+                            ).tag(index)
+                        }
                     case .cardBack:
-                        MailingImagePreviewView(
-                            imageData: viewModel.selectedBackCoverImageData ?? viewModel.cardBackImageData,
-                            refreshMailing: {
-                                viewModel.refreshMailing()
-                                viewModel.renderedImageType = mailingImages[index]
-                            },
-                            cancelRefreshMailingTask: {
-                                viewModel.refreshMailingTask.cancel()
-                            }
-                        )
-                        .tag(index)
+                        if viewModel.mailing.layoutTemplate == nil && viewModel.selectedBackCoverImageData == nil {
+                            EmptyListView(
+                                message: "Please select a card template for your mailing."
+                            ).tag(index)
+                        } else {
+                            MailingImagePreviewView(
+                                imageData: viewModel.selectedBackCoverImageData ?? viewModel.cardBackImageData,
+                                refreshMailing: {
+                                    viewModel.refreshMailing()
+                                    viewModel.renderedImageType = mailingImages[index]
+                                },
+                                cancelRefreshMailingTask: {
+                                    viewModel.refreshMailingTask.cancel()
+                                }
+                            )
+                            .tag(index)
+                        }
                     }
                 }
             }
@@ -108,7 +151,10 @@ struct MailingCoverImagePagerView: View, Equatable {
                 )
             )
             .disabled(isEditingMailing && !isEditingMailingCoverImage)
-            .frame(maxHeight: isEditingMailing || minimizePagerView ? 165 : .infinity)
+            .frame(
+                minHeight: maximizePagerView ? 500 : 0,
+                maxHeight: isEditingMailing || minimizePagerView ? 165 : .infinity
+            )
             .id(mailingImages)
             // MARK: - Pager Label + Edit Button
             HStack {
@@ -117,20 +163,35 @@ struct MailingCoverImagePagerView: View, Equatable {
                     .font(Font.custom("Silka-Medium", size: 16))
                     .foregroundColor(Color.black.opacity(0.8)) : nil
                 Spacer()
-                !isEditingMailing ? Button(action: {
-                    withAnimation(.easeIn(duration: 0.5)) {
-                        isEditingMailing.toggle()
+                !isEditingMailing ?
+                    Button(action: {
+                        withAnimation(.easeIn(duration: 0.5)) {
+                            isEditingMailing.toggle()
+                        }
+                    }) {
+                        Text(getEditButtonText(
+                                for: mailingImages[isEditingMailingCoverImage ?
+                                                    selectedCoverImageIndex : selectedMailingImageIndex])
+                        )
+                        .font(Font.custom("Silka-Bold", size: 12))
+                        .foregroundColor(Color.black.opacity(0.3))
+                        .underline()
                     }
-                }) {
-                    Text(getEditButtonText(for: mailingImages[
-                        isEditingMailingCoverImage ? selectedCoverImageIndex : selectedMailingImageIndex
-                    ]))
-                    .font(Font.custom("Silka-Bold", size: 12))
-                    .foregroundColor(Color.black.opacity(0.3))
-                    .underline()
-                }
-                .disabled(getMailingStatus() == .mailed || getMailingStatus() == .processing)
-                .opacity(getMailingStatus() == .mailed || getMailingStatus() == .processing ? 0.4 : 1) : nil
+                    .disabled(
+                        getMailingStatus() == .mailed ||
+                            getMailingStatus() == .processing ||
+                            missingMessageTemplate(
+                                mailingImages[isEditingMailingCoverImage ?
+                                                selectedCoverImageIndex : selectedMailingImageIndex])
+                    )
+                    .opacity(
+                        getMailingStatus() == .mailed ||
+                            getMailingStatus() == .processing ||
+                            missingMessageTemplate(
+                                mailingImages[isEditingMailingCoverImage ?
+                                                selectedCoverImageIndex :
+                                                selectedMailingImageIndex]
+                            ) ? 0.4 : 1) : nil
             }
             .padding(.horizontal, 20)
         }.onAppear {
@@ -141,6 +202,9 @@ struct MailingCoverImagePagerView: View, Equatable {
                 viewModel.getMailingImages()
             }
         }
+    }
+    private func missingMessageTemplate(_ currentMailingImage: MailingImages) -> Bool {
+        return viewModel.mailing.customNoteTemplateID == nil && currentMailingImage == .cardInside
     }
     private func getMailingStatus() -> MailingStatus {
         switch viewModel.mailing.mailingStatus {

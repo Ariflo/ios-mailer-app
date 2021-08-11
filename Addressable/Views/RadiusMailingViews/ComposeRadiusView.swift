@@ -302,7 +302,7 @@ struct ComposeRadiusView: View {
         case .audienceProcessing:
             return false
         case.confirmAudience:
-            return false
+            return viewModel.numActiveRecipients < 1
         case .confirmSend:
             return viewModel.isEditingTargetDropDate
         case .radiusSent:

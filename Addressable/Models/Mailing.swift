@@ -5,6 +5,7 @@
 //  Created by Ari on 5/20/21.
 //
 
+// swiftlint:disable file_length
 // MARK: - Mailing
 struct Mailing: Codable, Identifiable, Equatable {
     static func == (lhs: Mailing, rhs: Mailing) -> Bool {
@@ -17,9 +18,13 @@ struct Mailing: Codable, Identifiable, Equatable {
     let name: String
     let type: String?
     let fromAddress: ReturnAddress
-    let listCount, targetQuantity, activeRecipientCount: Int
+    let listCount: Int
+    let listUploadIdToNameMap: [[Int: String]]
+    let targetQuantity, activeRecipientCount: Int
     let layoutTemplate: LayoutTemplate?
+    let customNoteBody: String?
     let customNoteTemplateID: Int?
+    let customNoteTemplateName: String?
     let relatedMailing: RelatedMailing?
     let subjectListEntry: SubjectListEntry?
     let topicDuration, topicSelectionID: Int?
@@ -32,10 +37,13 @@ struct Mailing: Codable, Identifiable, Equatable {
         case id, account, user, name, type
         case fromAddress = "from_address"
         case listCount = "list_count"
+        case listUploadIdToNameMap = "list_upload_ids_to_list_name_map"
         case targetQuantity = "target_quantity"
         case activeRecipientCount = "active_recipient_count"
         case layoutTemplate = "layout_template"
+        case customNoteBody = "custom_note_body"
         case customNoteTemplateID = "custom_note_template_id"
+        case customNoteTemplateName = "custom_note_template_title"
         case relatedMailing = "corresponding_mailing"
         case subjectListEntry = "subject_list_entry"
         case topicDuration = "topic_duration"
@@ -102,9 +110,11 @@ struct Campaign: Codable {
 // MARK: - MailingResponse
 struct MailingResponse: Codable {
     let mailing: Mailing
+    let transactionStatus: TransactionStatus?
 
     enum CodingKeys: String, CodingKey {
         case mailing
+        case transactionStatus = "status"
     }
 }
 // MARK: - ReturnAddress
@@ -144,11 +154,12 @@ struct User: Codable {
 }
 
 // MARK: - LayoutTemplate
-struct LayoutTemplate: Codable {
+struct LayoutTemplate: Codable, Equatable {
     let id: Int
+    let name: String
 
     enum CodingKeys: String, CodingKey {
-        case id
+        case id, name
     }
 }
 
@@ -195,10 +206,10 @@ struct RadiusMailingResponse: Codable {
 }
 // MARK: - OutgoingMailingFromAddress
 struct OutgoingMailingFromAddress: Codable {
-    let mailing: ReturnAddress
+    let customNote: ReturnAddress
 
     enum CodingKeys: String, CodingKey {
-        case mailing
+        case customNote = "custom_note"
     }
 }
 // MARK: - OutgoingRadiusMailingSiteWrapper
@@ -227,17 +238,17 @@ struct OutgoingSubjectListEntry: Codable {
     }
 }
 
-// MARK: - OutgoingRadiusMailingCoverArtWrapper
-struct OutgoingRadiusMailingCoverArtWrapper: Codable {
-    let cover: OutgoingRadiusMailingCoverArtData
+// MARK: - OutgoingMailingCoverArtWrapper
+struct OutgoingMailingCoverArtWrapper: Codable {
+    let cover: OutgoingMailingCoverArtData
 
     enum CodingKeys: String, CodingKey {
         case cover
     }
 }
 
-// MARK: - OutgoingRadiusMailingCoverArtData
-struct OutgoingRadiusMailingCoverArtData: Codable {
+// MARK: - OutgoingMailingCoverArtData
+struct OutgoingMailingCoverArtData: Codable {
     let layoutTemplateID: Int
 
     enum CodingKeys: String, CodingKey {
@@ -311,13 +322,13 @@ struct InsideCardImageURLResponse: Codable {
         case cardInsidePreviewUrl = "card_inside_preview_url"
     }
 }
-// MARK: - SendMailing
-struct SendMailing: Codable {
-    let mailing: TargetDropDate
+// MARK: - CreateMailingTransaction
+struct CreateMailingTransaction: Codable {
+    let customNote: TargetDropDate?
     let approveForPrint: ApproveForPrint
 
     enum CodingKeys: String, CodingKey {
-        case mailing
+        case customNote = "custom_note"
         case approveForPrint = "approve_for_print"
     }
 }
@@ -330,5 +341,65 @@ struct ApproveForPrint: Codable {
     enum CodingKeys: String, CodingKey {
         case finalQuantity = "final_quantity"
         case status
+    }
+}
+// MARK: - CloneMailingWrapper
+struct CloneMailingWrapper: Codable {
+    let cloneMailing: CloneMailing
+
+    enum CodingKeys: String, CodingKey {
+        case cloneMailing = "clone_mailing"
+    }
+}
+
+// MARK: - CloneMailing
+struct CloneMailing: Codable {
+    let name, targetDropDate: String
+    let targetQuantity, useLayoutTemplate, useMessageTemplate: Int
+    let listUploadIDS: [Int]
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case targetDropDate = "target_drop_date"
+        case targetQuantity = "target_quantity"
+        case useLayoutTemplate = "use_layout_template"
+        case useMessageTemplate = "use_message_template"
+        case listUploadIDS = "list_upload_ids"
+    }
+}
+// MARK: - UpdateMailingMessageTemplate
+struct UpdateMailingMessageTemplate: Codable {
+    let customNote: AddMessageTemplate
+
+
+    enum CodingKeys: String, CodingKey {
+        case customNote = "custom_note"
+    }
+}
+// MARK: - AddMessageTemplate
+struct AddMessageTemplate: Codable {
+    let messageTemplateId: Int
+
+
+    enum CodingKeys: String, CodingKey {
+        case messageTemplateId = "message_template_id"
+    }
+}
+// MARK: - AddAudienceToMailingWrapper
+struct AddAudienceToMailingWrapper: Codable {
+    let mailing: AddAudience
+
+
+    enum CodingKeys: String, CodingKey {
+        case mailing
+    }
+}
+// MARK: - AddAudience
+struct AddAudience: Codable {
+    let audienceIds: [Int]
+
+
+    enum CodingKeys: String, CodingKey {
+        case audienceIds = "list_upload_ids"
     }
 }

@@ -11,6 +11,7 @@ struct ComposeRadiusAudienceConfirmationView: View {
     @EnvironmentObject var app: Application
     @ObservedObject var viewModel: ComposeRadiusViewModel
 
+
     init(viewModel: ComposeRadiusViewModel) {
         self.viewModel = viewModel
 
@@ -25,8 +26,10 @@ struct ComposeRadiusAudienceConfirmationView: View {
             HStack {
                 HStack {
                     Image(systemName: "person.3")
-                    Text("\(viewModel.touchOneMailing?.activeRecipientCount ?? 0)")
-                        .font(Font.custom("Silka-Medium", size: 18))
+                    if let targetQuantity = viewModel.touchOneMailing?.targetQuantity {
+                        Text("\(targetQuantity)")
+                            .font(Font.custom("Silka-Medium", size: 18))
+                    }
                 }
                 .padding(.horizontal, 19)
                 .padding(.vertical, 6)
@@ -45,11 +48,22 @@ struct ComposeRadiusAudienceConfirmationView: View {
             // MARK: - Recipient List
             if viewModel.touchOneMailing != nil {
                 // swiftlint:disable force_unwrapping
+                let selectedMailingBinding = Binding<Mailing>(
+                    get: { viewModel.touchOneMailing! },
+                    set: { updatedMailing in
+                        viewModel.touchOneMailing = updatedMailing
+                    })
+                // HACK: Consider allowing users to select audience in Radius Creation
+                let activeSheetTypeBinding = Binding<MailingDetailSheetTypes?>(
+                    get: { nil },
+                    set: { _ in })
                 MailingRecipientsListView(
                     viewModel: MailingRecipientsListViewModel(
                         provider: app.dependencyProvider,
-                        selectedMailing: viewModel.touchOneMailing!
-                    )
+                        selectedMailing: selectedMailingBinding,
+                        numActiveRecipients: $viewModel.numActiveRecipients
+                    ),
+                    activeSheetType: activeSheetTypeBinding
                 ).equatable()
             } else {
                 ProgressView()

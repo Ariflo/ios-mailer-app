@@ -55,7 +55,7 @@ struct DashboardView: View {
                             Text("Addressable")
                                 .font(Font.custom("Silka-Medium", size: 22))
                                 .foregroundColor(Color.addressablePurple)
-                        }
+                        }.disabled(showNavMenu)
                         Spacer()
                         Button(action: {
                             // Open Side Menu
@@ -92,6 +92,7 @@ struct DashboardView: View {
                         .frame(maxHeight: 34)
                         .foregroundColor(Color.addressablePurple)
                         .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
+                        .disabled(showNavMenu)
                     }
                     // MARK: - Main Menu
                     switch selectedMenuItem {
@@ -102,6 +103,7 @@ struct DashboardView: View {
                         )
                         .equatable()
                         .environmentObject(app)
+                        .disabled(showNavMenu)
                     case .calls:
                         CallListView(
                             viewModel: CallsViewModel(provider: app.dependencyProvider),
@@ -111,12 +113,14 @@ struct DashboardView: View {
                         )
                         .equatable()
                         .environmentObject(app)
+                        .disabled(showNavMenu)
                     case .messages:
                         MessageListView(
                             viewModel: MessagesViewModel(provider: app.dependencyProvider),
                             selectedMenuItem: $selectedMenuItem
                         )
                         .equatable()
+                        .disabled(showNavMenu)
                     case .profile:
                         ProfileView(
                             viewModel: ProfileViewModel(provider: app.dependencyProvider),
@@ -124,6 +128,7 @@ struct DashboardView: View {
                         )
                         .equatable()
                         .environmentObject(app)
+                        .disabled(showNavMenu)
                     case .mailingDetail:
                         if let mailing = app.selectedMailing {
                             MailingDetailView(
@@ -134,18 +139,18 @@ struct DashboardView: View {
                             )
                             .equatable()
                             .environmentObject(app)
+                            .disabled(showNavMenu)
                         }
                     case .feedback:
                         SendFeedbackView(
                             viewModel: SendFeedbackViewModel(
                                 provider: app.dependencyProvider
                             )
-                        )
+                        ).disabled(showNavMenu)
                     }
                 }
                 .adaptsToKeyboard()
                 .offset(x: showNavMenu ? -(geometry.size.width / 2) : 0)
-                .disabled(showNavMenu)
             }
             .ignoresSafeArea(.all, edges: [.bottom])
             .onAppear {
@@ -183,17 +188,10 @@ struct DashboardView: View {
                 }.environmentObject(app)
             }
             .gesture(drag)
-            .onTapGesture {
-                if showNavMenu {
-                    withAnimation {
-                        self.showNavMenu = false
-                    }
-                }
-            }
         }
     }
     private func navigateToMailingDetailView(with mailingId: Int) {
-        viewModel.getRadiusMailing(with: mailingId) { mailing in
+        viewModel.getMailing(with: mailingId) { mailing in
             guard mailing != nil else { return }
             app.selectedMailing = mailing
             selectedMenuItem = .mailingDetail

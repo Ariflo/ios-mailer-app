@@ -10,15 +10,33 @@ import SwiftUI
 struct CheckView: View {
     var isChecked: Bool = false
     var title: String
+    var subTitles: [String]?
 
     var toggle: () -> Void
 
     var body: some View {
-        HStack(alignment: .center) {
+        HStack(alignment: subTitles == nil ? .center : .top) {
             Button(action: toggle) {
                 Image(systemName: isChecked ? "checkmark.circle": "circle")
             }
-            Text(title).minimumScaleFactor(0.1).font(Font.custom("Silka-Medium", size: 12))
+            subTitles == nil ?
+                Text(title)
+                .minimumScaleFactor(0.1)
+                .font(Font.custom("Silka-Medium", size: 12)) : nil
+            if let labels = subTitles {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .minimumScaleFactor(0.1)
+                        .font(Font.custom("Silka-Medium", size: 12))
+                    ForEach(labels, id: \.self) { label in
+                        Text(label)
+                            .minimumScaleFactor(0.1)
+                            .font(Font.custom("Silka-Medium", size: 12))
+                            .foregroundColor(Color.addressableFadedBlack)
+                            .multilineTextAlignment(.leading)
+                    }
+                }
+            }
         }.foregroundColor(Color.addressablePurple)
     }
 }

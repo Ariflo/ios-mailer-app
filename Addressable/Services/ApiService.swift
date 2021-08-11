@@ -33,13 +33,18 @@ protocol FetchableData {
     func getMailingCoverImages() -> AnyPublisher<MailingCoverImageResponse, ApiError>
     func createNewRadiusMailing(_ newRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingResponse, ApiError>
     func updateRadiusMailing(for component: RadiusMailingComponent, with id: Int, _ updateRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingResponse, ApiError>
-    func getSelectedRadiusMailing(for id: Int) -> AnyPublisher<RadiusMailingResponse, ApiError>
+    func getSelectedMailing(for id: Int) -> AnyPublisher<MailingResponse, ApiError>
     func getDefaultDataTreeSearchCriteria() -> AnyPublisher<DataTreeSearchCriteriaWrapper, ApiError>
     func updateMailingListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<UpdateRecipientResponse, ApiError>
+    func updateMailingMessageTemplate(for id: Int, _ updateMailingMessageTemplateData: Data?) -> AnyPublisher<MailingResponse, ApiError>
+    func updateMailingListUpload(for id: Int, _ updateMailingAudienceData: Data?) -> AnyPublisher<MailingResponse, ApiError>
     func getMailingRecipients(for mailingId: Int) -> AnyPublisher<RecipientResponse, ApiError>
     func addRecipientToRemovalList(accountId: Int, recipientId: Int) -> AnyPublisher<UpdateRecipientResponse, ApiError>
     func createTransaction(accountId: Int, mailingId: Int, transactionData: Data?) -> AnyPublisher<MailingResponse, ApiError>
     func updateMailingReturnAddress(for mailingId: Int, returnAddressData: Data?) -> AnyPublisher<MailingResponse, ApiError>
+    func updateMailingCover(for mailingId: Int, updateMailingCoverData: Data?) -> AnyPublisher<MailingResponse, ApiError>
+    func cloneMailing(accountId: Int, mailingId: Int, cloneMailingData: Data?) -> AnyPublisher<MailingResponse, ApiError>
+    func getListUploads() -> AnyPublisher<ListUploadResponse, ApiError>
     // MARK: - Feedback
     func sendAppFeedback(feedbackData: Data?) -> AnyPublisher<GenericAPISuccessResponse, ApiError>
 }
@@ -64,6 +69,31 @@ class ApiService: Service {
 }
 
 extension ApiService: FetchableData {
+    func updateMailingListUpload(for id: Int, _ updateMailingAudienceData: Data?) -> AnyPublisher<MailingResponse, ApiError> {
+        return makeApiRequest(
+            with: updateMailingAudienceRequestComponents(for: id),
+            postRequestBodyData: nil,
+            patchRequestBodyData: updateMailingAudienceData
+        )
+    }
+
+    func getListUploads() -> AnyPublisher<ListUploadResponse, ApiError> {
+        return makeApiRequest(with: listUploadsRequestComponents())
+    }
+    func updateMailingMessageTemplate(for id: Int, _ updateMailingMessageTemplateData: Data?) -> AnyPublisher<MailingResponse, ApiError> {
+        return makeApiRequest(
+            with: mailingRequestComponents(for: id),
+            postRequestBodyData: updateMailingMessageTemplateData
+        )
+    }
+
+    func cloneMailing(accountId: Int, mailingId: Int, cloneMailingData: Data?) -> AnyPublisher<MailingResponse, ApiError> {
+        return makeApiRequest(
+            with: cloneMailingRequestComponents(accountId: accountId, mailingId: mailingId),
+            postRequestBodyData: cloneMailingData
+        )
+    }
+
     func sendAppFeedback(feedbackData: Data?) -> AnyPublisher<GenericAPISuccessResponse, ApiError> {
         return makeApiRequest(
             with: sendFeedbackRequestComponents(),
@@ -148,14 +178,20 @@ extension ApiService: FetchableData {
                               patchRequestBodyData: returnAddressData)
     }
 
+    func updateMailingCover(for mailingId: Int, updateMailingCoverData: Data?) -> AnyPublisher<MailingResponse, ApiError> {
+        return makeApiRequest(with: updateMailingCoverRequestComponents(for: mailingId),
+                              postRequestBodyData: nil,
+                              patchRequestBodyData: updateMailingCoverData)
+    }
+
     func updateMailingListEntry(for id: Int, _ updateListEntryData: Data?) -> AnyPublisher<UpdateRecipientResponse, ApiError> {
         return makeApiRequest(with: updateListEntryRequestComponents(for: id),
                               postRequestBodyData: nil,
                               patchRequestBodyData: updateListEntryData)
     }
 
-    func getSelectedRadiusMailing(for id: Int) -> AnyPublisher<RadiusMailingResponse, ApiError> {
-        return makeApiRequest(with: getRadiusMailingRequestComponents(for: id))
+    func getSelectedMailing(for id: Int) -> AnyPublisher<MailingResponse, ApiError> {
+        return makeApiRequest(with: mailingRequestComponents(for: id))
     }
 
     func createNewRadiusMailing(_ newRadiusMailingData: Data?) -> AnyPublisher<RadiusMailingResponse, ApiError> {
@@ -471,12 +507,12 @@ private extension ApiService {
         return components
     }
 
-    func getRadiusMailingRequestComponents(for id: Int) -> URLComponents {
+    func mailingRequestComponents(for id: Int) -> URLComponents {
         var components = URLComponents()
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/radius_mailings/\(id)"
+        components.path = AddressableAPI.path + "/mailings/\(id)"
 
         return components
     }
@@ -497,6 +533,26 @@ private extension ApiService {
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
         components.path = AddressableAPI.path + "/radius_mailings/\(id)/cover"
+
+        return components
+    }
+
+    func updateMailingCoverRequestComponents(for id: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/mailings/\(id)/cover"
+
+        return components
+    }
+
+    func updateMailingAudienceRequestComponents(for id: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/mailings/\(id)/audience"
 
         return components
     }
@@ -618,6 +674,26 @@ private extension ApiService {
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
         components.path = AddressableAPI.path + "/accounts/\(accountId)/mailings/\(mailingId)/create_transaction"
+
+        return components
+    }
+
+    func cloneMailingRequestComponents(accountId: Int, mailingId: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/accounts/\(accountId)/mailings/\(mailingId)/clone"
+
+        return components
+    }
+
+    func listUploadsRequestComponents() -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/list_uploads"
 
         return components
     }

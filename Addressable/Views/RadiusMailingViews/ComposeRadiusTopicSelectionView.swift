@@ -370,7 +370,7 @@ struct CustomNotePreviewView: View {
                let templateId = touch == .touchOne ?
                 viewModel.touchOneTemplate?.id : viewModel.touchTwoTemplate?.id {
                 PreviewView(viewModel: touchViewModel,
-                            radiusMailing: mailing,
+                            mailing: mailing,
                             messageTemplateId: templateId)
                     .shadow(color: Color(red: 0, green: 0, blue: 0, opacity: 0.1), radius: 3, x: 2, y: 2)
                     .frame(minWidth: 300, minHeight: 450)

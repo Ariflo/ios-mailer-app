@@ -12,7 +12,7 @@ import Combine
 class MailingCoverImageGalleryViewModel: ObservableObject {
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
-    var mailing: Mailing
+    @Binding var mailing: Mailing
 
     @Binding var selectedFrontCoverImageData: Data?
     @Binding var selectedBackCoverImageData: Data?
@@ -26,14 +26,13 @@ class MailingCoverImageGalleryViewModel: ObservableObject {
 
     init(
         provider: DependencyProviding,
-        selectedMailing: Mailing,
+        selectedMailing: Binding<Mailing>,
         selectedFrontImageData: Binding<Data?>,
         selectedBackImageData: Binding<Data?>,
         selectedImageId: Binding<Int>
     ) {
         apiService = provider.register(provider: provider)
-        mailing = selectedMailing
-
+        _mailing = selectedMailing
         _selectedFrontCoverImageData = selectedFrontImageData
         _selectedBackCoverImageData = selectedBackImageData
         _selectedCoverImageId = selectedImageId
@@ -129,36 +128,32 @@ class MailingCoverImageGalleryViewModel: ObservableObject {
 
     func updateMailingCoverImage(completion: @escaping (_ updatedMailing: Mailing?) -> Void) {
         guard let updatedImageData = try? JSONEncoder().encode(
-            OutgoingRadiusMailingCoverArtWrapper(
-                cover: OutgoingRadiusMailingCoverArtData(layoutTemplateID: selectedCoverImageId)
+            OutgoingMailingCoverArtWrapper(
+                cover: OutgoingMailingCoverArtData(layoutTemplateID: selectedCoverImageId)
             )
         ) else {
             print("Update Mailing COVER Encoding Error")
             return
         }
 
-        apiService.updateRadiusMailing(
-            for: .cover,
-            with: mailing.id,
-            updatedImageData
-        )
-        .map { resp in
-            resp.radiusMailing
-        }
-        .receive(on: DispatchQueue.main)
-        .sink(
-            receiveCompletion: { value in
-                switch value {
-                case .failure(let error):
-                    print("updateMailingCoverImage() receiveCompletion error: \(error)")
-                    completion(nil)
-                case .finished:
-                    break
-                }
-            },
-            receiveValue: { mailing in
-                completion(mailing)
-            })
-        .store(in: &disposables)
+        apiService.updateMailingCover(for: mailing.id, updateMailingCoverData: updatedImageData)
+            .map { resp in
+                resp.mailing
+            }
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { value in
+                    switch value {
+                    case .failure(let error):
+                        print("updateMailingCoverImage() receiveCompletion error: \(error)")
+                        completion(nil)
+                    case .finished:
+                        break
+                    }
+                },
+                receiveValue: { mailing in
+                    completion(mailing)
+                })
+            .store(in: &disposables)
     }
 }
