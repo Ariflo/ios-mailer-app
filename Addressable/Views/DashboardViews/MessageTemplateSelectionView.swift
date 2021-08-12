@@ -182,8 +182,7 @@ struct MessageTemplateSelectionView: View, Equatable {
 
         if getSelectedMessageTemplateMergeVars().count == viewModel.messageTemplateMergeVariables.keys.count {
             return !getSelectedMessageTemplateMergeVars().filter {
-                // swiftlint:disable force_unwrapping
-                viewModel.messageTemplateMergeVariables[$0]!.isEmpty
+                viewModel.messageTemplateMergeVariables[$0]?.isEmpty ?? true
             }.isEmpty
         }
         return true
