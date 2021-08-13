@@ -112,7 +112,7 @@ struct ComposeRadiusView: View {
                     VStack {
                         switch viewModel.step {
                         case .selectLocation:
-                            ComposeRadiusSelectLocationView(viewModel: viewModel)
+                            ComposeRadiusSelectLocationView(viewModel: viewModel).adaptsToKeyboard()
                         case .selectCard:
                             ComposeRadiusCoverImageSelectionView(viewModel: viewModel)
                         case .chooseTopic:
@@ -138,7 +138,7 @@ struct ComposeRadiusView: View {
                                     "You will receive a notification when the mailing is sent in the next 1-2 days."
                             )
                         }
-                    }.adaptsToKeyboard()
+                    }
                     // MARK: - Button Footer
                     HStack(spacing: 20) {
                         if viewModel.step != .confirmSend &&
