@@ -45,7 +45,7 @@ struct PreviewView: UIViewRepresentable {
             viewModel.reloadWebView = false
         }
 
-        if let url = URL(string: "https://live.addressable.app/api/v1/mobile_views/custom_note_previews?" +
+        if let url = URL(string: "https://sandbox.addressable.app/api/v1/mobile_views/custom_note_previews?" +
                             "mailing_id=\(mailing.id)&" +
                             "&user_token=\(mailing.user.authenticationToken)" +
                             "&message_template_id=\(messageTemplateId)") {
