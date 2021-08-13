@@ -72,9 +72,11 @@ struct EditReturnAddressView: View {
                 Spacer()
                 Button(action: {
                     viewModel.updateMailingReturnAddress { updatedMailing in
-                        guard updatedMailing != nil else { return }
-                        withAnimation(.easeOut(duration: 0.5)) {
-                            isEditingReturnAddress = false
+                        if let updatedMailing = updatedMailing {
+                            viewModel.mailing = updatedMailing
+                            withAnimation(.easeOut(duration: 0.5)) {
+                                isEditingReturnAddress = false
+                            }
                         }
                     }
                 }) {
