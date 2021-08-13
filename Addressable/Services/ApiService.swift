@@ -370,7 +370,7 @@ private extension ApiService {
     // swiftlint:disable convenience_type
     struct AddressableAPI {
         static let scheme = "https"
-        static let host = "sandbox.addressable.app"
+        static let host = "live.addressable.app"
         static let path = "/api/v1"
     }
 
