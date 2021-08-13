@@ -9,6 +9,8 @@
 import Foundation
 import Combine
 
+let unauthorizedUserResponse = "content=\"authenticity_token\""
+
 protocol FetchableData {
     // MARK: - Authorization
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError>
@@ -282,14 +284,28 @@ extension ApiService: FetchableData {
             request.httpBody = body
         }
 
+
         return session.dataTaskPublisher(for: request)
             .mapError { error in
                 .network(description: error.localizedDescription)
             }
+            .filter { self.verifiedAuthorizedUserResponse(response: $0.data) }
             .flatMap(maxPublishers: .max(1)) { pair in
                 decode(pair.data)
             }
             .eraseToAnyPublisher()
+    }
+    private func verifiedAuthorizedUserResponse(response: Data) -> Bool {
+        if let jsonPayload = String(data: response, encoding: .utf8) {
+            if jsonPayload.contains(unauthorizedUserResponse) {
+                KeyChainServiceUtil.shared[userBasicAuthToken] = nil
+                KeyChainServiceUtil.shared[userAppToken] = nil
+                KeyChainServiceUtil.shared[userMobileClientIdentity] = nil
+
+                return false
+            }
+        }
+        return true
     }
     func connectToWebSocket(userToken: String, completionHandler: @escaping (Data?) -> Void) {
         if let url = getWebSocketRequestComponents(with: userToken).url {

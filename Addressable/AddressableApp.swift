@@ -201,6 +201,7 @@ struct AddressableApp: App {
             switch phase {
             case .background:
                 print("App is in background")
+                logOutOfApplication()
             case .active:
                 if KeyChainServiceUtil.shared[userBasicAuthToken] != nil {
                     appDelegate.verifyPermissions {
@@ -209,11 +210,21 @@ struct AddressableApp: App {
                         }
                     }
                 }
+                logOutOfApplication()
             case .inactive:
                 print("App is Inactive")
+                logOutOfApplication()
             @unknown default:
                 print("New App state not yet introduced")
+                logOutOfApplication()
             }
+        }
+    }
+    private func logOutOfApplication() {
+        if KeyChainServiceUtil.shared[userBasicAuthToken] == nil &&
+            KeyChainServiceUtil.shared[userMobileClientIdentity] == nil &&
+            KeyChainServiceUtil.shared[userAppToken] == nil {
+            appDelegate.currentView = .signIn
         }
     }
 }
