@@ -39,7 +39,6 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     @Published var topicSelectionID: Int = 0
     @Published var touchOneBody: String = "Write your message here..."
     @Published var touchTwoBody: String = "Write your message here..."
-    @Published var shouldUpdateTouchOneTemplate: Bool = false
     @Published var touchOneTemplate: MessageTemplate?
     @Published var touchTwoTemplate: MessageTemplate?
     @Published var touchOneTemplateMergeVariables: [String: String] = [:]
@@ -564,7 +563,6 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
                 OutgoingRadiusMailingTopicWrapper(
                     topic: OutgoingRadiusMailingTopicData(multiTouchTopicID: topicSelectionID),
                     topicTemplate: OutgoingRadiusMailingTopicTemplateData(
-                        shouldEditTouchOneTemplate: shouldUpdateTouchOneTemplate,
                         templateOneBody: touchOneBody,
                         templateTwoBody: touchTwoBody),
                     mergeVars: touchOneTemplateMergeVariables.merging(
@@ -643,45 +641,6 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
                 },
                 receiveValue: { updatedMessageTemplate in
                     completion(updatedMessageTemplate)
-                })
-            .store(in: &disposables)
-    }
-
-    func createMessageTemplate(
-        for touch: AddressableTouch,
-        with newBody: String,
-        completion: @escaping (MessageTemplate?) -> Void
-    ) {
-        guard let selectedMailing = touchOneMailing,
-              let subjectListEntry = selectedMailing.subjectListEntry,
-              let encodedMessageTemplateData = try? JSONEncoder().encode(
-                OutgoingMessageTemplateWrapper(messageTemplate: OutgoingMessageTemplate(
-                    title: "\(subjectListEntry.siteAddressLine1) \(touch.rawValue) ",
-                    body: newBody
-                ))
-              ) else {
-            print("Create Message Template Encoding Error")
-            return
-        }
-
-        apiService.createMessageTemplate(encodedMessageTemplateData)
-            .map { resp in
-                resp.messageTemplate
-            }
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { value in
-                    switch value {
-                    case .failure(let error):
-                        print("createMessageTemplate(" +
-                                "with data: \(encodedMessageTemplateData), receiveCompletion error: \(error)")
-                        completion(nil)
-                    case .finished:
-                        break
-                    }
-                },
-                receiveValue: { newMessageTemplate in
-                    completion(newMessageTemplate)
                 })
             .store(in: &disposables)
     }

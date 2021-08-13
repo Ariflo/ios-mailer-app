@@ -87,14 +87,7 @@ struct ComposeRadiusTopicSelectionView: View {
                     .foregroundColor(.black)
                     // MARK: - Touch 1 + Merge Vars
                     VStack(alignment: .center, spacing: 25) {
-                        VStack(spacing: 6) {
-                            Text(AddressableTouch.touchOne.rawValue).font(Font.custom("Silka-Medium", size: 16))
-                            isEditingTouchOne ? CheckView(
-                                isChecked: viewModel.shouldUpdateTouchOneTemplate,
-                                title: "Update Original Template",
-                                toggle: { viewModel.shouldUpdateTouchOneTemplate.toggle() }
-                            ).multilineTextAlignment(.center) : nil
-                        }
+                        Text(AddressableTouch.touchOne.rawValue).font(Font.custom("Silka-Medium", size: 16))
                         if isEditingTouchOne {
                             TextEditorView(
                                 viewModel: viewModel,
@@ -271,47 +264,25 @@ struct TextEditorView: View {
                 .frame(minWidth: 300, minHeight: 450)
             VStack {
                 Button(action: {
-                    if touch == .touchTwo || viewModel.shouldUpdateTouchOneTemplate {
-                        if let templateID = touch == .touchOne ?
-                            viewModel.touchOneTemplate?.id :
-                            viewModel.touchTwoTemplate?.id {
-                            viewModel.updateMessageTemplate(
-                                for: touch,
-                                id: templateID,
-                                with: touch == .touchOne ?
-                                    viewModel.touchOneBody :
-                                    viewModel.touchTwoBody
-                            ) { updatedTemplate in
-                                if let updatedTemplate = updatedTemplate {
-                                    viewModel.getMessageTemplate(
-                                        for: touch == .touchOne ? 1 : 2,
-                                        with: updatedTemplate.id
-                                    ) { template in
-                                        guard template != nil else {
-                                            showAlert()
-                                            return
-                                        }
-                                        touchViewModel.reloadWebView = true
-                                        setIsEditingOff()
-                                    }
-                                } else {
-                                    showAlert()
-                                    return
-                                }
-                            }
-                        }
-                    } else if touch == .touchOne && !viewModel.shouldUpdateTouchOneTemplate {
-                        viewModel.createMessageTemplate(
+                    if let templateID = touch == .touchOne ?
+                        viewModel.touchOneTemplate?.id :
+                        viewModel.touchTwoTemplate?.id {
+                        viewModel.updateMessageTemplate(
                             for: touch,
-                            with: viewModel.touchOneBody
-                        ) { newTemplate in
-                            if let newTemplate = newTemplate {
-                                viewModel.getMessageTemplate(for: 1, with: newTemplate.id) { template in
+                            id: templateID,
+                            with: touch == .touchOne ?
+                                viewModel.touchOneBody :
+                                viewModel.touchTwoBody
+                        ) { updatedTemplate in
+                            if let updatedTemplate = updatedTemplate {
+                                viewModel.getMessageTemplate(
+                                    for: touch == .touchOne ? 1 : 2,
+                                    with: updatedTemplate.id
+                                ) { template in
                                     guard template != nil else {
                                         showAlert()
                                         return
                                     }
-
                                     touchViewModel.reloadWebView = true
                                     setIsEditingOff()
                                 }

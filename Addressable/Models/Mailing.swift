@@ -278,12 +278,10 @@ struct OutgoingRadiusMailingTopicData: Codable {
 }
 // MARK: - OutgoingRadiusMailingTopicTemplateData
 struct OutgoingRadiusMailingTopicTemplateData: Codable {
-    let shouldEditTouchOneTemplate: Bool?
     let templateOneBody: String
     let templateTwoBody: String
 
     enum CodingKeys: String, CodingKey {
-        case shouldEditTouchOneTemplate = "update_template_one"
         case templateOneBody = "template_one_body"
         case templateTwoBody = "template_two_body"
     }
