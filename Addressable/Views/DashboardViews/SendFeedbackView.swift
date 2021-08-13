@@ -53,21 +53,22 @@ struct SendFeedbackView: View {
                     // MARK: - Confirm Edit Buttons
                     HStack {
                         Spacer()
-                        Text("Submit Feedback")
-                            .font(Font.custom("Silka-Medium", size: 16))
-                            .multilineTextAlignment(.center)
-                            .frame(minWidth: 145, minHeight: 40)
-                            .foregroundColor(Color.white)
-                            .background(Color.addressablePurple)
-                            .cornerRadius(5)
-                            .onTapGesture {
-                                viewModel.sendFeedback(feedbackText: feedbackText) { feedbackResponse in
-                                    guard feedbackResponse != nil else { return }
-                                    feebackSent = true
-                                }
+                        Button(action: {
+                            viewModel.sendFeedback(feedbackText: feedbackText) { feedbackResponse in
+                                guard feedbackResponse != nil else { return }
+                                feebackSent = true
                             }
-                            .disabled(feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                            .opacity(feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.4 : 1)
+                        }) {
+                            Text("Submit Feedback")
+                                .font(Font.custom("Silka-Medium", size: 16))
+                                .multilineTextAlignment(.center)
+                                .frame(minWidth: 145, minHeight: 40)
+                                .foregroundColor(Color.white)
+                                .background(Color.addressablePurple)
+                                .cornerRadius(5)
+                        }
+                        .disabled(feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        .opacity(feedbackText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.4 : 1)
                         Spacer()
                     }.padding()
                 }
