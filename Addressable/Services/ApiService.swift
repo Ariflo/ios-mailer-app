@@ -303,6 +303,7 @@ extension ApiService: FetchableData {
     }
 
     func disconnectFromWebSocket() {
+        guard socket != nil else { return }
         if let cancelTask = URLSessionWebSocketTask.CloseCode(rawValue: 0) {
             socket.cancel(with: cancelTask, reason: nil)
         }
