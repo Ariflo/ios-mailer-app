@@ -26,8 +26,8 @@ struct MessageTemplateResponse: Codable {
 // MARK: - MessageTemplate
 struct MessageTemplate: Codable, Identifiable {
     let id: Int
-    var title, body: String
-    var mergeVars: [String]
+    let title, body: String
+    let mergeVars: [String: String?]
     let owned: Bool?
 
     enum CodingKeys: String, CodingKey {
@@ -38,9 +38,11 @@ struct MessageTemplate: Codable, Identifiable {
 }
 // MARK: - OutgoingMessageTemplateWrapper
 struct OutgoingMessageTemplateWrapper: Codable {
+    let mailingId: Int
     let messageTemplate: OutgoingMessageTemplate
 
     enum CodingKeys: String, CodingKey {
+        case mailingId = "mailing_id"
         case messageTemplate = "message_template"
     }
 }

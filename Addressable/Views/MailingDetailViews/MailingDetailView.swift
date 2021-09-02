@@ -28,7 +28,7 @@ enum MailingDetailSheetTypes: Identifiable {
     }
 }
 
-// swiftlint:disable type_body_length file_length
+// swiftlint:disable type_body_length
 struct MailingDetailView: View, Equatable {
     static func == (lhs: MailingDetailView, rhs: MailingDetailView) -> Bool {
         lhs.viewModel.mailing == rhs.viewModel.mailing
@@ -126,8 +126,6 @@ struct MailingDetailView: View, Equatable {
                     MailingImages.allCases[selectedMailingImageIndex] == .envelopeOutside
                 let isEditingFrontCardCover = isEditingMailing &&
                     MailingImages.allCases[selectedMailingImageIndex] == .cardFront
-                let isEditingInsideCard = isEditingMailing &&
-                    MailingImages.allCases[selectedMailingImageIndex] == .cardInside
                 let isEditingBackCardCover = isEditingMailing &&
                     MailingImages.allCases[selectedMailingImageIndex] == .cardBack
 
@@ -154,7 +152,7 @@ struct MailingDetailView: View, Equatable {
                         }
                     }
                 // MARK: - MailingCoverImagePagerView
-                isEditingInsideCard || isEditingReturnAddress ? nil :
+                isEditingReturnAddress ? nil :
                     MailingCoverImagePagerView(
                         viewModel: MailingCoverImagePagerViewModel(
                             provider: app.dependencyProvider,
@@ -185,8 +183,7 @@ struct MailingDetailView: View, Equatable {
                     .padding(20)
                     .transition(.move(edge: .top)) : nil
                 // MARK: - MailingRecipientsListView
-                isEditingInsideCard ||
-                    isEditingBackCardCover ||
+                isEditingBackCardCover ||
                     isEditingFrontCardCover ? nil :
                     MailingRecipientsListView(
                         viewModel: MailingRecipientsListViewModel(
@@ -224,23 +221,6 @@ struct MailingDetailView: View, Equatable {
                     .equatable()
                     .padding(20)
                     .transition(.move(edge: .bottom)) : nil
-                // MARK: - EditMailingInsideCardView
-                if let templateId = viewModel.mailing.customNoteTemplateID {
-                    isEditingInsideCard ?
-                        EditMailingInsideCardView(
-                            viewModel: EditMailingInsideCardViewModel(
-                                provider: app.dependencyProvider,
-                                templateId: templateId
-                            ),
-                            isEditingMailing: $isEditingMailing,
-                            isShowingInsideCardEditAlert: $isShowingAlert
-                        )
-                        .equatable()
-                        .transition(.move(edge: .bottom))
-                        .onAppear {
-                            alertType = .confirmCancelEdit
-                        }: nil
-                }
             }
         }
         .sheet(item: $activeSheetType) { item in

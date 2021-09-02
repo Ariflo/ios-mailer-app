@@ -5,8 +5,7 @@
 //  Created by Ari on 4/22/21.
 //
 
-// swiftlint:disable file_length
-
+import Foundation
 import SwiftUI
 
 enum AddressableTouch: String, CaseIterable {
@@ -14,6 +13,7 @@ enum AddressableTouch: String, CaseIterable {
     case touchTwo = "Touch 2"
 }
 
+// swiftlint:disable file_length
 struct ComposeRadiusTopicSelectionView: View {
     @ObservedObject var viewModel: ComposeRadiusViewModel
     @StateObject var touchOnePreviewViewModel = PreviewViewModel()
@@ -56,6 +56,17 @@ struct ComposeRadiusTopicSelectionView: View {
                 Spacer()
             } else if !viewModel.loadingTopics {
                 ScrollView(.vertical, showsIndicators: false) {
+                    Text("Select your campaign and complete the merge tags below each touch.")
+                        .font(Font.custom("Silka-Medium", size: 14))
+                        .foregroundColor(Color.black.opacity(0.3))
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 8)
+                    Text("Merge tags pull in data for your cards from the information you provide here," +
+                            " from your uploaded audience list, as well as your user profile.")
+                        .font(Font.custom("Silka-Medium", size: 14))
+                        .foregroundColor(Color.black.opacity(0.3))
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 8)
                     // MARK: - Choose Radius Topic
                     Menu {
                         ForEach(viewModel.topics) { topic in
@@ -111,7 +122,7 @@ struct ComposeRadiusTopicSelectionView: View {
                             )
                             if !isTouchOnePreviewLoading {
                                 ForEach(
-                                    Array(viewModel.touchOneTemplateMergeVariables.keys),
+                                    getSortedMergeTags(for: .touchOne).compactMap { $0 },
                                     id: \.self
                                 ) { mergeTagName in
                                     MergeVariableInput(
@@ -156,7 +167,7 @@ struct ComposeRadiusTopicSelectionView: View {
                             )
                             if !isTouchTwoPreviewLoading {
                                 ForEach(
-                                    Array(viewModel.touchTwoTemplateMergeVariables.keys),
+                                    getSortedMergeTags(for: .touchTwo).compactMap { $0 },
                                     id: \.self
                                 ) { mergeTagName in
                                     MergeVariableInput(
@@ -176,11 +187,27 @@ struct ComposeRadiusTopicSelectionView: View {
             viewModel.getRadiusMailingMultiTouchTopics()
         }
     }
+    private func getSortedMergeTags(for touch: AddressableTouch) -> [String?] {
+        let mergeVars = touch == .touchOne ?
+            viewModel.touchOneTemplateMergeVariables :
+            viewModel.touchTwoTemplateMergeVariables
+        if let templateBody = touch == .touchOne ? viewModel.touchOneTemplate?.body : viewModel.touchTwoTemplate?.body {
+            return mergeVars.keys.reduce(
+                into: Array(repeating: nil, count: templateBody.count)
+            ) { sortedMergeTags, mergeTag in
+                if let range = templateBody.range(of: mergeTag, options: .caseInsensitive) {
+                    let index: Int = templateBody.distance(from: templateBody.startIndex, to: range.lowerBound)
+                    sortedMergeTags.insert(mergeTag, at: index)
+                }
+            }
+        }
+        return []
+    }
     private func setSelectedTopic(selectedTopic: MultiTouchTopic) {
         viewModel.topicSelectionID = selectedTopic.id
         if let selectedMultiTouchTopic = viewModel.topics.first(where: { topic in topic.id == selectedTopic.id }) {
             viewModel.getMessageTemplates(for: selectedMultiTouchTopic)
-
+            // Refresh WebViews on every topic selection
             touchOnePreviewViewModel.reloadWebView = true
             touchTwoPreviewViewModel.reloadWebView = true
         }
@@ -269,16 +296,15 @@ struct TextEditorView: View {
                         viewModel.touchTwoTemplate?.id {
                         viewModel.updateMessageTemplate(
                             for: touch,
-                            id: templateID,
+                            templateId: templateID,
                             with: touch == .touchOne ?
                                 viewModel.touchOneBody :
                                 viewModel.touchTwoBody
                         ) { updatedTemplate in
                             if let updatedTemplate = updatedTemplate {
-                                viewModel.getMessageTemplate(
+                                viewModel.getTopicsMessageTemplate(
                                     for: touch == .touchOne ? 1 : 2,
-                                    with: updatedTemplate.id
-                                ) { template in
+                                    with: updatedTemplate.id) { template in
                                     guard template != nil else {
                                         showAlert()
                                         return

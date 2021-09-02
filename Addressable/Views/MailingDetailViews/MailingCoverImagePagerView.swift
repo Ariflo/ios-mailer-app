@@ -166,6 +166,12 @@ struct MailingCoverImagePagerView: View, Equatable {
                 !isEditingMailing ?
                     Button(action: {
                         withAnimation(.easeIn(duration: 0.5)) {
+                            guard mailingImages[isEditingMailingCoverImage ?
+                                                    selectedCoverImageIndex :
+                                                    selectedMailingImageIndex] != .cardInside else {
+                                activeSheetType = .addMessageTemplate
+                                return
+                            }
                             isEditingMailing.toggle()
                         }
                     }) {

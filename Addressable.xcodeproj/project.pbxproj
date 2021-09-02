@@ -77,8 +77,6 @@
 		CAB4F987267A6B2100B44D02 /* MailingCoverArtView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4F986267A6B2100B44D02 /* MailingCoverArtView.swift */; };
 		CAB4F989267B1ED600B44D02 /* MailingImagePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4F988267B1ED600B44D02 /* MailingImagePreviewView.swift */; };
 		CAB4F98D267B1FA400B44D02 /* MailingCoverImagePagerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4F98C267B1FA400B44D02 /* MailingCoverImagePagerView.swift */; };
-		CAB4F98F267B1FD900B44D02 /* EditMailingInsideCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4F98E267B1FD900B44D02 /* EditMailingInsideCardView.swift */; };
-		CAB4F993267BC60100B44D02 /* EditMailingInsideCardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4F992267BC60100B44D02 /* EditMailingInsideCardViewModel.swift */; };
 		CAB4F995267BCA1C00B44D02 /* EditReturnAddressViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4F994267BCA1C00B44D02 /* EditReturnAddressViewModel.swift */; };
 		CAB4F997267BCC1100B44D02 /* MailingCoverImagePagerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4F996267BCC1100B44D02 /* MailingCoverImagePagerViewModel.swift */; };
 		CAB80CA425B8EFF4005E868D /* ringtone.wav in Resources */ = {isa = PBXBuildFile; fileRef = CAB80CA325B8EFF4005E868D /* ringtone.wav */; };
@@ -253,8 +251,6 @@
 		CAB4F986267A6B2100B44D02 /* MailingCoverArtView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingCoverArtView.swift; sourceTree = "<group>"; };
 		CAB4F988267B1ED600B44D02 /* MailingImagePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingImagePreviewView.swift; sourceTree = "<group>"; };
 		CAB4F98C267B1FA400B44D02 /* MailingCoverImagePagerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingCoverImagePagerView.swift; sourceTree = "<group>"; };
-		CAB4F98E267B1FD900B44D02 /* EditMailingInsideCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMailingInsideCardView.swift; sourceTree = "<group>"; };
-		CAB4F992267BC60100B44D02 /* EditMailingInsideCardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditMailingInsideCardViewModel.swift; sourceTree = "<group>"; };
 		CAB4F994267BCA1C00B44D02 /* EditReturnAddressViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReturnAddressViewModel.swift; sourceTree = "<group>"; };
 		CAB4F996267BCC1100B44D02 /* MailingCoverImagePagerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingCoverImagePagerViewModel.swift; sourceTree = "<group>"; };
 		CAB80CA325B8EFF4005E868D /* ringtone.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ringtone.wav; sourceTree = "<group>"; };
@@ -519,7 +515,6 @@
 				CACE58C1266EE47700BDD0A9 /* MailingDetailViewModel.swift */,
 				CACE58C5267142AC00BDD0A9 /* MailingRecipientsListViewModel.swift */,
 				CAB4F982267A5FF200B44D02 /* MailingCoverImageGalleryViewModel.swift */,
-				CAB4F992267BC60100B44D02 /* EditMailingInsideCardViewModel.swift */,
 				CAB4F994267BCA1C00B44D02 /* EditReturnAddressViewModel.swift */,
 				CAB4F996267BCC1100B44D02 /* MailingCoverImagePagerViewModel.swift */,
 				CA36D90526B0B3F600CCD114 /* ConfirmAndSendMailingViewModel.swift */,
@@ -657,7 +652,6 @@
 				CAB4F980267A5DF900B44D02 /* MailingCoverImageGalleryView.swift */,
 				CAB4F988267B1ED600B44D02 /* MailingImagePreviewView.swift */,
 				CAB4F98C267B1FA400B44D02 /* MailingCoverImagePagerView.swift */,
-				CAB4F98E267B1FD900B44D02 /* EditMailingInsideCardView.swift */,
 				CA36D90326B0B24000CCD114 /* ConfirmAndSendMailingView.swift */,
 				CA4263BA26B9E20400F533A5 /* CloneMailingView.swift */,
 				CAF5A51F26C1F83900F55B54 /* SelectAudienceView.swift */,
@@ -951,7 +945,6 @@
 				CA3CE817259BC38500A230E1 /* DashboardViewModel.swift in Sources */,
 				CACFA5E7263350D4007AA8E4 /* BordersUtils.swift in Sources */,
 				CACE58C2266EE47700BDD0A9 /* MailingDetailViewModel.swift in Sources */,
-				CAB4F98F267B1FD900B44D02 /* EditMailingInsideCardView.swift in Sources */,
 				CAC8B0AB259D017E00D4447F /* CallListView.swift in Sources */,
 				CA4A0F5225F2CE3200BF89CF /* CustomSegmentedPickerView.swift in Sources */,
 				CAA2A73E26B31BD70007FAD6 /* SendFeedbackViewModel.swift in Sources */,
@@ -975,7 +968,6 @@
 				B370BC172576BAC10066624A /* AddressableApp.swift in Sources */,
 				CA88422925A3D52F00E0D75A /* RefreshableScrollView.swift in Sources */,
 				CA85564D25AFB9B40063274D /* PermissionsUtil.swift in Sources */,
-				CAB4F993267BC60100B44D02 /* EditMailingInsideCardViewModel.swift in Sources */,
 				CAB4F989267B1ED600B44D02 /* MailingImagePreviewView.swift in Sources */,
 				CA4A0F4825F1A75D00BF89CF /* TagIncomingLeadViewModel.swift in Sources */,
 				CACE58BC266BF99A00BDD0A9 /* CalendarTileView.swift in Sources */,
@@ -1154,7 +1146,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;
@@ -1184,7 +1176,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;

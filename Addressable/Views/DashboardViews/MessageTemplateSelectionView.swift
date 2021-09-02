@@ -55,7 +55,10 @@ struct MessageTemplateSelectionView: View, Equatable {
                         Menu {
                             ForEach(viewModel.messageTemplates) { messageTemplate in
                                 Button {
-                                    setSelectedMessageTemplate(selectedMessageTemplate: messageTemplate)
+                                    viewModel.selectedMessageTemplateID = messageTemplate.id
+                                    viewModel.messageTemplateMergeVariables = messageTemplate
+                                        .mergeVars
+                                        .mapValues { $0 ?? "" }
                                 } label: {
                                     Text(messageTemplate.title).font(Font.custom("Silka-Medium", size: 14))
                                 }
@@ -111,7 +114,7 @@ struct MessageTemplateSelectionView: View, Equatable {
                                     )
                                     if !isMessagePreviewLoading {
                                         ForEach(
-                                            getSelectedMessageTemplateMergeVars(),
+                                            getSortedMergeTags().compactMap { $0 },
                                             id: \.self
                                         ) { mergeTagName in
                                             MessageTemplateMergeVariableInput(
@@ -125,6 +128,7 @@ struct MessageTemplateSelectionView: View, Equatable {
                         }
                     }
                 }
+                // MARK: - Add Message Template / Cancel Buttons
                 Spacer()
                 HStack(spacing: 8) {
                     Button(action: {
@@ -142,7 +146,7 @@ struct MessageTemplateSelectionView: View, Equatable {
                     }
                     Button(action: {
                         if let selectedMessageTemplate = getSelectedMessageTemplate() {
-                            viewModel.addMessageTemplate(with: selectedMessageTemplate.id) { mailingWithMessageTemplate in
+                            viewModel.addMessageTemplate(selectedMessageTemplate) { mailingWithMessageTemplate in
                                 if let newMailing = mailingWithMessageTemplate {
                                     viewModel.mailing = newMailing
                                     presentationMode.wrappedValue.dismiss()
@@ -162,7 +166,7 @@ struct MessageTemplateSelectionView: View, Equatable {
                     }
                     .disabled(isMissingMergeVars() || viewModel.selectedMessageTemplateID == 0)
                     .opacity(isMissingMergeVars() || viewModel.selectedMessageTemplateID == 0 ? 0.4 : 1)
-                }
+                }.padding(.bottom)
             }
             .navigationBarTitle("Message Template", displayMode: .inline)
             .onAppear {
@@ -170,6 +174,7 @@ struct MessageTemplateSelectionView: View, Equatable {
             }
             .padding()
             .background(Color.addressableLightGray)
+            .edgesIgnoringSafeArea(.bottom)
         }.alert(isPresented: $showingAlert) {
             Alert(title: Text("Sorry something went wrong," +
                                 " try again or reach out to an Addressable " +
@@ -177,18 +182,21 @@ struct MessageTemplateSelectionView: View, Equatable {
             )
         }
     }
-    private func isMissingMergeVars() -> Bool {
-        guard !getSelectedMessageTemplateMergeVars().isEmpty else { return false }
-
-        if getSelectedMessageTemplateMergeVars().count == viewModel.messageTemplateMergeVariables.keys.count {
-            return !getSelectedMessageTemplateMergeVars().filter {
-                viewModel.messageTemplateMergeVariables[$0]?.isEmpty ?? true
-            }.isEmpty
+    private func getSortedMergeTags() -> [String?] {
+        if let templateBody = getSelectedMessageTemplate()?.body {
+            return viewModel.messageTemplateMergeVariables.keys.reduce(
+                into: Array(repeating: nil, count: templateBody.count)
+            ) { sortedMergeTags, mergeTag in
+                if let range = templateBody.range(of: mergeTag, options: .caseInsensitive) {
+                    let index: Int = templateBody.distance(from: templateBody.startIndex, to: range.lowerBound)
+                    sortedMergeTags.insert(mergeTag, at: index)
+                }
+            }
         }
-        return true
+        return []
     }
-    private func setSelectedMessageTemplate(selectedMessageTemplate: MessageTemplate) {
-        viewModel.selectedMessageTemplateID = selectedMessageTemplate.id
+    private func isMissingMergeVars() -> Bool {
+        return !Array(viewModel.messageTemplateMergeVariables.values).filter { $0.isEmpty }.isEmpty
     }
     private func getSelectedMessageTemplateTitle() -> String {
         if let selectedMessageTemplate = viewModel.messageTemplates.first(
@@ -197,14 +205,6 @@ struct MessageTemplateSelectionView: View, Equatable {
             return selectedMessageTemplate.title
         }
         return "Select Message Template"
-    }
-    private func getSelectedMessageTemplateMergeVars() -> [String] {
-        if let selectedMessageTemplate = viewModel.messageTemplates.first(
-            where: { messageTemplate in messageTemplate.id == viewModel.selectedMessageTemplateID }
-        ) {
-            return selectedMessageTemplate.mergeVars
-        }
-        return []
     }
     private func getSelectedMessageTemplate() -> MessageTemplate? {
         return viewModel.messageTemplates.first { messageTemplate in
@@ -349,12 +349,14 @@ struct MessageTemplateTextEditorView: View {
             VStack {
                 Button(action: {
                     viewModel.updateMessageTemplate(with: messageTemplate.id) { updatedTemplate in
-                        guard updatedTemplate != nil else {
+                        if let updatedTemplate = updatedTemplate {
+                            viewModel.messageTemplateMergeVariables = viewModel.messageTemplateMergeVariables.merging(
+                                updatedTemplate.mergeVars.mapValues { $0 ?? "" }) { first, _ in first }
+                            messageTemplatePreviewViewModel.reloadWebView = true
+                            setIsEditingOff()
+                        } else {
                             showAlert()
-                            return
                         }
-                        messageTemplatePreviewViewModel.reloadWebView = true
-                        setIsEditingOff()
                     }
                 }) {
                     Text("Show Preview")

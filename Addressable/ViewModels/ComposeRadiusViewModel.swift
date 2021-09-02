@@ -369,72 +369,63 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
         // Reset merge varibles with every update
         touchOneTemplateMergeVariables = [:]
         touchTwoTemplateMergeVariables = [:]
-        if let touchOneTemplateId = touchOneMailing?.topicSelectionID != self.topicSelectionID ||
-            touchOneMailing?.topicSelectionID == nil ?
-            topic.touchOneTemplateID : touchOneMailing!.customNoteTemplateID {
-            getMessageTemplate(for: 1, with: touchOneTemplateId)
-        }
-        getMessageTemplate(for: 2, with: topic.touchTwoTemplateID)
+
+        getTopicsMessageTemplate(for: 1, with: topic.touchOneTemplateID)
+        getTopicsMessageTemplate(for: 2, with: topic.touchTwoTemplateID)
     }
 
-    func getMessageTemplate(
+    func getTopicsMessageTemplate(
         for touch: Int,
-        with id: Int,
+        with templateId: Int,
         completion: @escaping (MessageTemplate?) -> Void = { _ in }
     ) {
-        apiService.getMessageTemplate(for: id)
-            .map { resp in
-                resp.messageTemplate
-            }
-            .receive(on: DispatchQueue.main)
-            .sink(
-                receiveCompletion: { [weak self] value in
-                    guard let self = self else { return }
-                    switch value {
-                    case .failure(let error):
-                        print("getMessageTemplate(" +
-                                "for touch: \(touch), with id: \(id) receiveCompletion error: \(error)")
+        if let mailingId = touchOneMailing?.id {
+            apiService.getMessageTemplate(for: templateId, with: mailingId)
+                .map { resp in
+                    resp.messageTemplate
+                }
+                .receive(on: DispatchQueue.main)
+                .sink(
+                    receiveCompletion: { [weak self] value in
+                        guard let self = self else { return }
+                        switch value {
+                        case .failure(let error):
+                            print("getTopicsMessageTemplate(" +
+                                    "for touch: \(touch), with templateId: \(templateId) " +
+                                    "receiveCompletion error: \(error)")
+                            if touch == 1 {
+                                self.touchOneTemplate = nil
+                                self.touchOneBody = "Write your message here..."
+                                self.touchOneTemplateMergeVariables = [:]
+                            } else {
+                                self.touchTwoTemplate = nil
+                                self.touchTwoBody = "Write your message here..."
+                                self.touchTwoTemplateMergeVariables = [:]
+                            }
+                            completion(nil)
+                        case .finished:
+                            break
+                        }
+                    },
+                    receiveValue: { [weak self] topicsMessageTemplate in
+                        guard let self = self else { return }
                         if touch == 1 {
-                            self.touchOneTemplate = nil
-                            self.touchOneBody = "Write your message here..."
-                            self.touchOneTemplateMergeVariables = [:]
+                            self.touchOneTemplate = topicsMessageTemplate
+                            self.touchOneBody = topicsMessageTemplate.body
+                            self.touchOneTemplateMergeVariables = self.touchOneTemplateMergeVariables.merging(
+                                topicsMessageTemplate.mergeVars.mapValues { $0 ?? "" }) { first, _ in first }
                         } else {
-                            self.touchTwoTemplate = nil
-                            self.touchTwoBody = "Write your message here..."
-                            self.touchTwoTemplateMergeVariables = [:]
+                            self.touchTwoTemplate = topicsMessageTemplate
+                            self.touchTwoBody = topicsMessageTemplate.body
+                            self.touchTwoTemplateMergeVariables = self.touchTwoTemplateMergeVariables.merging(
+                                topicsMessageTemplate.mergeVars.mapValues { $0 ?? "" }) { first, _ in first }
+
+                            self.loadingTopics = false
                         }
-                        completion(nil)
-                    case .finished:
-                        break
-                    }
-                },
-                receiveValue: { [weak self] template in
-                    guard let self = self else { return }
-                    if touch == 1 {
-                        self.touchOneTemplate = template
-                        self.touchOneBody = template.body
-                        if !template.mergeVars.isEmpty {
-                            for mergeVarName in template.mergeVars {
-                                self.touchOneTemplateMergeVariables[mergeVarName] = ""
-                            }
-                        } else {
-                            self.touchOneTemplateMergeVariables = [:]
-                        }
-                    } else {
-                        self.touchTwoTemplate = template
-                        self.touchTwoBody = template.body
-                        if !template.mergeVars.isEmpty {
-                            for mergeVarName in template.mergeVars {
-                                self.touchTwoTemplateMergeVariables[mergeVarName] = ""
-                            }
-                        } else {
-                            self.touchTwoTemplateMergeVariables = [:]
-                        }
-                        self.loadingTopics = false
-                    }
-                    completion(template)
-                })
-            .store(in: &disposables)
+                        completion(topicsMessageTemplate)
+                    })
+                .store(in: &disposables)
+        }
     }
 
     func createRadiusMailing(completion: @escaping (_ updatedMailing: Mailing?) -> Void) {
@@ -612,18 +603,22 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
 
     func updateMessageTemplate(
         for touch: AddressableTouch,
-        id: Int,
+        templateId: Int,
         with newBody: String,
         completion: @escaping (MessageTemplate?) -> Void
     ) {
+        guard let mailingId = touchOneMailing?.id else { return }
         guard let encodedMessageTemplateData = try? JSONEncoder().encode(
-            OutgoingMessageTemplateWrapper(messageTemplate: OutgoingMessageTemplate(title: nil, body: newBody))
+            OutgoingMessageTemplateWrapper(
+                mailingId: mailingId,
+                messageTemplate: OutgoingMessageTemplate(title: nil, body: newBody)
+            )
         ) else {
             print("Update Message Template Encoding Error")
             return
         }
 
-        apiService.updateMessageTemplate(for: id, encodedMessageTemplateData)
+        apiService.updateMessageTemplate(for: templateId, encodedMessageTemplateData)
             .map { resp in
                 resp.messageTemplate
             }
@@ -633,7 +628,7 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
                     switch value {
                     case .failure(let error):
                         print("updateMessageTemplate(" +
-                                "for id: \(id), with newBody: \(newBody), receiveCompletion error: \(error)")
+                                "for id: \(templateId), with newBody: \(newBody), receiveCompletion error: \(error)")
                         completion(nil)
                     case .finished:
                         break

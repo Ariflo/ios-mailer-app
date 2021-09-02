@@ -26,11 +26,8 @@ class MessageTemplateSelectionViewModel: ObservableObject {
     }
 
     func getMessageTemplates() {
-        // Reset merge varibles with every update
-        messageTemplateMergeVariables = [:]
-
         loadingMessageTemplates = true
-        apiService.getMessageTemplates()
+        apiService.getMessageTemplates(for: mailing.id)
             .map { resp in resp.messageTemplates.map { $0.messageTemplate } }
             .receive(on: DispatchQueue.main)
             .sink(
@@ -57,6 +54,14 @@ class MessageTemplateSelectionViewModel: ObservableObject {
                         return
                     }
                     self.messageTemplates = messageTemplates
+                    // Initialize view with selected template if it exsists
+                    if let selectedMailingMessageTemplateId = self.mailing.customNoteTemplateID,
+                       let selectedMessageTemplate = self.messageTemplates.first(
+                        where: { $0.id == selectedMailingMessageTemplateId }
+                       ) {
+                        self.selectedMessageTemplateID = selectedMessageTemplate.id
+                        self.messageTemplateMergeVariables = selectedMessageTemplate.mergeVars.mapValues { $0 ?? "" }
+                    }
                     self.loadingMessageTemplates = false
                 })
             .store(in: &disposables)
@@ -68,6 +73,7 @@ class MessageTemplateSelectionViewModel: ObservableObject {
     ) {
         guard let encodedMessageTemplateData = try? JSONEncoder().encode(
             OutgoingMessageTemplateWrapper(
+                mailingId: mailing.id,
                 messageTemplate: OutgoingMessageTemplate(title: nil, body: messageTemplateBody)
             )
         ) else {
@@ -104,14 +110,15 @@ class MessageTemplateSelectionViewModel: ObservableObject {
     }
 
     func addMessageTemplate(
-        with messageTemplateId: Int,
+        _ messageTemplate: MessageTemplate,
         completion: @escaping (Mailing?) -> Void
     ) {
         guard let addMessageTemplateData = try? JSONEncoder().encode(
             UpdateMailingMessageTemplate(
                 customNote: AddMessageTemplate(
-                    messageTemplateId: messageTemplateId
-                )
+                    messageTemplateId: messageTemplate.id,
+                    customNoteBody: messageTemplate.body,
+                    mergeVars: messageTemplateMergeVariables)
             )
         ) else {
             print("Add Message Template Encoding Error")

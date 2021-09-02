@@ -25,10 +25,9 @@ protocol FetchableData {
     func addCallParticipant(_ newCallData: Data?) -> AnyPublisher<CallParticipantResponse, ApiError>
     func addUserNotes(accountId: Int, leadId: Int, _ noteData: Data?) -> AnyPublisher<IncomingLeadResponse, ApiError>
     // MARK: - Message Templates
-    func createMessageTemplate(_ newMessageTemplateData: Data?) -> AnyPublisher<MessageTemplateResponse, ApiError>
-    func getMessageTemplates() -> AnyPublisher<MessageTemplatesResponse, ApiError>
-    func getMessageTemplate(for id: Int) -> AnyPublisher<MessageTemplateResponse, ApiError>
-    func updateMessageTemplate(for id: Int, _ messageTemplateData: Data?) -> AnyPublisher<MessageTemplateResponse, ApiError>
+    func getMessageTemplates(for mailingId: Int) -> AnyPublisher<MessageTemplatesResponse, ApiError>
+    func getMessageTemplate(for templateId: Int, with mailingId: Int) -> AnyPublisher<MessageTemplateResponse, ApiError>
+    func updateMessageTemplate(for templateId: Int, _ messageTemplateData: Data?) -> AnyPublisher<MessageTemplateResponse, ApiError>
     func getMultiTouchTopics() -> AnyPublisher<MultiTouchTopicResponse, ApiError>
     // MARK: - Mailings
     func getCurrentUserMailingCampaigns() -> AnyPublisher<CampaignsResponse, ApiError>
@@ -82,10 +81,12 @@ extension ApiService: FetchableData {
     func getListUploads() -> AnyPublisher<ListUploadResponse, ApiError> {
         return makeApiRequest(with: listUploadsRequestComponents())
     }
+
     func updateMailingMessageTemplate(for id: Int, _ updateMailingMessageTemplateData: Data?) -> AnyPublisher<MailingResponse, ApiError> {
         return makeApiRequest(
             with: mailingRequestComponents(for: id),
-            postRequestBodyData: updateMailingMessageTemplateData
+            postRequestBodyData: nil,
+            patchRequestBodyData: updateMailingMessageTemplateData
         )
     }
 
@@ -135,12 +136,6 @@ extension ApiService: FetchableData {
 
     func getDefaultDataTreeSearchCriteria() -> AnyPublisher<DataTreeSearchCriteriaWrapper, ApiError> {
         return makeApiRequest(with: getDefaultDataTreeSearchCriteriaRequestComponents())
-    }
-
-    func createMessageTemplate(_ newMessageTemplateData: Data?) -> AnyPublisher<MessageTemplateResponse, ApiError> {
-        makeApiRequest(
-            with: getOrCreateMessageTemplatesRequestComponents(),
-            postRequestBodyData: newMessageTemplateData)
     }
 
     func tagIncomingLead(with id: Int, _ tagData: Data?) -> AnyPublisher<IncomingLeadResponse, ApiError> {
@@ -200,12 +195,12 @@ extension ApiService: FetchableData {
         return makeApiRequest(with: createRadiusMailingRequestComponents(), postRequestBodyData: newRadiusMailingData)
     }
 
-    func getMessageTemplate(for id: Int) -> AnyPublisher<MessageTemplateResponse, ApiError> {
-        return makeApiRequest(with: getOrUpdateMessageTemplateRequestComponents(for: id))
+    func getMessageTemplate(for templateId: Int, with mailingId: Int) -> AnyPublisher<MessageTemplateResponse, ApiError> {
+        return makeApiRequest(with: getMessageTemplateRequestComponents(for: templateId, with: mailingId))
     }
 
-    func updateMessageTemplate(for id: Int, _ messageTemplateData: Data?) -> AnyPublisher<MessageTemplateResponse, ApiError> {
-        return makeApiRequest(with: getOrUpdateMessageTemplateRequestComponents(for: id),
+    func updateMessageTemplate(for templateId: Int, _ messageTemplateData: Data?) -> AnyPublisher<MessageTemplateResponse, ApiError> {
+        return makeApiRequest(with: updateMessageTemplateRequestComponents(for: templateId),
                               postRequestBodyData: nil,
                               patchRequestBodyData: messageTemplateData)
     }
@@ -222,8 +217,8 @@ extension ApiService: FetchableData {
         return makeApiRequest(with: addParticipantToCallRequestComponents(), postRequestBodyData: newCallData)
     }
 
-    func getMessageTemplates() -> AnyPublisher<MessageTemplatesResponse, ApiError> {
-        return makeApiRequest(with: getOrCreateMessageTemplatesRequestComponents())
+    func getMessageTemplates(for mailingId: Int) -> AnyPublisher<MessageTemplatesResponse, ApiError> {
+        return makeApiRequest(with: getMailingMessageTemplatesRequestComponents(with: mailingId))
     }
 
     func getMailingCoverImages() -> AnyPublisher<MailingCoverImageResponse, ApiError> {
@@ -474,22 +469,34 @@ private extension ApiService {
         return components
     }
 
-    func getOrCreateMessageTemplatesRequestComponents() -> URLComponents {
+    func getMailingMessageTemplatesRequestComponents(with mailingId: Int) -> URLComponents {
         var components = URLComponents()
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/message_templates"
+        components.path = AddressableAPI.path + "/mailings/\(mailingId)" +
+            "/message_templates/all_templates_with_merge_vars"
 
         return components
     }
 
-    func getOrUpdateMessageTemplateRequestComponents(for id: Int) -> URLComponents {
+    func getMessageTemplateRequestComponents(for templateId: Int, with mailingId: Int) -> URLComponents {
         var components = URLComponents()
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/message_templates/\(id)"
+        components.path = AddressableAPI.path + "/mailings/\(mailingId)" +
+            "/message_templates/\(templateId)/template_with_merge_vars"
+
+        return components
+    }
+
+    func updateMessageTemplateRequestComponents(for templateId: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/message_templates/\(templateId)"
 
         return components
     }

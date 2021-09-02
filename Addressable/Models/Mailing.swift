@@ -377,10 +377,14 @@ struct UpdateMailingMessageTemplate: Codable {
 // MARK: - AddMessageTemplate
 struct AddMessageTemplate: Codable {
     let messageTemplateId: Int
+    let customNoteBody: String
+    let mergeVars: [String: String]
 
 
     enum CodingKeys: String, CodingKey {
         case messageTemplateId = "message_template_id"
+        case customNoteBody = "body"
+        case mergeVars = "merge_variables"
     }
 }
 // MARK: - AddAudienceToMailingWrapper
