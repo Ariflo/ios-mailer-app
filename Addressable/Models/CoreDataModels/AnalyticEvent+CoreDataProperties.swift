@@ -49,7 +49,7 @@ extension AnalyticEvent {
         event.eventType = eventType
         event.eventTime = Date().timeIntervalSince1970
         event.sessionID = getEventSessionID(for: event, from: allPreviousEvents)
-        event.environment = "development"
+        event.environment = "production"
         event.source = "mobile"
         event.message = message
         event.userID = String(user.id)
