@@ -7,7 +7,7 @@
 import Foundation
 
 let userBasicAuthToken = "userBasicAuthToken"
-let userAppToken = "userApplicationToken"
+let userData = "userApplicationData"
 let userMobileClientIdentity = "userMobileClientIdentity"
 
 open class KeyChainServiceUtil {
@@ -71,6 +71,14 @@ open class KeyChainServiceUtil {
         result.setValue(key, forKey: kSecAttrService as String)
         result.setValue(kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly, forKey: kSecAttrAccessible as String)
         return result
+    }
+
+    func clearAll() {
+        let secItemClasses = [kSecClassGenericPassword]
+        for itemClass in secItemClasses {
+            let spec: NSDictionary = [kSecClass: itemClass]
+            SecItemDelete(spec)
+        }
     }
 
     private func logPrint(_ items: Any...) {

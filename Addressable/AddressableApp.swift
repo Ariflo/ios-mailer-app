@@ -11,6 +11,7 @@ import Combine
 import UserNotifications
 import GoogleMaps
 import GooglePlaces
+import CoreData
 
 // API Key Restrictions set on Google Cloud, safe to keep this key here for now
 let googleMapsApiKey = "AIzaSyDKJ7-97nKoAeFrCeb1yPfoVDbrS8RttKM"
@@ -32,16 +33,30 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
     var callKitProvider: CallService?
     var callManager: CallManager?
     var latestPushCredentials: PKPushCredentials?
+    var appLevelAnalyticsTracker: AnalyticsTracker?
+
+    // MARK: - Core Data Stack -
+    lazy var persistentContainer: NSPersistentContainer = {
+        let container = NSPersistentContainer(name: "AnalyticEvents")
+        container.loadPersistentStores { _, error in
+            if let error = error as NSError? {
+                fatalError("Unresolved error \(error), \(error.userInfo)")
+            }
+        }
+        return container
+    }()
 
     lazy var dependencyProvider = DependencyProvider()
     lazy var voipRegistry = PKPushRegistry.init(queue: DispatchQueue.main)
 
     func application(
         _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         GMSServices.provideAPIKey(googleMapsApiKey)
         GMSPlacesClient.provideAPIKey(googleMapsApiKey)
+
+        UNUserNotificationCenter.current().delegate = self
 
         callManager = CallManager(application: self)
         if let safeCallManager = callManager {
@@ -50,6 +65,29 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
 
         voipRegistry.delegate = self
         voipRegistry.desiredPushTypes = Set([PKPushType.voIP])
+
+        let currentVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
+        let versionOfLastRun = UserDefaults.standard.object(forKey: "VersionOfLastRun") as? String
+        appLevelAnalyticsTracker = self.dependencyProvider.register(provider: self.dependencyProvider)
+
+        if let tracker = appLevelAnalyticsTracker {
+            if versionOfLastRun == nil {
+                // First start after installing the app
+                tracker.trackEvent(.mobileAppInstalled, context: self.persistentContainer.viewContext)
+            } else if versionOfLastRun != currentVersion {
+                // App was updated since last run
+                tracker.trackEvent(.mobileAppUpdated, context: self.persistentContainer.viewContext)
+            }
+
+            // When the app launch after user tap on notification (originally was not running / not in background)
+            if launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] != nil {
+                tracker.trackEvent(
+                    .pushNotificationPressed,
+                    context: self.persistentContainer.viewContext
+                )
+            }
+        }
+        UserDefaults.standard.set(currentVersion, forKey: "VersionOfLastRun")
 
         return true
     }
@@ -73,6 +111,22 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
         print("Failed to register APN: \(error)")
     }
 
+    func application(
+        _ application: UIApplication,
+        didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+        fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
+    ) {
+        guard (userInfo["aps"] as? [String: AnyObject]) != nil else {
+            completionHandler(.failed)
+            return
+        }
+        if let tracker = appLevelAnalyticsTracker {
+            tracker.trackEvent(
+                .pushNotificationRecieved, context: self.persistentContainer.viewContext
+            )
+        }
+        completionHandler(.newData)
+    }
     func pushRegistry(_ registry: PKPushRegistry, didUpdate pushCredentials: PKPushCredentials, for type: PKPushType) {
         print("pushRegistry:didUpdatePushCredentials:forType: \(type)")
         latestPushCredentials = pushCredentials
@@ -195,14 +249,31 @@ struct AddressableApp: App {
     @Environment(\.scenePhase) var scenePhase
 
     var body: some Scene {
+        let analyticsTracker: AnalyticsTracker = appDelegate.dependencyProvider.register(
+            provider: appDelegate.dependencyProvider)
+
         WindowGroup {
-            AppView().environmentObject(appDelegate)
+            AppView()
+                .environmentObject(appDelegate)
+                .environment(\.managedObjectContext, appDelegate.persistentContainer.viewContext)
         }.onChange(of: scenePhase) { phase in
             switch phase {
             case .background:
+                #if DEBUG
                 print("App is in background")
-                logOutOfApplication()
+                #endif
+                if isLoggedIn() {
+                    analyticsTracker.trackEvent(.mobileAppBackgrounded,
+                                                context: appDelegate.persistentContainer.viewContext)
+                }
+                maybeLogOutOfApplication()
             case .active:
+                #if DEBUG
+                print("App is active")
+                #endif
+                if isLoggedIn() {
+                    analyticsTracker.trackEvent(.mobileAppOpened, context: appDelegate.persistentContainer.viewContext)
+                }
                 if KeyChainServiceUtil.shared[userBasicAuthToken] != nil {
                     appDelegate.verifyPermissions {
                         DispatchQueue.main.async {
@@ -210,21 +281,45 @@ struct AddressableApp: App {
                         }
                     }
                 }
-                logOutOfApplication()
+                maybeLogOutOfApplication()
             case .inactive:
+                #if DEBUG
                 print("App is Inactive")
-                logOutOfApplication()
+                #endif
+                maybeLogOutOfApplication()
             @unknown default:
+                #if DEBUG
                 print("New App state not yet introduced")
-                logOutOfApplication()
+                #endif
+                maybeLogOutOfApplication()
             }
         }
     }
-    private func logOutOfApplication() {
+    private func maybeLogOutOfApplication() {
         if KeyChainServiceUtil.shared[userBasicAuthToken] == nil &&
             KeyChainServiceUtil.shared[userMobileClientIdentity] == nil &&
-            KeyChainServiceUtil.shared[userAppToken] == nil {
+            KeyChainServiceUtil.shared[userData] == nil {
             appDelegate.currentView = .signIn
         }
+    }
+    private func isLoggedIn() -> Bool {
+        return KeyChainServiceUtil.shared[userBasicAuthToken] != nil &&
+            KeyChainServiceUtil.shared[userData] != nil
+    }
+}
+
+extension Application: UNUserNotificationCenterDelegate {
+    // This function will be called when the app receive notification
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        // show the notification alert (banner), and with sound
+        completionHandler([.banner, .sound])
+    }
+    // This function will be called right after user tap on the notification
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        if let tracker = appLevelAnalyticsTracker {
+            tracker.trackEvent(.pushNotificationPressed, context: self.persistentContainer.viewContext)
+        }
+        // tell the app that we have finished processing the user’s action / response
+        completionHandler()
     }
 }

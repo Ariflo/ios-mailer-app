@@ -138,8 +138,10 @@ class MessagesViewModel: ObservableObject {
     }
     // swiftlint:disable cyclomatic_complexity
     func connectToSocket() {
-        if let userToken = KeyChainServiceUtil.shared[userAppToken] {
-            apiService.connectToWebSocket(userToken: userToken) {[weak self] data in
+        if let keyStoreUser = KeyChainServiceUtil.shared[userData],
+           let userData = keyStoreUser.data(using: .utf8),
+           let user = try? JSONDecoder().decode(User.self, from: userData) {
+            apiService.connectToWebSocket(userToken: user.authenticationToken) {[weak self] data in
                 guard let self = self else { return }
                 guard data != nil else {
                     print("No data to confirm connection to socket")

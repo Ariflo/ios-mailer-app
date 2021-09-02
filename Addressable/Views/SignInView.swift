@@ -69,8 +69,8 @@ struct SignInView: View {
 
                     let loginString = String(format: "%@:%@", account, pwd)
                     if let loginData = loginString.data(using: String.Encoding.utf8) {
-                        viewModel.login(with: loginData.base64EncodedString()) { authenticatedUserInfo in
-                            guard authenticatedUserInfo != nil else {
+                        viewModel.login(with: loginData.base64EncodedString()) { authenticatedUser in
+                            guard authenticatedUser != nil else {
                                 alertText = "Incorrect Username or Password. Try Again!"
                                 showingAlert = true
                                 return
@@ -78,7 +78,11 @@ struct SignInView: View {
 
                             KeyChainServiceUtil.shared[userBasicAuthToken] = loginData.base64EncodedString()
                             // swiftlint:disable force_unwrapping
-                            KeyChainServiceUtil.shared[userAppToken] = authenticatedUserInfo!.userToken
+                            guard let encodedCurrentUserData = try? JSONEncoder().encode(authenticatedUser!) else {
+                                print("encodedCurrentUserData Encoding Error")
+                                return
+                            }
+                            KeyChainServiceUtil.shared[userData] = String(data: encodedCurrentUserData, encoding: .utf8)
 
                             // For the case where a user signs into the application on a previously registered device
                             // register said user with the device on Addressable's DB
@@ -121,9 +125,17 @@ struct SignInView: View {
     }
     private func logInToApplication() {
         if KeyChainServiceUtil.shared[userBasicAuthToken] != nil {
+            viewModel.analyticsTracker.trackEvent(
+                .mobileLoginSuccess,
+                context: app.persistentContainer.viewContext
+            )
             app.currentView = .dashboard(false)
             authorizedUser = 1
         } else {
+            viewModel.analyticsTracker.trackEvent(
+                .mobileLoginFailed,
+                context: app.persistentContainer.viewContext
+            )
             alertText = "Sorry something went wrong, " +
                 "try again or reach out to an Addressable " +
                 "representative if the problem persists."

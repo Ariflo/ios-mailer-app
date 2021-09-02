@@ -46,7 +46,7 @@ struct DashboardView: View {
                         .transition(.move(edge: .trailing))
                         .zIndex(-1)
                 }
-                VStack {
+                VStack(spacing: 0) {
                     // MARK: - Main Menu Header
                     HStack(alignment: .center) {
                         Button(action: {

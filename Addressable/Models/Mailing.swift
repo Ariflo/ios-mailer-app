@@ -5,7 +5,6 @@
 //  Created by Ari on 5/20/21.
 //
 
-// swiftlint:disable file_length
 // MARK: - Mailing
 struct Mailing: Codable, Identifiable, Equatable {
     static func == (lhs: Mailing, rhs: Mailing) -> Bool {
@@ -131,25 +130,6 @@ struct ReturnAddress: Codable {
         case fromCity = "from_city"
         case fromState = "from_state"
         case fromZipcode = "from_zipcode"
-    }
-}
-// MARK: - Account
-struct Account: Codable {
-    let id: Int
-
-    enum CodingKeys: String, CodingKey {
-        case id
-    }
-}
-
-// MARK: - User
-struct User: Codable {
-    let id: Int
-    let authenticationToken: String
-
-    enum CodingKeys: String, CodingKey {
-        case id
-        case authenticationToken = "authentication_token"
     }
 }
 

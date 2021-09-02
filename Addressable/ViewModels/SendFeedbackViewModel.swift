@@ -19,12 +19,14 @@ class SendFeedbackViewModel: ObservableObject {
     func sendFeedback(feedbackText: String, onCompletion: @escaping (GenericAPISuccessResponse?) -> Void) {
         guard let versionNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
               let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
-              let userToken = KeyChainServiceUtil.shared[userAppToken],
+              let keyStoreUser = KeyChainServiceUtil.shared[userData],
+              let userData = keyStoreUser.data(using: .utf8),
+              let user = try? JSONDecoder().decode(User.self, from: userData),
               let sendFeedbackData = try? JSONEncoder().encode(
                 FeedbackWrapper(feedback: Feedback(
                                     appVersion: "v\(appVersion) (\(versionNumber))",
                                     feedbackMessage: feedbackText,
-                                    userToken: userToken)
+                                    userToken: user.authenticationToken)
                 )
               ) else {
             print("Encoding Error in sendFeedback()")

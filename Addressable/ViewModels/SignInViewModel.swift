@@ -10,14 +10,17 @@ import Combine
 
 class SignInViewModel: ObservableObject {
     private let apiService: ApiService
+    let analyticsTracker: AnalyticsTracker
     private var disposables = Set<AnyCancellable>()
 
     init(provider: DependencyProviding) {
         apiService = provider.register(provider: provider)
+        analyticsTracker = provider.register(provider: provider)
     }
 
-    func login(with basicAuthtoken: String, onAuthenticationCompletion: @escaping (AuthorizedUserResponse?) -> Void) {
+    func login(with basicAuthtoken: String, onAuthenticationCompletion: @escaping (User?) -> Void) {
         apiService.getCurrentUserAuthorization(with: basicAuthtoken)
+            .map { $0.user }
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { [weak self] value in
@@ -30,10 +33,9 @@ class SignInViewModel: ObservableObject {
                         break
                     }
                 },
-                receiveValue: { [weak self] apiData in
+                receiveValue: { [weak self] authorizedUser in
                     guard self != nil else { return }
-                    // TODO: Consider using response status here as opposed to data returned.
-                    onAuthenticationCompletion(apiData)
+                    onAuthenticationCompletion(authorizedUser)
                 })
             .store(in: &disposables)
     }

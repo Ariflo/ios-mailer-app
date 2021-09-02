@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="18154" systemVersion="20G80" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AnalyticEvent" representedClassName="AnalyticEvent" syncable="YES">
+        <attribute name="environment" attributeType="String"/>
+        <attribute name="eventTime" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="eventType" attributeType="String"/>
+        <attribute name="message" optional="YES" attributeType="String"/>
+        <attribute name="mobileDeviceOS" attributeType="String"/>
+        <attribute name="mobileDeviceType" attributeType="String"/>
+        <attribute name="sessionID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="source" attributeType="String"/>
+        <attribute name="userID" optional="YES" attributeType="String"/>
+    </entity>
+    <elements>
+        <element name="AnalyticEvent" positionX="-63" positionY="-18" width="128" height="164"/>
+    </elements>
+</model>

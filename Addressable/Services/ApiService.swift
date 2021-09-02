@@ -48,6 +48,10 @@ protocol FetchableData {
     func getListUploads() -> AnyPublisher<ListUploadResponse, ApiError>
     // MARK: - Feedback
     func sendAppFeedback(feedbackData: Data?) -> AnyPublisher<GenericAPISuccessResponse, ApiError>
+    // MARK: - Profile Settings
+    func getAccount(with accountId: Int) -> AnyPublisher<AccountResponse, ApiError>
+    func getAccountHandwritingStyles() -> AnyPublisher<HandwritingResponse, ApiError>
+    func updateUser(with userId: Int, updateUserData: Data?) -> AnyPublisher<AuthorizedUserResponse, ApiError>
 }
 
 enum RadiusMailingComponent {
@@ -70,6 +74,20 @@ class ApiService: Service {
 }
 
 extension ApiService: FetchableData {
+    func getAccount(with accountId: Int) -> AnyPublisher<AccountResponse, ApiError> {
+        return makeApiRequest(with: getAccountRequestComponents(with: accountId))
+    }
+
+    func updateUser(with userId: Int, updateUserData: Data?) -> AnyPublisher<AuthorizedUserResponse, ApiError> {
+        return makeApiRequest(with: updateUserRequestComponents(with: userId),
+                              postRequestBodyData: nil,
+                              patchRequestBodyData: updateUserData)
+    }
+
+    func getAccountHandwritingStyles() -> AnyPublisher<HandwritingResponse, ApiError> {
+        return makeApiRequest(with: getHandwritingsRequestComponents())
+    }
+
     func updateMailingListUpload(for id: Int, _ updateMailingAudienceData: Data?) -> AnyPublisher<MailingResponse, ApiError> {
         return makeApiRequest(
             with: updateMailingAudienceRequestComponents(for: id),
@@ -293,10 +311,7 @@ extension ApiService: FetchableData {
     private func verifiedAuthorizedUserResponse(response: Data) -> Bool {
         if let jsonPayload = String(data: response, encoding: .utf8) {
             if jsonPayload.contains(unauthorizedUserResponse) {
-                KeyChainServiceUtil.shared[userBasicAuthToken] = nil
-                KeyChainServiceUtil.shared[userAppToken] = nil
-                KeyChainServiceUtil.shared[userMobileClientIdentity] = nil
-
+                KeyChainServiceUtil.shared.clearAll()
                 return false
             }
         }
@@ -384,7 +399,7 @@ private extension ApiService {
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/auth/mobile_login"
+        components.path = AddressableAPI.path + "/auth/mobile_registration"
 
         return components
     }
@@ -394,7 +409,7 @@ private extension ApiService {
 
         components.scheme = AddressableAPI.scheme
         components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/auth/mobile_logout"
+        components.path = AddressableAPI.path + "/auth/mobile_deregistration"
 
         return components
     }
@@ -731,6 +746,37 @@ private extension ApiService {
 
         return components
     }
+
+    func getAccountRequestComponents(with accountID: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/accounts/\(accountID)"
+
+        return components
+    }
+
+    func getHandwritingsRequestComponents() -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/handwritings"
+
+        return components
+    }
+
+    func updateUserRequestComponents(with userId: Int) -> URLComponents {
+        var components = URLComponents()
+
+        components.scheme = AddressableAPI.scheme
+        components.host = AddressableAPI.host
+        components.path = AddressableAPI.path + "/users/\(userId)"
+
+        return components
+    }
+
 
     func getWebSocketRequestComponents(with userToken: String) -> URLComponents {
         var components = URLComponents()

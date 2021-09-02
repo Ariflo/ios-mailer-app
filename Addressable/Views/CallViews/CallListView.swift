@@ -150,7 +150,6 @@ struct CallListView: View, Equatable {
             }
         }
         .background(Color.addressableLightGray)
-        .padding(.top, -10)
     }
     private func getTag(for score: Int) -> String {
         switch score {

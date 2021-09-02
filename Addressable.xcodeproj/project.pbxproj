@@ -25,6 +25,8 @@
 		CA1210052634D2310077D743 /* NumberUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1210042634D2310077D743 /* NumberUtils.swift */; };
 		CA121010263728200077D743 /* TargetCriteriaSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA12100F263728200077D743 /* TargetCriteriaSliderView.swift */; };
 		CA121015263742D00077D743 /* CheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA121014263742D00077D743 /* CheckView.swift */; };
+		CA365DD226D58F85005BC4DE /* AnalyticEvent+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA365DD026D58F85005BC4DE /* AnalyticEvent+CoreDataClass.swift */; };
+		CA365DD326D58F85005BC4DE /* AnalyticEvent+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA365DD126D58F85005BC4DE /* AnalyticEvent+CoreDataProperties.swift */; };
 		CA36D90226AB851500CCD114 /* MultilineTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA36D90126AB851500CCD114 /* MultilineTextView.swift */; };
 		CA36D90426B0B24000CCD114 /* ConfirmAndSendMailingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA36D90326B0B24000CCD114 /* ConfirmAndSendMailingView.swift */; };
 		CA36D90626B0B3F600CCD114 /* ConfirmAndSendMailingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA36D90526B0B3F600CCD114 /* ConfirmAndSendMailingViewModel.swift */; };
@@ -47,7 +49,9 @@
 		CA4A0F5225F2CE3200BF89CF /* CustomSegmentedPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4A0F5125F2CE3200BF89CF /* CustomSegmentedPickerView.swift */; };
 		CA4AE34125CD95E8003B6CE8 /* KeyPadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */; };
 		CA4AE37B25D30C86003B6CE8 /* TwilioVoice in Frameworks */ = {isa = PBXBuildFile; productRef = CA4AE37A25D30C86003B6CE8 /* TwilioVoice */; };
+		CA4E232A26E011A00055ADDF /* Account.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4E232926E011A00055ADDF /* Account.swift */; };
 		CA62A7A425DED59B005BF410 /* DictionaryUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA62A7A325DED59B005BF410 /* DictionaryUtil.swift */; };
+		CA6353A526E0737B001ECD4F /* EditUserAddressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6353A426E0737B001ECD4F /* EditUserAddressView.swift */; };
 		CA65191A265EF00D00DFE90E /* AddMenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA651919265EF00D00DFE90E /* AddMenuItem.swift */; };
 		CA6B716A2656C90400E2C77A /* DependencyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6B71692656C90400E2C77A /* DependencyProvider.swift */; };
 		CA6B716C2656C9F400E2C77A /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA6B716B2656C9F400E2C77A /* ServiceProvider.swift */; };
@@ -67,6 +71,8 @@
 		CA93F49E25C9E41000271404 /* AddressableCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93F49D25C9E41000271404 /* AddressableCallView.swift */; };
 		CA9504DD2627834500F0245E /* PreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9504DC2627834500F0245E /* PreviewViewModel.swift */; };
 		CA9504E2262783F200F0245E /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9504E1262783F200F0245E /* PreviewView.swift */; };
+		CA9A3B4326CDC53C00193EDE /* UtilityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9A3B4226CDC53C00193EDE /* UtilityProvider.swift */; };
+		CA9A3B4526CDC5AF00193EDE /* AnalyticsTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9A3B4426CDC5AF00193EDE /* AnalyticsTracker.swift */; };
 		CAA2A73C26B3111D0007FAD6 /* SendFeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA2A73B26B3111D0007FAD6 /* SendFeedbackView.swift */; };
 		CAA2A73E26B31BD70007FAD6 /* SendFeedbackViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA2A73D26B31BD70007FAD6 /* SendFeedbackViewModel.swift */; };
 		CAA2A74026B335720007FAD6 /* Feedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA2A73F26B335720007FAD6 /* Feedback.swift */; };
@@ -80,6 +86,10 @@
 		CAB4F995267BCA1C00B44D02 /* EditReturnAddressViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4F994267BCA1C00B44D02 /* EditReturnAddressViewModel.swift */; };
 		CAB4F997267BCC1100B44D02 /* MailingCoverImagePagerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAB4F996267BCC1100B44D02 /* MailingCoverImagePagerViewModel.swift */; };
 		CAB80CA425B8EFF4005E868D /* ringtone.wav in Resources */ = {isa = PBXBuildFile; fileRef = CAB80CA325B8EFF4005E868D /* ringtone.wav */; };
+		CABE1C2626D5A15700A3F033 /* AnalyticEvents.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CABE1C2426D5A15700A3F033 /* AnalyticEvents.xcdatamodeld */; };
+		CABE1C2826D5C43600A3F033 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE1C2726D5C43600A3F033 /* Analytics.swift */; };
+		CABE1C2A26D6FD2E00A3F033 /* DateUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE1C2926D6FD2E00A3F033 /* DateUtil.swift */; };
+		CABE1C3026D8473200A3F033 /* UIDeviceUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE1C2F26D8473200A3F033 /* UIDeviceUtil.swift */; };
 		CABE7A5E2639E5FC00B1B9AE /* DetectScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CABE7A5D2639E5FC00B1B9AE /* DetectScrollView.swift */; };
 		CAC8B086259BE6D400D4447F /* KeychainServiceUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */; };
 		CAC8B0A0259CFBC800D4447F /* AppView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B09F259CFBC800D4447F /* AppView.swift */; };
@@ -88,6 +98,8 @@
 		CAC8B0BD259D020500D4447F /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0BC259D020500D4447F /* ProfileView.swift */; };
 		CAC8B0D5259D347F00D4447F /* JsonUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0D4259D347F00D4447F /* JsonUtil.swift */; };
 		CAC8B0DD259D36AF00D4447F /* ApiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAC8B0DC259D36AF00D4447F /* ApiService.swift */; };
+		CACC525226DEC2C600EBE92A /* ProfileSettingSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACC525126DEC2C600EBE92A /* ProfileSettingSectionView.swift */; };
+		CACC525426DEDF1E00EBE92A /* Handwriting.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACC525326DEDF1E00EBE92A /* Handwriting.swift */; };
 		CACE58AA2666C89800BDD0A9 /* CampaignsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACE58A92666C89800BDD0A9 /* CampaignsListView.swift */; };
 		CACE58AE2668311F00BDD0A9 /* AdaptsToKeyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACE58AD2668311F00BDD0A9 /* AdaptsToKeyboard.swift */; };
 		CACE58B62669731800BDD0A9 /* CampaignsFilterBoxesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CACE58B52669731800BDD0A9 /* CampaignsFilterBoxesView.swift */; };
@@ -200,6 +212,8 @@
 		CA1210042634D2310077D743 /* NumberUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberUtils.swift; sourceTree = "<group>"; };
 		CA12100F263728200077D743 /* TargetCriteriaSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetCriteriaSliderView.swift; sourceTree = "<group>"; };
 		CA121014263742D00077D743 /* CheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckView.swift; sourceTree = "<group>"; };
+		CA365DD026D58F85005BC4DE /* AnalyticEvent+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticEvent+CoreDataClass.swift"; sourceTree = "<group>"; };
+		CA365DD126D58F85005BC4DE /* AnalyticEvent+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticEvent+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		CA36D90126AB851500CCD114 /* MultilineTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextView.swift; sourceTree = "<group>"; };
 		CA36D90326B0B24000CCD114 /* ConfirmAndSendMailingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmAndSendMailingView.swift; sourceTree = "<group>"; };
 		CA36D90526B0B3F600CCD114 /* ConfirmAndSendMailingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmAndSendMailingViewModel.swift; sourceTree = "<group>"; };
@@ -221,7 +235,9 @@
 		CA4A0F4C25F1AF8000BF89CF /* SegmentedControlIconOptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedControlIconOptionView.swift; sourceTree = "<group>"; };
 		CA4A0F5125F2CE3200BF89CF /* CustomSegmentedPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomSegmentedPickerView.swift; sourceTree = "<group>"; };
 		CA4AE34025CD95E8003B6CE8 /* KeyPadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPadView.swift; sourceTree = "<group>"; };
+		CA4E232926E011A00055ADDF /* Account.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Account.swift; sourceTree = "<group>"; };
 		CA62A7A325DED59B005BF410 /* DictionaryUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DictionaryUtil.swift; sourceTree = "<group>"; };
+		CA6353A426E0737B001ECD4F /* EditUserAddressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditUserAddressView.swift; sourceTree = "<group>"; };
 		CA651919265EF00D00DFE90E /* AddMenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddMenuItem.swift; sourceTree = "<group>"; };
 		CA6B71692656C90400E2C77A /* DependencyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DependencyProvider.swift; sourceTree = "<group>"; };
 		CA6B716B2656C9F400E2C77A /* ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProvider.swift; sourceTree = "<group>"; };
@@ -241,6 +257,8 @@
 		CA93F49D25C9E41000271404 /* AddressableCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressableCallView.swift; sourceTree = "<group>"; };
 		CA9504DC2627834500F0245E /* PreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewModel.swift; sourceTree = "<group>"; };
 		CA9504E1262783F200F0245E /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
+		CA9A3B4226CDC53C00193EDE /* UtilityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilityProvider.swift; sourceTree = "<group>"; };
+		CA9A3B4426CDC5AF00193EDE /* AnalyticsTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTracker.swift; sourceTree = "<group>"; };
 		CAA2A73B26B3111D0007FAD6 /* SendFeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendFeedbackView.swift; sourceTree = "<group>"; };
 		CAA2A73D26B31BD70007FAD6 /* SendFeedbackViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendFeedbackViewModel.swift; sourceTree = "<group>"; };
 		CAA2A73F26B335720007FAD6 /* Feedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feedback.swift; sourceTree = "<group>"; };
@@ -254,6 +272,10 @@
 		CAB4F994267BCA1C00B44D02 /* EditReturnAddressViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditReturnAddressViewModel.swift; sourceTree = "<group>"; };
 		CAB4F996267BCC1100B44D02 /* MailingCoverImagePagerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MailingCoverImagePagerViewModel.swift; sourceTree = "<group>"; };
 		CAB80CA325B8EFF4005E868D /* ringtone.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = ringtone.wav; sourceTree = "<group>"; };
+		CABE1C2526D5A15700A3F033 /* AnalyticEvents.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AnalyticEvents.xcdatamodel; sourceTree = "<group>"; };
+		CABE1C2726D5C43600A3F033 /* Analytics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
+		CABE1C2926D6FD2E00A3F033 /* DateUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtil.swift; sourceTree = "<group>"; };
+		CABE1C2F26D8473200A3F033 /* UIDeviceUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIDeviceUtil.swift; sourceTree = "<group>"; };
 		CABE7A5D2639E5FC00B1B9AE /* DetectScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetectScrollView.swift; sourceTree = "<group>"; };
 		CAC8B085259BE6D400D4447F /* KeychainServiceUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainServiceUtil.swift; sourceTree = "<group>"; };
 		CAC8B09F259CFBC800D4447F /* AppView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppView.swift; sourceTree = "<group>"; };
@@ -262,6 +284,8 @@
 		CAC8B0BC259D020500D4447F /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		CAC8B0D4259D347F00D4447F /* JsonUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JsonUtil.swift; sourceTree = "<group>"; };
 		CAC8B0DC259D36AF00D4447F /* ApiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiService.swift; sourceTree = "<group>"; };
+		CACC525126DEC2C600EBE92A /* ProfileSettingSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileSettingSectionView.swift; sourceTree = "<group>"; };
+		CACC525326DEDF1E00EBE92A /* Handwriting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Handwriting.swift; sourceTree = "<group>"; };
 		CACE58A92666C89800BDD0A9 /* CampaignsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignsListView.swift; sourceTree = "<group>"; };
 		CACE58AD2668311F00BDD0A9 /* AdaptsToKeyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptsToKeyboard.swift; sourceTree = "<group>"; };
 		CACE58B52669731800BDD0A9 /* CampaignsFilterBoxesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignsFilterBoxesView.swift; sourceTree = "<group>"; };
@@ -416,6 +440,7 @@
 				B370BC4C2576C2860066624A /* Addressable.entitlements */,
 				B370BC1F2576BAC10066624A /* Info.plist */,
 				B370BC1C2576BAC10066624A /* Preview Content */,
+				CABE1C2426D5A15700A3F033 /* AnalyticEvents.xcdatamodeld */,
 			);
 			path = Addressable;
 			sourceTree = "<group>";
@@ -451,11 +476,11 @@
 			children = (
 				CAC8B09F259CFBC800D4447F /* AppView.swift */,
 				B370BC862576DE9F0066624A /* SignInView.swift */,
-				CAC8B0BC259D020500D4447F /* ProfileView.swift */,
 				CACE58C32671404E00BDD0A9 /* MailingRecipientsListView.swift */,
 				CA054A7D265C2F0900729D13 /* DashboardViews */,
 				CA6C4F9B2656D74500C36498 /* MessageViews */,
 				CA6C4F9A2656D73400C36498 /* CallViews */,
+				CACC525026DEC27200EBE92A /* ProfileSettingViews */,
 				CAB4F97D26794EBC00B44D02 /* MailingDetailViews */,
 				CA6C4F9C2656D7EB00C36498 /* RadiusMailingViews */,
 				CA6C4F982656D6CD00C36498 /* ViewsUtilities */,
@@ -481,9 +506,19 @@
 			path = DashboardViews;
 			sourceTree = "<group>";
 		};
+		CA365DCF26D58F5D005BC4DE /* CoreDataModels */ = {
+			isa = PBXGroup;
+			children = (
+				CA365DD026D58F85005BC4DE /* AnalyticEvent+CoreDataClass.swift */,
+				CA365DD126D58F85005BC4DE /* AnalyticEvent+CoreDataProperties.swift */,
+			);
+			path = CoreDataModels;
+			sourceTree = "<group>";
+		};
 		CA3CE7F6259BBA1900A230E1 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				CA365DCF26D58F5D005BC4DE /* CoreDataModels */,
 				CA88420625A3A7D200E0D75A /* Authorization.swift */,
 				CA8555D525A81B330063274D /* CallManager.swift */,
 				CA85565725AFC4910063274D /* IncomingLead.swift */,
@@ -496,6 +531,9 @@
 				CA48C8462656E030003A23EC /* MailingCoverImage.swift */,
 				CA48C8482656E0FD003A23EC /* Recipient.swift */,
 				CAA2A73F26B335720007FAD6 /* Feedback.swift */,
+				CABE1C2726D5C43600A3F033 /* Analytics.swift */,
+				CACC525326DEDF1E00EBE92A /* Handwriting.swift */,
+				CA4E232926E011A00055ADDF /* Account.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -540,6 +578,10 @@
 				CA1210042634D2310077D743 /* NumberUtils.swift */,
 				CA0FE8DD264B614900AAE273 /* StringsUtil.swift */,
 				CAB4F984267A66AE00B44D02 /* ArrayUtil.swift */,
+				CA9A3B4226CDC53C00193EDE /* UtilityProvider.swift */,
+				CA9A3B4426CDC5AF00193EDE /* AnalyticsTracker.swift */,
+				CABE1C2926D6FD2E00A3F033 /* DateUtil.swift */,
+				CABE1C2F26D8473200A3F033 /* UIDeviceUtil.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -665,6 +707,16 @@
 				CAB80CA325B8EFF4005E868D /* ringtone.wav */,
 			);
 			path = Ringtone;
+			sourceTree = "<group>";
+		};
+		CACC525026DEC27200EBE92A /* ProfileSettingViews */ = {
+			isa = PBXGroup;
+			children = (
+				CAC8B0BC259D020500D4447F /* ProfileView.swift */,
+				CACC525126DEC2C600EBE92A /* ProfileSettingSectionView.swift */,
+				CA6353A426E0737B001ECD4F /* EditUserAddressView.swift */,
+			);
+			path = ProfileSettingViews;
 			sourceTree = "<group>";
 		};
 		CACFA5B8263335C6007AA8E4 /* AddressableFonts */ = {
@@ -893,6 +945,7 @@
 				CA36D90626B0B3F600CCD114 /* ConfirmAndSendMailingViewModel.swift in Sources */,
 				CA62A7A425DED59B005BF410 /* DictionaryUtil.swift in Sources */,
 				CA4AE34125CD95E8003B6CE8 /* KeyPadView.swift in Sources */,
+				CA6353A526E0737B001ECD4F /* EditUserAddressView.swift in Sources */,
 				CA120FFB2634BFBB0077D743 /* SliderUtils.swift in Sources */,
 				CAC8B0D5259D347F00D4447F /* JsonUtil.swift in Sources */,
 				CAC8B0DD259D36AF00D4447F /* ApiService.swift in Sources */,
@@ -900,12 +953,18 @@
 				CA65191A265EF00D00DFE90E /* AddMenuItem.swift in Sources */,
 				CAB4F987267A6B2100B44D02 /* MailingCoverArtView.swift in Sources */,
 				CAFECD2D26320B15009A7837 /* ComposeRadiusAudienceConfirmationView.swift in Sources */,
+				CA4E232A26E011A00055ADDF /* Account.swift in Sources */,
 				CA85568125B0E6400063274D /* ContentMessageView.swift in Sources */,
 				CA6B716A2656C90400E2C77A /* DependencyProvider.swift in Sources */,
+				CA365DD226D58F85005BC4DE /* AnalyticEvent+CoreDataClass.swift in Sources */,
 				CAC8B0A0259CFBC800D4447F /* AppView.swift in Sources */,
 				CA85568E25B0EB230063274D /* MessageChatView.swift in Sources */,
 				CAFDBEAE25D5DF0D002D17B4 /* GoogleMapsView.swift in Sources */,
 				CABE7A5E2639E5FC00B1B9AE /* DetectScrollView.swift in Sources */,
+				CA9A3B4326CDC53C00193EDE /* UtilityProvider.swift in Sources */,
+				CACC525226DEC2C600EBE92A /* ProfileSettingSectionView.swift in Sources */,
+				CACC525426DEDF1E00EBE92A /* Handwriting.swift in Sources */,
+				CABE1C2626D5A15700A3F033 /* AnalyticEvents.xcdatamodeld in Sources */,
 				CA36D90426B0B24000CCD114 /* ConfirmAndSendMailingView.swift in Sources */,
 				CAB4F98D267B1FA400B44D02 /* MailingCoverImagePagerView.swift in Sources */,
 				CA48C8432656DF57003A23EC /* MessageTemplate.swift in Sources */,
@@ -921,8 +980,10 @@
 				CA85565D25AFC5ED0063274D /* CallsViewModel.swift in Sources */,
 				CAF5A52026C1F83900F55B54 /* SelectAudienceView.swift in Sources */,
 				CA48C8412656DE93003A23EC /* CustomNote.swift in Sources */,
+				CABE1C2A26D6FD2E00A3F033 /* DateUtil.swift in Sources */,
 				CAB4F981267A5DF900B44D02 /* MailingCoverImageGalleryView.swift in Sources */,
 				CA054A81265C309800729D13 /* CampaignsView.swift in Sources */,
+				CA365DD326D58F85005BC4DE /* AnalyticEvent+CoreDataProperties.swift in Sources */,
 				CAFECD1E2632099D009A7837 /* ComposeRadiusCoverImageSelectionView.swift in Sources */,
 				CACE58C6267142AC00BDD0A9 /* MailingRecipientsListViewModel.swift in Sources */,
 				CAFDBEC525D6F3D3002D17B4 /* ComposeRadiusViewModel.swift in Sources */,
@@ -931,6 +992,7 @@
 				CA4263C126BDCDA500F533A5 /* MessageTemplateSelectionViewModel.swift in Sources */,
 				CA88420725A3A7D200E0D75A /* Authorization.swift in Sources */,
 				CA054A7F265C2F4E00729D13 /* NavigationMenuView.swift in Sources */,
+				CABE1C2826D5C43600A3F033 /* Analytics.swift in Sources */,
 				CAB4F995267BCA1C00B44D02 /* EditReturnAddressViewModel.swift in Sources */,
 				CA85565825AFC4910063274D /* IncomingLead.swift in Sources */,
 				CA054A83265C310300729D13 /* CampaignsViewModel.swift in Sources */,
@@ -961,6 +1023,7 @@
 				CA3B8F8C26557FEE005A12EF /* ProfileViewModel.swift in Sources */,
 				CAFECD23263209F2009A7837 /* ComposeRadiusTopicSelectionView.swift in Sources */,
 				CAC8B0BD259D020500D4447F /* ProfileView.swift in Sources */,
+				CABE1C3026D8473200A3F033 /* UIDeviceUtil.swift in Sources */,
 				B370BC872576DE9F0066624A /* SignInView.swift in Sources */,
 				CA48C8492656E0FD003A23EC /* Recipient.swift in Sources */,
 				CA121015263742D00077D743 /* CheckView.swift in Sources */,
@@ -982,6 +1045,7 @@
 				CAA2A74026B335720007FAD6 /* Feedback.swift in Sources */,
 				CA4A0F4325F1966A00BF89CF /* TagIncomingLeadView.swift in Sources */,
 				CACFA5DD26333B04007AA8E4 /* FontUtils.swift in Sources */,
+				CA9A3B4526CDC5AF00193EDE /* AnalyticsTracker.swift in Sources */,
 				CA054A85265C361B00729D13 /* CustomHeader.swift in Sources */,
 				CA1210052634D2310077D743 /* NumberUtils.swift in Sources */,
 				CA0FE8DE264B614900AAE273 /* StringsUtil.swift in Sources */,
@@ -1146,7 +1210,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;
@@ -1160,7 +1224,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.2;
+				MARKETING_VERSION = 0.1.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1176,7 +1240,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				ENABLE_PREVIEWS = YES;
@@ -1190,7 +1254,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.2;
+				MARKETING_VERSION = 0.1.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1342,6 +1406,19 @@
 			productName = TwilioVoice;
 		};
 /* End XCSwiftPackageProductDependency section */
+
+/* Begin XCVersionGroup section */
+		CABE1C2426D5A15700A3F033 /* AnalyticEvents.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				CABE1C2526D5A15700A3F033 /* AnalyticEvents.xcdatamodel */,
+			);
+			currentVersion = CABE1C2526D5A15700A3F033 /* AnalyticEvents.xcdatamodel */;
+			path = AnalyticEvents.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = B370BC0B2576BAC10066624A /* Project object */;
 }

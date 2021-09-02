@@ -667,8 +667,10 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     }
 
     private func connectToSocket(connectionCompletion: @escaping (Data) -> Void) {
-        if let userToken = KeyChainServiceUtil.shared[userAppToken] {
-            apiService.connectToWebSocket(userToken: userToken) { data in
+        if let keyStoreUser = KeyChainServiceUtil.shared[userData],
+           let userData = keyStoreUser.data(using: .utf8),
+           let user = try? JSONDecoder().decode(User.self, from: userData) {
+            apiService.connectToWebSocket(userToken: user.authenticationToken) { data in
                 guard data != nil else {
                     print("No data to confirm connection to socket")
                     return
