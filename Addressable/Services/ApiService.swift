@@ -379,413 +379,497 @@ extension ApiService: FetchableData {
 private extension ApiService {
     // swiftlint:disable convenience_type
     struct AddressableAPI {
-        static let scheme = "https"
-        static let host = "live.addressable.app"
+        static var components = URLComponents()
+        static let scheme = Bundle.main.object(forInfoDictionaryKey: "DOMAIN_SCHEME") as? String ?? ""
+        static let host = Bundle.main.object(forInfoDictionaryKey: "API_DOMAIN_NAME") as? String ?? ""
         static let path = "/api/v1"
+        static let port = 3000
     }
 
     func getAuthorizationRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/auth"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/auth"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getTwilioAccessTokenRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/auth/mobile_registration"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/auth/mobile_registration"
 
-        return components
+        return AddressableAPI.components
     }
 
     func logoutMobileUserRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/auth/mobile_deregistration"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/auth/mobile_deregistration"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getCampaignsRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/campaigns"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/campaigns"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getIncomingLeadsRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/incoming_leads"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/incoming_leads"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getIncomingLeadsWithMessagesRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/lead_messages"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/lead_messages"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getLeadMessagesRequestComponents(for leadId: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/lead_messages/\(leadId)"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/lead_messages/\(leadId)"
 
-        return components
+        return AddressableAPI.components
     }
 
     func sendLeadMessageRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/lead_messages"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/lead_messages"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getMailingCoverArtRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/layout_templates"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/layout_templates"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getMailingReturnAddressRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/return_addresses"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/return_addresses"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getMailingMessageTemplatesRequestComponents(with mailingId: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/mailings/\(mailingId)" +
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/mailings/\(mailingId)" +
             "/message_templates/all_templates_with_merge_vars"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getMessageTemplateRequestComponents(for templateId: Int, with mailingId: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/mailings/\(mailingId)" +
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/mailings/\(mailingId)" +
             "/message_templates/\(templateId)/template_with_merge_vars"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateMessageTemplateRequestComponents(for templateId: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/message_templates/\(templateId)"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/message_templates/\(templateId)"
 
-        return components
+        return AddressableAPI.components
     }
 
     func addParticipantToCallRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/outgoing_calls/add_caller"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/outgoing_calls/add_caller"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getMultiTouchTopicRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/multi_touch_topics"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/multi_touch_topics"
 
-        return components
+        return AddressableAPI.components
     }
 
     func createRadiusMailingRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/radius_mailings"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/radius_mailings"
 
-        return components
+        return AddressableAPI.components
     }
 
     func mailingRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/mailings/\(id)"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/mailings/\(id)"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateRadiusMailingLocationRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/radius_mailings/\(id)/subject_address"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/radius_mailings/\(id)/subject_address"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateRadiusMailingCoverRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/radius_mailings/\(id)/cover"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/radius_mailings/\(id)/cover"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateMailingCoverRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/mailings/\(id)/cover"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/mailings/\(id)/cover"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateMailingAudienceRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/mailings/\(id)/audience"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/mailings/\(id)/audience"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateRadiusMailingTopicRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/radius_mailings/\(id)/topic"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/radius_mailings/\(id)/topic"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateRadiusMailingListRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/radius_mailings/\(id)/list"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/radius_mailings/\(id)/list"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateRadiusMailingDateRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/radius_mailings/\(id)/target_date"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/radius_mailings/\(id)/target_date"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateMailingReturnAddressRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/mailings/\(id)/from_address"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/mailings/\(id)/from_address"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateRadiusMailingStatusRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/radius_mailings/\(id)/status"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/radius_mailings/\(id)/status"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateListEntryRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/list_entries/\(id)"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/list_entries/\(id)"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateIncomingLeadRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/incoming_leads/\(id)"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/incoming_leads/\(id)"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getDefaultDataTreeSearchCriteriaRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/data_tree_search/default_criteria"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/data_tree_search/default_criteria"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getMailingRecipientsRequestComponents(for id: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/mailings/\(id)/recipients"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/mailings/\(id)/recipients"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getRemoveRecipientFromListRequestComponents(accountId: Int, recipientId: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/accounts/\(accountId)/removals/\(recipientId)" +
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/accounts/\(accountId)/removals/\(recipientId)" +
             "/create_removal_from_list_entry"
 
-        return components
+        return AddressableAPI.components
     }
 
     func addUserNotesRequestComponents(accountId: Int, leadId: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/accounts/\(accountId)/incoming_leads/\(leadId)/add_note"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/accounts/\(accountId)" +
+            "/incoming_leads/\(leadId)/add_note"
 
-        return components
+        return AddressableAPI.components
     }
 
     func createTransactionRequestComponents(accountId: Int, mailingId: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/accounts/\(accountId)/mailings/\(mailingId)/create_transaction"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/accounts/\(accountId)" +
+            "/mailings/\(mailingId)/create_transaction"
 
-        return components
+        return AddressableAPI.components
     }
 
     func cloneMailingRequestComponents(accountId: Int, mailingId: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/accounts/\(accountId)/mailings/\(mailingId)/clone"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/accounts/\(accountId)/mailings/\(mailingId)/clone"
 
-        return components
+        return AddressableAPI.components
     }
 
     func listUploadsRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/list_uploads"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/list_uploads"
 
-        return components
+        return AddressableAPI.components
     }
 
     func sendFeedbackRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/feedback"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/feedback"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getAccountRequestComponents(with accountID: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/accounts/\(accountID)"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/accounts/\(accountID)"
 
-        return components
+        return AddressableAPI.components
     }
 
     func getHandwritingsRequestComponents() -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/handwritings"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/handwritings"
 
-        return components
+        return AddressableAPI.components
     }
 
     func updateUserRequestComponents(with userId: Int) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = AddressableAPI.scheme
-        components.host = AddressableAPI.host
-        components.path = AddressableAPI.path + "/users/\(userId)"
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/users/\(userId)"
 
-        return components
+        return AddressableAPI.components
     }
 
 
     func getWebSocketRequestComponents(with userToken: String) -> URLComponents {
-        var components = URLComponents()
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
 
-        components.scheme = "ws"
-        components.host = AddressableAPI.host
-        components.path = "/cable"
-        components.queryItems = [URLQueryItem(name: "user_token", value: userToken)]
+        AddressableAPI.components.scheme = "ws"
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = "/cable"
+        AddressableAPI.components.queryItems = [URLQueryItem(name: "user_token", value: userToken)]
 
-        return components
+        return AddressableAPI.components
     }
 }

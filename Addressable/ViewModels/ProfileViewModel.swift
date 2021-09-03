@@ -212,9 +212,9 @@ class ProfileViewModel: ObservableObject {
 
         userFirstName = user.firstName
         userLastName = user.lastName
-        userBusinessName = user.companyName
+        userBusinessName = user.companyName ?? ""
         userAddressLine1 = user.addressLine1
-        userAddressLine2 = user.addressLine2
+        userAddressLine2 = user.addressLine2 ?? ""
         userCity = user.city
         userState = user.state
         userZipcode = user.zipcode

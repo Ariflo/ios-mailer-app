@@ -319,7 +319,9 @@ struct ProfileSettingSectionView: View {
             }
         case .balance:
             guard let user = getCurrentUser(),
-                  let url = URL(string: "https://live.addressable.app/accounts/\(user.accountID)/token_orders")
+                  let scheme = Bundle.main.object(forInfoDictionaryKey: "DOMAIN_SCHEME") as? String,
+                  let host = Bundle.main.object(forInfoDictionaryKey: "API_DOMAIN_NAME") as? String,
+                  let url = URL(string: "\(scheme)://\(host)/accounts/\(user.accountID)/token_orders")
             else {
                 alertType = .appError
                 showingAlert = true
@@ -328,7 +330,12 @@ struct ProfileSettingSectionView: View {
             UIApplication.shared.open(url)
         case .team:
             guard let user = getCurrentUser(),
-                  let url = URL(string: "https://live.addressable.app/users/invitation/new?account_id=\(user.accountID)&from_layout=application")
+                  let scheme = Bundle.main.object(forInfoDictionaryKey: "DOMAIN_SCHEME") as? String,
+                  let host = Bundle.main.object(forInfoDictionaryKey: "API_DOMAIN_NAME") as? String,
+                  let url = URL(
+                    string: "\(scheme)://\(host)/users/invitation/new?account_id=\(user.accountID)" +
+                        "&from_layout=application"
+                  )
             else {
                 alertType = .appError
                 showingAlert = true
@@ -340,7 +347,9 @@ struct ProfileSettingSectionView: View {
                 isEditingUserAddress = true
             }
         case .api:
-            guard let url = URL(string: "https://live.addressable.app/api/doc")
+            guard let scheme = Bundle.main.object(forInfoDictionaryKey: "DOMAIN_SCHEME") as? String,
+                  let host = Bundle.main.object(forInfoDictionaryKey: "API_DOMAIN_NAME") as? String,
+                  let url = URL(string: "\(scheme)://\(host)/api/doc")
             else {
                 alertType = .appError
                 showingAlert = true

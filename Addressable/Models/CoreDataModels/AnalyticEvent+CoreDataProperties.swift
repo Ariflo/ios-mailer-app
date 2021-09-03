@@ -49,16 +49,17 @@ extension AnalyticEvent {
         event.eventType = eventType
         event.eventTime = Date().timeIntervalSince1970
         event.sessionID = getEventSessionID(for: event, from: allPreviousEvents)
-        event.environment = "production"
+        event.environment = Bundle.main.object(forInfoDictionaryKey: "ANALYTICS_ENV") as? String ?? "development"
         event.source = "mobile"
         event.message = message
         event.userID = String(user.id)
         event.mobileDeviceType = "\(UIDevice.current.modelName)"
         event.mobileDeviceOS = "\(UIDevice.current.systemName) - \(UIDevice.current.systemVersion)"
 
-        #if DEBUG
+        #if DEBUG || STAGING
         print("*** EVENT_ADDED *** \(event.eventType) - \(event.sessionID)")
         print("*** EVENT_DEVICE *** \(UIDevice.current.modelName)")
+        print("*** EVENT_ENV *** \(event.environment)")
         print("*** EVENT_DEVICE_OS *** \(UIDevice.current.systemName) - \(UIDevice.current.systemVersion)")
         #endif
 
@@ -68,7 +69,7 @@ extension AnalyticEvent {
                 print("allCurrentAnalyticsEvents Fetch Error")
                 return
             }
-            #if DEBUG
+            #if DEBUG || STAGING
             print("*** EVENTS_COUNT ***\(allCurrentAnalyticsEvents.count)")
             print("*** 10_MIN_PASSED ***\(timePassedSinceLastEvent(in: allCurrentAnalyticsEvents, min: 10))")
             #endif
@@ -145,7 +146,7 @@ extension AnalyticEvent {
             return
         }
         request.httpBody = encodedAddressableAnalyticsEvents
-        #if DEBUG
+        #if DEBUG || STAGING
         print(allAnalyticsEvents.map { event in
             AddressableAnalyticEvent(
                 sessionId: event.sessionID,
@@ -166,18 +167,18 @@ extension AnalyticEvent {
                 print("****** flush() Error: \(String(describing: error)) *****")
                 return
             }
-            #if DEBUG
+            #if DEBUG || STAGING
             print("START REMOVE ALL ANALYTICS EVENTS")
             #endif
             self.lastEventPostFlush = allAnalyticsEvents.sorted { $0.eventTime < $1.eventTime }.last
             for eventObj in allAnalyticsEvents {
                 let managedObjectData: NSManagedObject = eventObj
                 context.delete(managedObjectData)
-                #if DEBUG
+                #if DEBUG || STAGING
                 print("EVENT REMOVED")
                 #endif
             }
-            #if DEBUG
+            #if DEBUG || STAGING
             print("ALL ANALYTICS EVENTS REMOVED")
             #endif
         }

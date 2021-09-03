@@ -20,7 +20,10 @@ struct User: Codable, Identifiable {
     let firstName, lastName: String
     let accountID: Int
     let dre: String?
-    let phone, companyName, addressLine1, addressLine2: String
+    let phone: String?
+    let companyName: String?
+    let addressLine1: String
+    let addressLine2: String?
     let city, state, zipcode, authenticationToken: String
     let handwritingID: Int
     let messageTemplateID, defaultLayoutTemplateID: Int?
