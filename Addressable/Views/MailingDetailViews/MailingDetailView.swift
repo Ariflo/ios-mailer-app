@@ -28,7 +28,7 @@ enum MailingDetailSheetTypes: Identifiable {
     }
 }
 
-// swiftlint:disable type_body_length file_length
+// swiftlint:disable type_body_length
 struct MailingDetailView: View, Equatable {
     static func == (lhs: MailingDetailView, rhs: MailingDetailView) -> Bool {
         lhs.viewModel.mailing == rhs.viewModel.mailing
