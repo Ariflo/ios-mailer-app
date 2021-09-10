@@ -179,9 +179,11 @@ struct SubjectListEntry: Codable, Identifiable {
 // MARK: - RadiusMailingResponse
 struct RadiusMailingResponse: Codable {
     let radiusMailing: Mailing
+    let status: TransactionStatus?
 
     enum CodingKeys: String, CodingKey {
         case radiusMailing = "radius_mailing"
+        case status
     }
 }
 // MARK: - OutgoingMailingFromAddress
@@ -287,6 +289,13 @@ struct TargetDropDate: Codable {
 struct InsideCardImageSubscribedResponse: Codable {
     let identifier: String?
     let message: InsideCardImageURLResponse?
+    let type: SocketReponseTypes?
+}
+
+// MARK: - RelatedMailingSubscribedResponse
+struct RelatedMailingSubscribedResponse: Codable {
+    let identifier: String?
+    let message: RadiusMailingResponse?
     let type: SocketReponseTypes?
 }
 

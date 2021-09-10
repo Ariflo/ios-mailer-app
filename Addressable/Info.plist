@@ -22,6 +22,8 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CURRENT_SCHEME_NAME</key>
+	<string>${CURRENT_SCHEME_NAME}</string>
 	<key>DOMAIN_SCHEME</key>
 	<string>${DOMAIN_SCHEME}</string>
 	<key>LSRequiresIPhoneOS</key>

@@ -23,7 +23,7 @@ enum ComposeRadiusSteps: String, CaseIterable {
 }
 // MARK: - ComposeRadiusAlerts
 enum ComposeRadiusAlerts {
-    case somethingWentWrong
+    case somethingWentWrong, paymentRequired
 }
 
 // MARK: - ListStatus
@@ -141,16 +141,17 @@ struct ComposeRadiusView: View {
                     }
                     // MARK: - Button Footer
                     HStack(spacing: 20) {
-                        if viewModel.step != .confirmSend &&
-                            viewModel.step != .radiusSent &&
-                            viewModel.step != .audienceProcessing {
+                        if (viewModel.step != .confirmSend &&
+                                viewModel.step != .radiusSent &&
+                                viewModel.step != .audienceProcessing) || !viewModel.canAfford {
                             // MARK: - Back Button
                             Button(
                                 action: {
                                     guard viewModel.step == .selectLocation ||
                                             viewModel.step == .audienceProcessing ||
                                             viewModel.step == .confirmAudience ||
-                                            (isCurrentMailingListInProgress() && viewModel.step == .selectCard)
+                                            (isCurrentMailingListInProgress() && viewModel.step == .selectCard) ||
+                                            !viewModel.canAfford
                                     else {
                                         viewModel.step.back()
                                         return
@@ -160,7 +161,8 @@ struct ComposeRadiusView: View {
                             ) {
                                 Text(viewModel.step == .audienceProcessing ||
                                         viewModel.step == .confirmAudience ||
-                                        (isCurrentMailingListInProgress() && viewModel.step == .selectCard) ?
+                                        (isCurrentMailingListInProgress() && viewModel.step == .selectCard) ||
+                                        !viewModel.canAfford ?
                                         "Campaigns" :
                                         "Back")
                                     .font(Font.custom("Silka-Medium", size: 18))
@@ -228,9 +230,10 @@ struct ComposeRadiusView: View {
                             Text(getNextButtonText())
                                 .font(Font.custom("Silka-Medium", size: 18))
                                 .multilineTextAlignment(.center)
-                                .frame(maxWidth: viewModel.step == .confirmSend ||
-                                        viewModel.step == .radiusSent ||
-                                        viewModel.step == .audienceProcessing  ? 295 : 140, maxHeight: 50)
+                                .frame(maxWidth: (viewModel.step == .confirmSend ||
+                                                    viewModel.step == .radiusSent ||
+                                                    viewModel.step == .audienceProcessing) &&
+                                        viewModel.canAfford  ? 295 : 140, maxHeight: 50)
                                 .foregroundColor(Color.white)
                                 .background(Color.addressablePurple)
                                 .cornerRadius(5)
@@ -252,12 +255,38 @@ struct ComposeRadiusView: View {
                     }
                 }
             }
+            .onChange(of: viewModel.canAfford) { _ in
+                if !viewModel.canAfford {
+                    alertType = .paymentRequired
+                    showingAlert = true
+                }
+            }
             .alert(isPresented: $showingAlert) {
                 switch alertType {
                 case .somethingWentWrong:
                     return Alert(title: Text("Sorry something went wrong," +
                                                 " try again or reach out to an Addressable " +
                                                 " representative if the problem persists."))
+                case .paymentRequired:
+                    return Alert(
+                        title: Text("Low Token Balance")
+                            .font(Font.custom("Silka-Bold", size: 14)),
+                        message: Text("Please purchase more tokens to send this mailing.")
+                            .font(Font.custom("Silka-Medium", size: 12)),
+                        primaryButton: .default(Text("Buy More")) {
+                            guard let keyStoreUser = KeyChainServiceUtil.shared[userData],
+                                  let userData = keyStoreUser.data(using: .utf8),
+                                  let user = try? JSONDecoder().decode(User.self, from: userData),
+                                  let scheme = Bundle.main.object(forInfoDictionaryKey: "DOMAIN_SCHEME") as? String,
+                                  let host = Bundle.main.object(forInfoDictionaryKey: "API_DOMAIN_NAME") as? String,
+                                  let url = URL(string: "\(scheme)://\(host)/accounts/\(user.accountID)/token_orders")
+                            else {
+                                alertType = .somethingWentWrong
+                                showingAlert = true
+                                return
+                            }
+                            UIApplication.shared.open(url)
+                        }, secondaryButton: .cancel())
                 }
             }
         }.edgesIgnoringSafeArea([.bottom])
@@ -272,7 +301,7 @@ struct ComposeRadiusView: View {
         case .audienceProcessing:
             return "Finish"
         case .confirmSend:
-            return "Confirm & Send"
+            return " Confirm & Send "
         case .radiusSent:
             return "Complete"
         default:
@@ -304,7 +333,7 @@ struct ComposeRadiusView: View {
         case.confirmAudience:
             return viewModel.numActiveRecipients < 1
         case .confirmSend:
-            return viewModel.isEditingTargetDropDate
+            return viewModel.isEditingTargetDropDate || !viewModel.canAfford
         case .radiusSent:
             return false
         }

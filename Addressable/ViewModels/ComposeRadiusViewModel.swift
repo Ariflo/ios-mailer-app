@@ -49,6 +49,7 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     @Published var loadingImages: Bool = false
     @Published var loadingTopics: Bool = false
     @Published var isSelectingCoverImage: Bool = false
+    @Published var canAfford: Bool = true
 
     // In the case that call to API fails set data tree search criteria defaults here
     @Published var dataTreeSearchCriteria = DataTreeSearchCriteria(
@@ -91,6 +92,8 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     @Published var touchOneInsideCardImageData: Data?
     @Published var touchTwoInsideCardImageData: Data?
     @Published var numActiveRecipients: Int = 0
+    var subscribedChannels: [String: Set<Int>] = [:]
+    var subscribedSubjectMailingIds = Set<Int>()
 
     var selectedDropDate: String = ""
     let mailingTouches: [Mailing] = []
@@ -500,19 +503,7 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
                 }
             },
             receiveValue: { mailing in
-                if radiusMailingComponent == .list {
-                    self.touchTwoMailing = mailing
-                    self.connectToSocket { socketResponseData in
-                        if self.touchOneMailing?.cardInsidePreviewUrl == nil {
-                            self.subscribeToInsideCardImage(for: .touchOne, with: socketResponseData)
-                        }
-                        if self.touchTwoMailing?.cardInsidePreviewUrl == nil {
-                            self.subscribeToInsideCardImage(for: .touchTwo, with: socketResponseData)
-                        }
-                    }
-                } else {
-                    self.touchOneMailing = mailing
-                }
+                self.touchOneMailing = mailing
                 completion(mailing)
             })
         .store(in: &disposables)
@@ -666,80 +657,157 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
             .store(in: &disposables)
     }
 
-    private func connectToSocket(connectionCompletion: @escaping (Data) -> Void) {
+    func connectToSocket() {
         if let keyStoreUser = KeyChainServiceUtil.shared[userData],
            let userData = keyStoreUser.data(using: .utf8),
            let user = try? JSONDecoder().decode(User.self, from: userData) {
-            apiService.connectToWebSocket(userToken: user.authenticationToken) { data in
-                guard data != nil else {
+            apiService.connectToWebSocket(
+                userToken: user.authenticationToken
+            ) {[weak self] data in
+                guard let self = self else { return }
+                guard let streamData = data else {
                     print("No data to confirm connection to socket")
                     return
                 }
-                connectionCompletion(data!)
+                self.logSocketPing(data: streamData)
+                self.maybeSubscribeToChannels(with: streamData)
             }
         }
     }
 
-    private func subscribeToInsideCardImage(for touch: AddressableTouch, with socketResponseData: Data) {
-        // Subscribe to inside card image channel
-        if let touchOneMailingId = touchOneMailing?.id,
-           let touchTwoMailingId = touchTwoMailing?.id {
+    private func extractData(from data: Data) {
+        for channel in RadiusSocketChannels.allCases {
+            switch channel {
+            case .insideCardImage:
+                guard let socketResponseData = try? JSONDecoder()
+                        .decode(InsideCardImageSubscribedResponse.self, from: data) else {
+                    #if DEBUG || STAGING
+                    print("InsideCardImageSubscribedResponse decoding Error")
+                    #endif
+                    continue
+                }
+                if let imageDataResponse = socketResponseData.message,
+                   let relevantMailingId = touchTwoMailing == nil ? touchOneMailing?.id : touchTwoMailing?.id {
+                    if relevantMailingId == imageDataResponse.mailingId {
+                        getInsideCardImageData(
+                            for: touchTwoMailing == nil ? .touchOne : .touchTwo,
+                            url: imageDataResponse.cardInsidePreviewUrl
+                        )
+                    }
+                }
+            case .relatedMailing:
+                guard let socketResponseData = try? JSONDecoder()
+                        .decode(RelatedMailingSubscribedResponse.self, from: data) else {
+                    #if DEBUG || STAGING
+                    print("RelatedMailingSubscribedResponse decoding Error")
+                    #endif
+                    continue
+                }
+                if let radiusMailingResponse = socketResponseData.message {
+                    DispatchQueue.main.async {
+                        guard radiusMailingResponse.status == nil  else {
+                            if radiusMailingResponse.status == .paymentRequired {
+                                self.canAfford = false
+                            }
+                            return
+                        }
+                        self.touchTwoMailing = radiusMailingResponse.radiusMailing
+                    }
+                }
+            }
+        }
+    }
+
+    private func maybeSubscribeToChannels(with data: Data) {
+        if touchOneMailing?.cardInsidePreviewUrl == nil ||
+            (touchTwoMailing != nil && touchTwoMailing?.cardInsidePreviewUrl == nil) {
+            subscribeToChannel(channel: .insideCardImage, socketResponseData: data)
+        }
+        if touchTwoMailing == nil {
+            subscribeToChannel(channel: .relatedMailing, socketResponseData: data)
+        }
+    }
+
+    private func subscribeToChannel(
+        channel: RadiusSocketChannels,
+        socketResponseData: Data
+    ) {
+        if let mailingId = touchTwoMailing == nil ? touchOneMailing?.id : touchTwoMailing?.id {
+            guard !subscribedToChannel(channel, for: mailingId) else { return }
+
             self.apiService.subscribe(
                 command: "subscribe",
-                identifier: "{\"channel\": \"CardInsideImageChannel\", \"id\": " +
-                    "\"\(touch == .touchOne ? touchOneMailingId : touchTwoMailingId)\"}"
+                identifier: "{\"channel\": \"\(channel.rawValue)\", \"id\": " +
+                    "\"\(mailingId)\"}"
             )
-            #if DEBUG
-            print("Socket Subscription made for Touch: \(touch) with " +
-                    "id \(touch == .touchOne ? touchOneMailingId : touchTwoMailingId)")
+            #if DEBUG || STAGING
+            print("\(channel.rawValue) Socket Subscription made for mailing with " +
+                    "id \(mailingId)")
             #endif
         } else {
             // Try re-subscribing
-            subscribeToInsideCardImage(for: touch, with: socketResponseData)
-            #if DEBUG
-            print("Socket Subscription re-attempted for Touch: \(touch)")
+            subscribeToChannel(
+                channel: channel,
+                socketResponseData: socketResponseData
+            )
+            #if DEBUG || STAGING
+            print("\(channel.rawValue) Socket Subscription re-attempted for mailing")
             #endif
             return
         }
-        guard let socketResponseData = try? JSONDecoder()
-                .decode(InsideCardImageSubscribedResponse.self, from: socketResponseData)
-        else {
-            // Log Socket Pings
-            #if DEBUG
-            do {
-                let socketPingResponseData = try JSONDecoder()
-                    .decode(
-                        MessageSubscribePingResponse.self,
-                        from: socketResponseData
-                    )
+    }
 
-                switch socketPingResponseData.type {
-                case .confirm:
-                    print("User Successfully Subscribed -> socketResponseData: \(socketPingResponseData)")
-                case .ping:
-                    print("Socket Ping -> socketResponseData: \(socketPingResponseData)")
-                case .welcome:
-                    print("User Successfully Connected to Socket -> " +
-                            "socketResponseData: \(socketPingResponseData)")
-                case .none:
-                    print("Unknown -> socketResponseData: \(socketPingResponseData)")
-                }
-            } catch {
-                print("connectToSocket MessageSubscribeResponse decoding error: \(error)")
-            }
-            #endif
-            return
-        }
-        if let imageDataResponse = socketResponseData.message,
-           let relevantMailingId = touch == .touchOne ? touchOneMailing?.id : touchTwoMailing?.id {
-            if relevantMailingId == imageDataResponse.mailingId {
-                self.getInsideCardImageData(for: touch, url: imageDataResponse.cardInsidePreviewUrl)
-            }
-        }
+    private func subscribedToChannel(_ channel: RadiusSocketChannels, for mailingId: Int) -> Bool {
+        return ((subscribedChannels[channel.rawValue]?.contains(mailingId)) != nil)
     }
 
     func disconnectFromSocket() {
         apiService.disconnectFromWebSocket()
+    }
+
+    func logSocketPing(data: Data) {
+        do {
+            let socketPingResponseData = try JSONDecoder().decode(
+                MessageSubscribePingResponse.self,
+                from: data
+            )
+
+            switch socketPingResponseData.type {
+            case .confirm:
+                if let identifier = socketPingResponseData.identifier {
+                    for channelName in RadiusSocketChannels.allCases where identifier.contains(channelName.rawValue) {
+                        #if DEBUG || STAGING
+                        print("User Successfully Subscribed to \(channelName) -> " +
+                                "socketResponseData: \(socketPingResponseData)")
+                        #endif
+                        if let mailingId = touchTwoMailing == nil ? touchOneMailing?.id : touchTwoMailing?.id {
+                            print("MAILING ID for touch \(touchTwoMailing == nil ? 1 : 2) ID => \(mailingId)")
+                            self.subscribedSubjectMailingIds.insert(mailingId)
+                            self.subscribedChannels[channelName.rawValue] = self.subscribedSubjectMailingIds
+                        }
+                    }
+                }
+            case .ping:
+                #if DEBUG || STAGING
+                print("Socket Ping -> socketResponseData: \(socketPingResponseData)")
+                #endif
+            case .welcome:
+                #if DEBUG || STAGING
+                print("User Successfully Connected to Socket -> " +
+                        "socketResponseData: \(socketPingResponseData)")
+                #endif
+            case .none:
+                #if DEBUG || STAGING
+                print("Unknown -> socketResponseData: \(socketPingResponseData)")
+                #endif
+            }
+        } catch {
+            #if DEBUG || STAGING
+            print("connectToSocket MessageSubscribePingResponse decoding error: \(error)")
+            #endif
+            // Extract data that is not MessageSubscribePingResponse
+            self.extractData(from: data)
+        }
     }
 }
 

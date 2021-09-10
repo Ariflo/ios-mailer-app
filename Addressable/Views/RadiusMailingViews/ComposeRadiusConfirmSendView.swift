@@ -6,6 +6,11 @@
 //
 import SwiftUI
 
+enum RadiusSocketChannels: String, CaseIterable {
+    case insideCardImage = "CardInsideImageChannel"
+    case relatedMailing = "RelatedMailingChannel"
+}
+
 // MARK: - ComposeRadiusConfirmSendView
 struct ComposeRadiusConfirmSendView: View {
     @ObservedObject var viewModel: ComposeRadiusViewModel
@@ -21,7 +26,13 @@ struct ComposeRadiusConfirmSendView: View {
                     // MARK: - Touch Inside Card Preview
                     HStack(alignment: .center) {
                         Spacer()
-                        if !isCardImageReady(for: touch) {
+                        if !viewModel.canAfford {
+                            Text("Please purchase more tokens to create this mailing.")
+                                .font(Font.custom("Silka-Medium", size: 12))
+                                .foregroundColor(Color.addressableFadedBlack)
+                                .multilineTextAlignment(.leading)
+                                .frame(width: 350, height: 200)
+                        } else if !isCardImageReady(for: touch) {
                             ProgressView()
                                 .progressViewStyle(CircularProgressViewStyle())
                                 .frame(width: 350, height: 200)
@@ -84,7 +95,11 @@ struct ComposeRadiusConfirmSendView: View {
                     }.padding(.horizontal, 40)
                 }
             }
-        }.onDisappear {
+        }
+        .onAppear {
+            viewModel.connectToSocket()
+        }
+        .onDisappear {
             viewModel.disconnectFromSocket()
         }
     }

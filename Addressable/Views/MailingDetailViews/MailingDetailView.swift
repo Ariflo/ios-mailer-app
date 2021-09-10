@@ -17,7 +17,7 @@ enum SettingsMenu: String, CaseIterable {
 }
 
 enum MailingDetailAlertTypes {
-    case confirmCancelEdit, confirmCancelMailing, mailingError, addTokensAlert
+    case confirmCancelEdit, confirmCancelMailing, mailingError
 }
 
 enum MailingDetailSheetTypes: Identifiable {
@@ -28,7 +28,7 @@ enum MailingDetailSheetTypes: Identifiable {
     }
 }
 
-// swiftlint:disable type_body_length
+// swiftlint:disable type_body_length file_length
 struct MailingDetailView: View, Equatable {
     static func == (lhs: MailingDetailView, rhs: MailingDetailView) -> Bool {
         lhs.viewModel.mailing == rhs.viewModel.mailing
@@ -292,9 +292,6 @@ struct MailingDetailView: View, Equatable {
                 return Alert(title: Text("Sorry something went wrong, " +
                                             "try again or reach out to an Addressable " +
                                             "representative if the problem persists."))
-            case .addTokensAlert:
-                return Alert(title: Text("Please visit the 'Settings' section " +
-                                            "of the Addressable.app portal to buy more tokens and send this mailing."))
             }
         }
         .background(Color.addressableLightGray)
@@ -326,8 +323,18 @@ struct MailingDetailView: View, Equatable {
              .cancelMailing:
             isShowingAlert = true
         case .addTokens:
-            isShowingAlert = true
-            alertType = .addTokensAlert
+            guard let keyStoreUser = KeyChainServiceUtil.shared[userData],
+                  let userData = keyStoreUser.data(using: .utf8),
+                  let user = try? JSONDecoder().decode(User.self, from: userData),
+                  let scheme = Bundle.main.object(forInfoDictionaryKey: "DOMAIN_SCHEME") as? String,
+                  let host = Bundle.main.object(forInfoDictionaryKey: "API_DOMAIN_NAME") as? String,
+                  let url = URL(string: "\(scheme)://\(host)/accounts/\(user.accountID)/token_orders")
+            else {
+                alertType = .mailingError
+                isShowingAlert = true
+                return
+            }
+            UIApplication.shared.open(url)
         case .clone,
              .sendAgain:
             activeSheetType = .cloneMailing

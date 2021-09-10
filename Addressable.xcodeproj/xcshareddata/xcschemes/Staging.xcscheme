@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B370BC122576BAC10066624A"
-               BuildableName = "Addressable .app"
+               BuildableName = "Addressable.app"
                BlueprintName = "Addressable"
                ReferencedContainer = "container:Addressable.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B370BC122576BAC10066624A"
-            BuildableName = "Addressable .app"
+            BuildableName = "Addressable.app"
             BlueprintName = "Addressable"
             ReferencedContainer = "container:Addressable.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "B370BC122576BAC10066624A"
-            BuildableName = "Addressable .app"
+            BuildableName = "Addressable.app"
             BlueprintName = "Addressable"
             ReferencedContainer = "container:Addressable.xcodeproj">
          </BuildableReference>

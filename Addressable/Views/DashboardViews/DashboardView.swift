@@ -56,6 +56,15 @@ struct DashboardView: View {
                                 .font(Font.custom("Silka-Medium", size: 22))
                                 .foregroundColor(Color.addressablePurple)
                         }.disabled(showNavMenu)
+                        #if DEBUG || STAGING || SANDBOX
+                        if let schemeName = Bundle.main.object(
+                            forInfoDictionaryKey: "CURRENT_SCHEME_NAME"
+                        ) as? String {
+                            Text("(\(schemeName))")
+                                .font(Font.custom("Silka-Medium", size: 16))
+                                .foregroundColor(Color.addressableFadedBlack)
+                        }
+                        #endif
                         Spacer()
                         Button(action: {
                             // Open Side Menu

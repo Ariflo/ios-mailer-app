@@ -12,13 +12,17 @@ enum TransactionStatus: String, Codable {
     case created
     case paymentRequired = "payment_required"
 }
+
+enum ConfirmSendMailingAlertTypes {
+    case paymentRequired, error, incompleteMailing
+}
 // MARK: - ConfirmAndSendMailingView
 struct ConfirmAndSendMailingView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var viewModel: ConfirmAndSendMailingViewModel
 
     @State var showingAlert: Bool = false
-    @State var alertText: String = ""
+    @State var alertType: ConfirmSendMailingAlertTypes = .error
 
     var isMailingReady: Bool = false
 
@@ -102,16 +106,13 @@ struct ConfirmAndSendMailingView: View {
                             // Release to Production
                             viewModel.sendMailing { newMailingTransactionReponse in
                                 guard newMailingTransactionReponse != nil else {
-                                    alertText = "Sorry something went wrong, " +
-                                        "try again or reach out to an Addressable " +
-                                        "representative if the problem persists."
+                                    alertType = .error
                                     showingAlert = true
                                     return
                                 }
                                 guard newMailingTransactionReponse?.transactionStatus != .paymentRequired
                                 else {
-                                    alertText = "Insufficient tokens. Please visit the 'Settings' section " +
-                                        "of the Addressable.app portal to buy more tokens and send this mailing."
+                                    alertType = .paymentRequired
                                     showingAlert = true
                                     return
                                 }
@@ -134,12 +135,39 @@ struct ConfirmAndSendMailingView: View {
             .navigationBarTitle("Release '\(viewModel.mailing.name) \(getTouchNumber())' " +
                                     "to Print", displayMode: .inline)
         }.alert(isPresented: $showingAlert) {
-            Alert(title: Text(alertText))
+            switch alertType {
+            case .paymentRequired:
+                return Alert(
+                    title: Text("Low Token Balance")
+                        .font(Font.custom("Silka-Bold", size: 14)),
+                    message: Text("Please purchase more tokens to send this mailing.")
+                        .font(Font.custom("Silka-Medium", size: 12)),
+                    primaryButton: .default(Text("Buy More")) {
+                        guard let keyStoreUser = KeyChainServiceUtil.shared[userData],
+                              let userData = keyStoreUser.data(using: .utf8),
+                              let user = try? JSONDecoder().decode(User.self, from: userData),
+                              let scheme = Bundle.main.object(forInfoDictionaryKey: "DOMAIN_SCHEME") as? String,
+                              let host = Bundle.main.object(forInfoDictionaryKey: "API_DOMAIN_NAME") as? String,
+                              let url = URL(string: "\(scheme)://\(host)/accounts/\(user.accountID)/token_orders")
+                        else {
+                            alertType = .error
+                            showingAlert = true
+                            return
+                        }
+                        UIApplication.shared.open(url)
+                    }, secondaryButton: .cancel())
+            case .error:
+                return Alert(title: Text("Sorry something went wrong, " +
+                                            "try again or reach out to an Addressable " +
+                                            "representative if the problem persists."))
+            case .incompleteMailing:
+                return Alert(title: Text("Please complete the mailing setup to send."))
+            }
         }
         .onAppear {
             if !isMailingReady {
+                self.alertType = .incompleteMailing
                 self.showingAlert = true
-                self.alertText = "Please complete the mailing setup to send."
             }
         }
     }
