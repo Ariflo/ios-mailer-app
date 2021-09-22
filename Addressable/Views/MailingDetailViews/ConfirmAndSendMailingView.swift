@@ -32,108 +32,109 @@ struct ConfirmAndSendMailingView: View {
     }
 
     var body: some View {
-        NavigationView {
-            ZStack(alignment: .top) {
-                Color.white.edgesIgnoringSafeArea(.all)
-                // MARK: - Mailing Drop Date + Description
-                VStack(spacing: 34) {
-                    Spacer()
-                    Image("ZippyIcon")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 250, height: 250)
-                    Text("Target Drop Date")
-                        .font(Font.custom("Silka-Medium", size: 20))
-                    Text("This is the date you would like the mail to start moving to the " +
-                            "Post Office. The earliest date is 10 business days from submitting " +
-                            "your Mailing.")
-                        .font(Font.custom("Silka-Regular", size: 16))
-                        .foregroundColor(Color.addressableFadedBlack)
-                        .padding(.horizontal, 20)
-                        .multilineTextAlignment(.center)
-                    HStack(alignment: .bottom, spacing: 8) {
-                        HStack {
-                            if viewModel.isEditingTargetDropDate {
-                                DatePicker(
-                                    selection: Binding<Date>(
-                                        get: {
-                                            getTargetDropDateObject()
-                                        }, set: {
-                                            viewModel.setSelectedDropDate(selectedDate: $0)
-                                        }),
-                                    in: getTargetDropDateObject()...,
-                                    displayedComponents: .date
-                                ) {}
-                            } else {
-                                Text("\(getFormattedTargetDropDate())")
-                                    .font(Font.custom("Silka-Bold", size: 22))
-                                    .foregroundColor(Color.black)
-                                    .multilineTextAlignment(.leading)
-                            }
-                            Button(action: {
-                                viewModel.isEditingTargetDropDate.toggle()
-                            }) {
-                                Text(viewModel.isEditingTargetDropDate ? "Set New Drop Date" : "Edit Drop Date")
-                                    .font(Font.custom("Silka-Medium", size: 16))
-                                    .foregroundColor(Color.addressableFadedBlack)
-                                    .underline()
-                                    .multilineTextAlignment(.center)
-                            }
+        ZStack(alignment: .top) {
+            Color.white.edgesIgnoringSafeArea(.all)
+            // MARK: - Release Mailing Header
+            Text("Release '\(viewModel.mailing.name) \(getTouchNumber())' to Print")
+                .font(Font.custom("Silka-Bold", size: 20))
+                .multilineTextAlignment(.center)
+                .padding()
+            // MARK: - Mailing Drop Date + Description
+            VStack(spacing: 34) {
+                Spacer()
+                Image("ZippyIcon")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 250, height: 250)
+                Text("Target Drop Date")
+                    .font(Font.custom("Silka-Medium", size: 20))
+                Text("This is the date you would like the mail to start moving to the " +
+                        "Post Office. The earliest date is 10 business days from submitting " +
+                        "your Mailing.")
+                    .font(Font.custom("Silka-Medium", size: 16))
+                    .foregroundColor(Color.addressableFadedBlack)
+                    .padding(.horizontal, 20)
+                    .multilineTextAlignment(.center)
+                HStack(alignment: .bottom, spacing: 8) {
+                    HStack {
+                        if viewModel.isEditingTargetDropDate {
+                            DatePicker(
+                                selection: Binding<Date>(
+                                    get: {
+                                        getTargetDropDateObject()
+                                    }, set: {
+                                        viewModel.setSelectedDropDate(selectedDate: $0)
+                                    }),
+                                in: getTargetDropDateObject()...,
+                                displayedComponents: .date
+                            ) {}
+                        } else {
+                            Text("\(getFormattedTargetDropDate())")
+                                .font(Font.custom("Silka-Bold", size: 22))
+                                .foregroundColor(Color.black)
+                                .multilineTextAlignment(.leading)
+                        }
+                        Button(action: {
+                            viewModel.isEditingTargetDropDate.toggle()
+                        }) {
+                            Text(viewModel.isEditingTargetDropDate ? "Set New Drop Date" : "Edit Drop Date")
+                                .font(Font.custom("Silka-Medium", size: 16))
+                                .foregroundColor(Color.addressableFadedBlack)
+                                .underline()
+                                .multilineTextAlignment(.center)
                         }
                     }
-                    Text("We will send " +
-                            "\(viewModel.mailing.activeRecipientCount) " +
-                            "cards to \(viewModel.mailing.activeRecipientCount) " +
-                            "recipients\(getMailingSiteAddress())")
-                        .font(Font.custom("Silka-Medium", size: 16))
-                        .foregroundColor(Color.addressableFadedBlack)
-                    Spacer()
-                    HStack(spacing: 8) {
-                        Button(action: {
+                }
+                Text("We will send " +
+                        "\(viewModel.mailing.activeRecipientCount) " +
+                        "cards to \(viewModel.mailing.activeRecipientCount) " +
+                        "recipients\(getMailingSiteAddress())")
+                    .font(Font.custom("Silka-Medium", size: 16))
+                    .foregroundColor(Color.addressableFadedBlack)
+                Spacer()
+                HStack(spacing: 8) {
+                    Button(action: {
+                        presentationMode.wrappedValue.dismiss()
+                    }) {
+                        Text("Cancel")
+                            .font(Font.custom("Silka-Medium", size: 18))
+                            .padding()
+                            .foregroundColor(Color.addressableDarkGray)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 5)
+                                    .stroke(Color.addressableDarkGray, lineWidth: 1)
+                            )
+                            .multilineTextAlignment(.center)
+                    }
+                    Button(action: {
+                        // Release to Production
+                        viewModel.sendMailing { newMailingTransactionReponse in
+                            guard newMailingTransactionReponse != nil else {
+                                alertType = .error
+                                showingAlert = true
+                                return
+                            }
+                            guard newMailingTransactionReponse?.transactionStatus != .paymentRequired
+                            else {
+                                alertType = .paymentRequired
+                                showingAlert = true
+                                return
+                            }
                             presentationMode.wrappedValue.dismiss()
-                        }) {
-                            Text("Cancel")
-                                .font(Font.custom("Silka-Medium", size: 18))
-                                .padding()
-                                .foregroundColor(Color.addressableDarkGray)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 5)
-                                        .stroke(Color.addressableDarkGray, lineWidth: 1)
-                                )
-                                .multilineTextAlignment(.center)
                         }
-                        Button(action: {
-                            // Release to Production
-                            viewModel.sendMailing { newMailingTransactionReponse in
-                                guard newMailingTransactionReponse != nil else {
-                                    alertType = .error
-                                    showingAlert = true
-                                    return
-                                }
-                                guard newMailingTransactionReponse?.transactionStatus != .paymentRequired
-                                else {
-                                    alertType = .paymentRequired
-                                    showingAlert = true
-                                    return
-                                }
-                                presentationMode.wrappedValue.dismiss()
-                            }
-                        }) {
-                            Text("Release to Production")
-                                .font(Font.custom("Silka-Medium", size: 18))
-                                .padding()
-                                .foregroundColor(Color.white)
-                                .background(Color.addressablePurple)
-                                .cornerRadius(5)
-                                .multilineTextAlignment(.center)
-                        }
-                        .disabled(shouldDisableReleaseButton())
-                        .opacity(shouldDisableReleaseButton() ? 0.4 : 1)
+                    }) {
+                        Text("Release to Production")
+                            .font(Font.custom("Silka-Medium", size: 18))
+                            .padding()
+                            .foregroundColor(Color.white)
+                            .background(Color.addressablePurple)
+                            .cornerRadius(5)
+                            .multilineTextAlignment(.center)
                     }
-                }.padding(20)
-            }
-            .navigationBarTitle("Release '\(viewModel.mailing.name) \(getTouchNumber())' " +
-                                    "to Print", displayMode: .inline)
+                    .disabled(shouldDisableReleaseButton())
+                    .opacity(shouldDisableReleaseButton() ? 0.4 : 1)
+                }
+            }.padding(20)
         }.alert(isPresented: $showingAlert) {
             switch alertType {
             case .paymentRequired:

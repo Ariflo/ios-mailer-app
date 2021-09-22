@@ -11,10 +11,12 @@ struct EditReturnAddressView: View {
     @ObservedObject var viewModel: EditReturnAddressViewModel
 
     @Binding var isEditingReturnAddress: Bool
+    var toggleAlert: () -> Void
 
-    init(viewModel: EditReturnAddressViewModel, isEditingReturnAddress: Binding<Bool>) {
+    init(viewModel: EditReturnAddressViewModel, isEditingReturnAddress: Binding<Bool>, toggleAlert: @escaping () -> Void) {
         self.viewModel = viewModel
         self._isEditingReturnAddress = isEditingReturnAddress
+        self.toggleAlert = toggleAlert
     }
     var body: some View {
         VStack {
@@ -76,6 +78,7 @@ struct EditReturnAddressView: View {
                             viewModel.mailing = updatedMailing
                             withAnimation(.easeOut(duration: 0.5)) {
                                 isEditingReturnAddress = false
+                                toggleAlert()
                             }
                         }
                     }

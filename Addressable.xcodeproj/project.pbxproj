@@ -25,6 +25,8 @@
 		CA1210052634D2310077D743 /* NumberUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1210042634D2310077D743 /* NumberUtils.swift */; };
 		CA121010263728200077D743 /* TargetCriteriaSliderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA12100F263728200077D743 /* TargetCriteriaSliderView.swift */; };
 		CA121015263742D00077D743 /* CheckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA121014263742D00077D743 /* CheckView.swift */; };
+		CA27E00826FAA182005B434B /* Popup.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA27E00726FAA182005B434B /* Popup.swift */; };
+		CA27E00A26FAA4B1005B434B /* MessageAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA27E00926FAA4B1005B434B /* MessageAlert.swift */; };
 		CA365DD226D58F85005BC4DE /* AnalyticEvent+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA365DD026D58F85005BC4DE /* AnalyticEvent+CoreDataClass.swift */; };
 		CA365DD326D58F85005BC4DE /* AnalyticEvent+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA365DD126D58F85005BC4DE /* AnalyticEvent+CoreDataProperties.swift */; };
 		CA36D90226AB851500CCD114 /* MultilineTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA36D90126AB851500CCD114 /* MultilineTextView.swift */; };
@@ -212,6 +214,8 @@
 		CA1210042634D2310077D743 /* NumberUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberUtils.swift; sourceTree = "<group>"; };
 		CA12100F263728200077D743 /* TargetCriteriaSliderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetCriteriaSliderView.swift; sourceTree = "<group>"; };
 		CA121014263742D00077D743 /* CheckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckView.swift; sourceTree = "<group>"; };
+		CA27E00726FAA182005B434B /* Popup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Popup.swift; sourceTree = "<group>"; };
+		CA27E00926FAA4B1005B434B /* MessageAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageAlert.swift; sourceTree = "<group>"; };
 		CA365DD026D58F85005BC4DE /* AnalyticEvent+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticEvent+CoreDataClass.swift"; sourceTree = "<group>"; };
 		CA365DD126D58F85005BC4DE /* AnalyticEvent+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AnalyticEvent+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		CA36D90126AB851500CCD114 /* MultilineTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultilineTextView.swift; sourceTree = "<group>"; };
@@ -614,6 +618,8 @@
 				CACE58C72672BB3400BDD0A9 /* TextFieldModifier.swift */,
 				CA36D90126AB851500CCD114 /* MultilineTextView.swift */,
 				CA4263BC26B9E27000F533A5 /* CloneMailingViewModel.swift */,
+				CA27E00726FAA182005B434B /* Popup.swift */,
+				CA27E00926FAA4B1005B434B /* MessageAlert.swift */,
 			);
 			path = ViewsUtilities;
 			sourceTree = "<group>";
@@ -937,6 +943,7 @@
 			files = (
 				CA85567725B0E34F0063274D /* MessagesViewModel.swift in Sources */,
 				CA85567C25B0E5C50063274D /* Message.swift in Sources */,
+				CA27E00826FAA182005B434B /* Popup.swift in Sources */,
 				CAFECD3226320B78009A7837 /* ComposeRadiusConfirmSendView.swift in Sources */,
 				CA48C83F2656DBB5003A23EC /* Mailing.swift in Sources */,
 				CA48C8452656DF86003A23EC /* MultiTouchTopic.swift in Sources */,
@@ -999,6 +1006,7 @@
 				CACE58B82669A6C600BDD0A9 /* CampaignSectionHeaderView.swift in Sources */,
 				CA4263BD26B9E27000F533A5 /* CloneMailingViewModel.swift in Sources */,
 				CAFECD192632091C009A7837 /* ComposeRadiusSelectLocationView.swift in Sources */,
+				CA27E00A26FAA4B1005B434B /* MessageAlert.swift in Sources */,
 				CA36D90226AB851500CCD114 /* MultilineTextView.swift in Sources */,
 				B3DB527F257992F8004196A6 /* DashboardView.swift in Sources */,
 				CAF5A52226C1F8C900F55B54 /* SelectAudienceViewModel.swift in Sources */,
@@ -1212,7 +1220,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				CURRENT_SCHEME_NAME = Debug;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
@@ -1229,7 +1237,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.3;
+				MARKETING_VERSION = 0.1.4;
 				OTHER_LDFLAGS = "-ObjC";
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app.dev;
@@ -1248,7 +1256,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				CURRENT_SCHEME_NAME = Release;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
@@ -1265,7 +1273,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.3;
+				MARKETING_VERSION = 0.1.4;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1423,7 +1431,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				CURRENT_SCHEME_NAME = Sandbox;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
@@ -1440,7 +1448,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.3;
+				MARKETING_VERSION = 0.1.4;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app.sandbox;
 				PRODUCT_NAME = "$(CURRENT_SCHEME_NAME)";
@@ -1563,13 +1571,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				CURRENT_SCHEME_NAME = Staging;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
 				DOMAIN_SCHEME = https;
 				ENABLE_PREVIEWS = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)",
@@ -1581,7 +1588,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.3;
+				MARKETING_VERSION = 0.1.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app.dev;

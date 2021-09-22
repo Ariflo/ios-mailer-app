@@ -131,6 +131,7 @@ struct CampaignsView: View, Equatable {
                                 }
                             }
                         }
+                        .padding(.horizontal, 20)
                         .foregroundColor(Color.addressablePurple)
                     }
                     // MARK: - List of Campaigns

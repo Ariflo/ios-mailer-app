@@ -11,17 +11,16 @@ struct CalendarTileView: View {
     var date: String?
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             Text(getFormattedTargetDropMonth())
                 .font(Font.custom("Silka-Bold", size: 8))
-                .padding(EdgeInsets(top: 2, leading: 8, bottom: 0, trailing: 8))
+                .padding(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
                 .foregroundColor(Color.white)
                 .textCase(.uppercase)
                 .background(Color.addressableRed)
             Text(getFormattedTargetDropDay())
                 .font(Font.custom("Silka-Semibold", size: 16))
                 .foregroundColor(Color.black)
-                .padding(EdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8))
         }
         .border(width: 1, edges: [.bottom, .top, .leading, .trailing], color: Color.gray.opacity(0.2))
     }

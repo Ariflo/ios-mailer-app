@@ -19,11 +19,14 @@ struct MessageTemplateSelectionView: View, Equatable {
     @State var isMessagePreviewLoading: Bool = true
     @State var isEditingMessageTemplate: Bool = false
     @State var showingAlert: Bool = false
+    var toggleAlert: () -> Void
 
     init(
-        viewModel: MessageTemplateSelectionViewModel
+        viewModel: MessageTemplateSelectionViewModel,
+        toggleAlert: @escaping () -> Void
     ) {
         self.viewModel = viewModel
+        self.toggleAlert = toggleAlert
     }
 
     var body: some View {
@@ -149,6 +152,7 @@ struct MessageTemplateSelectionView: View, Equatable {
                             viewModel.addMessageTemplate(selectedMessageTemplate) { mailingWithMessageTemplate in
                                 if let newMailing = mailingWithMessageTemplate {
                                     viewModel.mailing = newMailing
+                                    toggleAlert()
                                     presentationMode.wrappedValue.dismiss()
                                 } else {
                                     showingAlert = true

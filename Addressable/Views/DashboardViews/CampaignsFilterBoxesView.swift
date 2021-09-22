@@ -30,7 +30,7 @@ struct CampaignsFilterBoxesView: View {
                             getFilterImage(for: filter)
                                 .imageScale(.small)
                             Text(filter)
-                                .font(Font.custom("Silka-Medium", size: 12))
+                                .font(Font.custom("Silka-Medium", size: 14))
                             filterCases == selectedFilters ?
                                 Image(systemName: "xmark")
                                 .imageScale(.small)

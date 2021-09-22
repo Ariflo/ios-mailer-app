@@ -48,7 +48,6 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
 
     @Published var loadingImages: Bool = false
     @Published var loadingTopics: Bool = false
-    @Published var isSelectingCoverImage: Bool = false
     @Published var canAfford: Bool = true
 
     // In the case that call to API fails set data tree search criteria defaults here

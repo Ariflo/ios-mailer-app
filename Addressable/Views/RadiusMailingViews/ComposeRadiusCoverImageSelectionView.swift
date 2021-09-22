@@ -45,24 +45,10 @@ struct ComposeRadiusCoverImageSelectionView: View {
                         }
                     }
                 }
-                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 375)
-                .tabViewStyle(PageTabViewStyle(
-                                indexDisplayMode: viewModel.isSelectingCoverImage ? .always : .never)
+                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: 475)
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always)
                 )
-                .disabled(!viewModel.isSelectingCoverImage)
-
-                Button(action: {
-                    // Reveal Dots and Category Selector
-                    viewModel.isSelectingCoverImage.toggle()
-                }) {
-                    Text(!viewModel.isSelectingCoverImage ? "Customize" : "Select Card Cover")
-                        .font(Font.custom("Silka-Medium", size: 14))
-                        .foregroundColor(Color.black.opacity(0.3))
-                        .underline()
-                }
                 Spacer()
-            }.onDisappear {
-                viewModel.isSelectingCoverImage = false
             }
         }
     }

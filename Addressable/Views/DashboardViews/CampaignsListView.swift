@@ -107,11 +107,13 @@ struct CampaignsListView: View {
                         CampaignsFilterBoxesView(
                             filterCases: MailingStatus.allCases.map { $0.rawValue },
                             selectedFilters: $selectedFilters
-                        ).frame(maxHeight: 51)
-                    } : nil
+                        )
+                        .frame(maxHeight: 51)
+                    }.padding(.bottom, 12) : nil
             }
             .padding(.horizontal, 20)
             .transition(.move(edge: .bottom))
+            .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
             // MARK: - Campaigns Mailing List
             RefreshableScrollView(refreshing: $viewModel.refreshMailingData) {
                 let isListFiltered = !(selectedFilters.isEmpty && mailingSearchTerm.isEmpty)
@@ -127,7 +129,7 @@ struct CampaignsListView: View {
                     }.background(Color.addressableLightGray)
                 } else {
                     ForEach(MailingStatus.allCases, id: \.self) { status in
-                        isListFiltered ? nil :
+                        isListFiltered || getMailings(with: status).isEmpty ? nil :
                             CampaignSectionHeaderView(
                                 status: status,
                                 count: getMailings(with: status).count,
@@ -135,16 +137,10 @@ struct CampaignsListView: View {
                             )
                         if let mailingStatus = selectedFilters.isEmpty ? status :
                             getMailingStatusFromFilters(with: status) {
-                            if getMailings(with: mailingStatus).count < 1 && mailingSearchTerm.isEmpty {
-                                HStack {
-                                    Spacer()
-                                    Text("No mailings \(status.rawValue.lowercased())")
-                                        .font(Font.custom("Silka-Regular", size: 16))
-                                        .padding()
-                                    Spacer()
-                                }.background(Color.addressableLightGray)
-                            } else {
-                                let mailingList = getMailings(with: mailingStatus).filter { isRelatedToSearchQuery($0) }
+                            if !getMailings(with: mailingStatus).isEmpty {
+                                let mailingList = getMailings(
+                                    with: mailingStatus).filter { isRelatedToSearchQuery($0)
+                                }
                                 ForEach(mailingList.indices) { mailingIndex in
                                     if mailingIndex < (isListFiltered ? mailingList.count :
                                                         maxMailingsDisplayCount) {
@@ -268,7 +264,6 @@ struct MailingRowItem: View {
             tapAction()
         }) {
             MailingCardItemView(mailing: mailing)
-                .shadow(color: Color.addressableLighterGray, radius: 3, x: 2, y: 2)
         }
     }
 }

@@ -36,7 +36,10 @@ struct MailingCardItemView: View {
                 .padding()
         }
         .frame(minWidth: 324, minHeight: 59)
-        .cornerRadius(3)
+        .overlay(
+            RoundedRectangle(cornerRadius: 3)
+                .stroke(Color.addressableFadedBlack, lineWidth: 1)
+        )
         .background(Color.white)
         .padding(.top, 10)
     }

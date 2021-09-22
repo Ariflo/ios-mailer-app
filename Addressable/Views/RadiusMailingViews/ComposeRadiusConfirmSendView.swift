@@ -33,8 +33,11 @@ struct ComposeRadiusConfirmSendView: View {
                                 .multilineTextAlignment(.leading)
                                 .frame(width: 350, height: 200)
                         } else if !isCardImageReady(for: touch) {
-                            ProgressView()
+                            ProgressView("Preview Requested (may take a few minutes)")
                                 .progressViewStyle(CircularProgressViewStyle())
+                                .font(Font.custom("Silka-Medium", size: 12))
+                                .foregroundColor(Color.addressableFadedBlack)
+                                .multilineTextAlignment(.leading)
                                 .frame(width: 350, height: 200)
                         } else {
                             CustomNote.CoverImage(imageData: getInsideCardImageDataFromStore(for: touch))

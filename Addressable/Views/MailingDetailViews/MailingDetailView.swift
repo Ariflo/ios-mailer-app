@@ -28,7 +28,7 @@ enum MailingDetailSheetTypes: Identifiable {
     }
 }
 
-// swiftlint:disable type_body_length
+// swiftlint:disable type_body_length file_length
 struct MailingDetailView: View, Equatable {
     static func == (lhs: MailingDetailView, rhs: MailingDetailView) -> Bool {
         lhs.viewModel.mailing == rhs.viewModel.mailing
@@ -45,6 +45,7 @@ struct MailingDetailView: View, Equatable {
     @State var isShowingAlert: Bool = false
     @State var alertType: MailingDetailAlertTypes = .confirmCancelMailing
     @State var activeSheetType: MailingDetailSheetTypes?
+    @State var isShowingMessageAlert: Bool = false
 
     init(viewModel: MailingDetailViewModel) {
         self.viewModel = viewModel
@@ -178,7 +179,8 @@ struct MailingDetailView: View, Equatable {
                             provider: app.dependencyProvider,
                             selectedMailing: $viewModel.mailing
                         ),
-                        isEditingReturnAddress: $isEditingMailing
+                        isEditingReturnAddress: $isEditingMailing,
+                        toggleAlert: toggleMessageToastView
                     )
                     .padding(20)
                     .transition(.move(edge: .top)) : nil
@@ -223,6 +225,7 @@ struct MailingDetailView: View, Equatable {
                     .transition(.move(edge: .bottom)) : nil
             }
         }
+        .popup(isPresented: isShowingMessageAlert, alignment: .center, content: MessageAlert.init)
         .sheet(item: $activeSheetType) { item in
             switch item {
             case .confirmAndSendMailing:
@@ -248,7 +251,8 @@ struct MailingDetailView: View, Equatable {
                     viewModel: MessageTemplateSelectionViewModel(
                         provider: app.dependencyProvider,
                         selectedMailing: $viewModel.mailing
-                    )
+                    ),
+                    toggleAlert: toggleMessageToastView
                 ).equatable()
             case .addAudience:
                 SelectAudienceView(
@@ -295,6 +299,14 @@ struct MailingDetailView: View, Equatable {
             }
         }
         .background(Color.addressableLightGray)
+    }
+    private func toggleMessageToastView() {
+        isShowingMessageAlert = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+            withAnimation(.easeOut(duration: 0.5)) {
+                isShowingMessageAlert = false
+            }
+        }
     }
     private func shouldDisplay(_ option: SettingsMenu) -> Bool {
         for state in MailingState.allCases where state.rawValue == viewModel.mailing.mailingStatus {

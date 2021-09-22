@@ -325,7 +325,7 @@ struct ComposeRadiusView: View {
         case .selectLocation:
             return viewModel.locationEntry.isEmpty
         case .selectCard:
-            return viewModel.isSelectingCoverImage || viewModel.mailingCoverImages.isEmpty
+            return viewModel.mailingCoverImages.isEmpty
         case .chooseTopic:
             return viewModel.topics.isEmpty || isMissingMergeVars()
         case .audienceProcessing:

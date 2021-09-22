@@ -13,11 +13,11 @@ struct RefreshableScrollView<Content: View>: View {
     @State private var frozen: Bool = false
     @State private var rotation: Angle = .degrees(0)
 
-    var threshold: CGFloat = 80
+    var threshold: CGFloat = 200
     @Binding var refreshing: Bool
     let content: Content
 
-    init(height: CGFloat = 80, refreshing: Binding<Bool>, @ViewBuilder content: () -> Content) {
+    init(height: CGFloat = 200, refreshing: Binding<Bool>, @ViewBuilder content: () -> Content) {
         self.threshold = height
         self._refreshing = refreshing
         self.content = content()
@@ -35,7 +35,6 @@ struct RefreshableScrollView<Content: View>: View {
                         })
 
                     SymbolView(
-                        height: self.threshold,
                         loading: self.refreshing,
                         frozen: self.frozen,
                         rotation: self.rotation
@@ -95,7 +94,6 @@ struct RefreshableScrollView<Content: View>: View {
     }
 
     struct SymbolView: View {
-        var height: CGFloat
         var loading: Bool
         var frozen: Bool
         var rotation: Angle
@@ -108,18 +106,18 @@ struct RefreshableScrollView<Content: View>: View {
                         Spacer()
                         ActivityRep()
                         Spacer()
-                    }.frame(height: height)
+                    }.frame(height: 80)
                     .fixedSize()
-                    .offset(y: -height + (self.loading && self.frozen ? height : 0.0))
+                    .offset(y: -80 + (self.loading && self.frozen ? 80 : 0.0))
                 } else {
                     Image(systemName: "arrow.down") // If not loading, show the arrow
                         .resizable()
                         .aspectRatio(contentMode: .fit)
-                        .frame(width: height * 0.25, height: height * 0.25)
+                        .frame(width: 80 * 0.25, height: 80 * 0.25)
                         .fixedSize()
-                        .padding(height * 0.375)
+                        .padding(80 * 0.375)
                         .rotationEffect(rotation)
-                        .offset(y: -height + (loading && frozen ? +height : 0.0))
+                        .offset(y: -80 + (loading && frozen ? +80 : 0.0))
                 }
             }
         }
