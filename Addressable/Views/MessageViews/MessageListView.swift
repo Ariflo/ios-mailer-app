@@ -12,6 +12,7 @@ struct MessageListView: View, Equatable {
         lhs.selectedMenuItem == rhs.selectedMenuItem
     }
 
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: MessagesViewModel
     @State var navigateToChat = false
     @State var selectedLead = IncomingLead(
@@ -93,11 +94,18 @@ struct MessageListView: View, Equatable {
             NavigationLink(destination: MessageChatView(
                 viewModel: viewModel,
                 lead: selectedLead
-            ),
+            ).environmentObject(app),
             isActive: $navigateToChat) {}
         )
         .onAppear {
-            viewModel.getIncomingLeadsWithMessages()
+            viewModel.getIncomingLeadsWithMessages { incomingLeads in
+                if let pushEvent = app.pushNotificationEvent,
+                   let leadId = pushEvent[PushNotificationEvents.incomingLeadMessage.rawValue],
+                   let lead = incomingLeads.first(where: { $0.id == leadId }) {
+                    selectedLead = lead
+                    navigateToChat = true
+                }
+            }
         }
     }
 }
@@ -108,8 +116,9 @@ struct MessageListView_Previews: PreviewProvider {
         let selectedMenuItem = Binding<MainMenu>(
             get: { MainMenu.campaigns }, set: { _ in }
         )
-        MessageListView(viewModel: MessagesViewModel(provider: DependencyProvider()),
-                        selectedMenuItem: selectedMenuItem)
+        MessageListView(
+            viewModel: MessagesViewModel(provider: DependencyProvider()),
+            selectedMenuItem: selectedMenuItem)
     }
 }
 #endif

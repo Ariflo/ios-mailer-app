@@ -129,6 +129,7 @@ struct DashboardView: View {
                             selectedMenuItem: $selectedMenuItem
                         )
                         .equatable()
+                        .environmentObject(app)
                         .disabled(showNavMenu)
                     case .profile:
                         ProfileView(
@@ -187,6 +188,20 @@ struct DashboardView: View {
                     }
                 }
             }
+            .onChange(of: app.pushNotificationEvent) { _ in
+                if let pushEvent = app.pushNotificationEvent {
+                    for event in PushNotificationEvents.allCases where pushEvent[event.rawValue] != nil {
+                        switch event {
+                        case .mailingListStatus:
+                            selectedMenuItem = .campaigns
+                        case .incomingLeadCall:
+                            selectedMenuItem = .calls
+                        case .incomingLeadMessage:
+                            selectedMenuItem = .messages
+                        }
+                    }
+                }
+            }
             .sheet(isPresented: $displayIncomingLeadSurvey) {
                 TagIncomingLeadView(
                     viewModel: TagIncomingLeadViewModel(
@@ -211,7 +226,9 @@ struct DashboardView: View {
 #if DEBUG
 struct DashboardView_Previews: PreviewProvider {
     static var previews: some View {
-        DashboardView(viewModel: DashboardViewModel(provider: DependencyProvider()), displayIncomingLeadSurvey: false)
+        DashboardView(
+            viewModel: DashboardViewModel(provider: DependencyProvider()),
+            displayIncomingLeadSurvey: false)
     }
 }
 #endif

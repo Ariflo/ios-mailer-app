@@ -21,14 +21,14 @@ enum MailingDetailAlertTypes {
 }
 
 enum MailingDetailSheetTypes: Identifiable {
-    case confirmAndSendMailing, cloneMailing, addMessageTemplate, addAudience
+    case confirmAndSendMailing, cloneMailing, addMessageTemplate, addAudience, mailingRecipientsList
 
     var id: Int {
         hashValue
     }
 }
 
-// swiftlint:disable type_body_length file_length
+// swiftlint:disable type_body_length
 struct MailingDetailView: View, Equatable {
     static func == (lhs: MailingDetailView, rhs: MailingDetailView) -> Bool {
         lhs.viewModel.mailing == rhs.viewModel.mailing
@@ -38,8 +38,6 @@ struct MailingDetailView: View, Equatable {
     @ObservedObject var viewModel: MailingDetailViewModel
 
     @State var isEditingMailing: Bool = false
-    @State var expandMailingList: Bool = false
-    @State var shrinkMailingList: Bool = false
     @State var selectedMailingImageIndex: Int = 0
     @State var selectedCoverImageIndex: Int = 0
     @State var isShowingAlert: Bool = false
@@ -49,6 +47,13 @@ struct MailingDetailView: View, Equatable {
 
     init(viewModel: MailingDetailViewModel) {
         self.viewModel = viewModel
+
+        UINavigationBar.appearance().backgroundColor = UIColor(
+            red: 240 / 255,
+            green: 240 / 255,
+            blue: 240 / 255,
+            alpha: 1.0
+        )
     }
 
     var body: some View {
@@ -110,7 +115,7 @@ struct MailingDetailView: View, Equatable {
                         Text("Mailing Processing...")
                             .font(Font.custom("Silka-Medium", size: 14))
                     } else if getMailingStatus() != .archived {
-                        Image(systemName: "gear")
+                        Image(systemName: "ellipsis")
                             .imageScale(.medium)
                             .foregroundColor(Color.black.opacity(0.5))
                     }
@@ -129,29 +134,6 @@ struct MailingDetailView: View, Equatable {
                     MailingImages.allCases[selectedMailingImageIndex] == .cardFront
                 let isEditingBackCardCover = isEditingMailing &&
                     MailingImages.allCases[selectedMailingImageIndex] == .cardBack
-
-                let drag = DragGesture()
-                    .onEnded {
-                        if $0.translation.height > 0 {
-                            withAnimation {
-                                if !self.shrinkMailingList && !self.expandMailingList {
-                                    self.shrinkMailingList.toggle()
-                                } else {
-                                    self.shrinkMailingList = false
-                                    self.expandMailingList = false
-                                }
-                            }
-                        } else {
-                            withAnimation {
-                                if !self.shrinkMailingList && !self.expandMailingList {
-                                    self.expandMailingList.toggle()
-                                } else {
-                                    self.shrinkMailingList = false
-                                    self.expandMailingList = false
-                                }
-                            }
-                        }
-                    }
                 // MARK: - MailingCoverImagePagerView
                 isEditingReturnAddress ? nil :
                     MailingCoverImagePagerView(
@@ -163,8 +145,6 @@ struct MailingDetailView: View, Equatable {
                             selecteImageId: viewModel.selectedImageId
                         ),
                         isEditingMailing: $isEditingMailing,
-                        minimizePagerView: $expandMailingList,
-                        maximizePagerView: $shrinkMailingList,
                         selectedMailingImageIndex: $selectedMailingImageIndex,
                         isEditingMailingCoverImage: isEditingFrontCardCover || isEditingBackCardCover,
                         selectedCoverImageIndex: $selectedCoverImageIndex,
@@ -184,29 +164,21 @@ struct MailingDetailView: View, Equatable {
                     )
                     .padding(20)
                     .transition(.move(edge: .top)) : nil
-                // MARK: - MailingRecipientsListView
+                // MARK: - Display Mailing Recipients Button
                 isEditingBackCardCover ||
-                    isEditingFrontCardCover ? nil :
-                    MailingRecipientsListView(
-                        viewModel: MailingRecipientsListViewModel(
-                            provider: app.dependencyProvider,
-                            selectedMailing: $viewModel.mailing,
-                            numActiveRecipients: $viewModel.numActiveRecipients
-                        ),
-                        activeSheetType: $activeSheetType
-                    )
-                    .equatable()
-                    .padding(.horizontal, 20)
-                    .disabled(isEditingMailing)
-                    .opacity(isEditingMailing ? 0.5 : 1)
-                    .overlay(
-                        isEditingMailing ?
-                            Rectangle()
-                            .fill(Color.addressableFadedBlack)
-                            .opacity(isEditingMailing ? 0.5 : 1)
-                            : nil
-                    )
-                    .gesture(drag)
+                    isEditingFrontCardCover ||
+                    isEditingReturnAddress ? nil :
+                    Button(action: {
+                        activeSheetType = .mailingRecipientsList
+                    }) {
+                        Text("Edit Mailing Recipients")
+                            .font(Font.custom("Silka-Medium", size: 18))
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: 295, maxHeight: 50)
+                            .foregroundColor(Color.white)
+                            .background(Color.addressablePurple)
+                            .cornerRadius(5)
+                    }
                 // MARK: - MailingCoverImageGalleryView
                 isEditingFrontCardCover || isEditingBackCardCover ?
                     MailingCoverImageGalleryView(
@@ -223,6 +195,7 @@ struct MailingDetailView: View, Equatable {
                     .equatable()
                     .padding(20)
                     .transition(.move(edge: .bottom)) : nil
+                Spacer()
             }
         }
         .popup(isPresented: isShowingMessageAlert, alignment: .center, content: MessageAlert.init)
@@ -260,6 +233,26 @@ struct MailingDetailView: View, Equatable {
                         provider: app.dependencyProvider,
                         selectedMailing: $viewModel.mailing)
                 )
+            case .mailingRecipientsList:
+                NavigationView {
+                    MailingRecipientsListView(
+                        viewModel: MailingRecipientsListViewModel(
+                            provider: app.dependencyProvider,
+                            selectedMailing: $viewModel.mailing,
+                            numActiveRecipients: $viewModel.numActiveRecipients
+                        ),
+                        activeSheetType: $activeSheetType
+                    )
+                    .equatable()
+                    .padding(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
+                    .navigationBarTitle("Edit Mailing Recipients", displayMode: .inline)
+                    .navigationBarItems(trailing: Button(action: { activeSheetType = nil }) {
+                        Text("Done")
+                    })
+                    .background(Color.addressableLightGray)
+                    .border(width: 1, edges: [.top], color: Color.gray.opacity(0.2))
+                    .ignoresSafeArea(.all, edges: [.bottom])
+                }
             }
         }
         .alert(isPresented: $isShowingAlert) {

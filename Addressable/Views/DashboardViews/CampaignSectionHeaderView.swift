@@ -25,14 +25,16 @@ struct CampaignSectionHeaderView: View {
                 .background(Color.addressableDarkGray)
                 .clipShape(Circle())
             Spacer()
-            Button(action: {
-                // View All
-                selectedFilters = [status.rawValue]
-            }) {
-                Text("View All")
-                    .font(Font.custom("Silka-Bold", size: 12))
-                    .foregroundColor(Color.black.opacity(0.3))
-                    .underline()
+            if count > 3 {
+                Button(action: {
+                    // View All
+                    selectedFilters = [status.rawValue]
+                }) {
+                    Text("View All")
+                        .font(Font.custom("Silka-Bold", size: 12))
+                        .foregroundColor(Color.black.opacity(0.3))
+                        .underline()
+                }
             }
         }.padding(.top, 10)
     }

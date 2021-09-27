@@ -11,6 +11,8 @@ struct ComposeRadiusAudienceConfirmationView: View {
     @EnvironmentObject var app: Application
     @ObservedObject var viewModel: ComposeRadiusViewModel
 
+    @State var expandRecipientList: Bool = false
+
 
     init(viewModel: ComposeRadiusViewModel) {
         self.viewModel = viewModel
@@ -22,29 +24,36 @@ struct ComposeRadiusAudienceConfirmationView: View {
 
     var body: some View {
         VStack(alignment: .center, spacing: 6) {
-            // MARK: - Count Pill
-            HStack {
-                HStack {
-                    Image(systemName: "person.3")
-                    if let targetQuantity = viewModel.touchOneMailing?.targetQuantity {
-                        Text("\(targetQuantity)")
-                            .font(Font.custom("Silka-Medium", size: 18))
+            if !expandRecipientList {
+                VStack {
+                    Text(viewModel.step.rawValue)
+                        .font(Font.custom("Silka-Medium", size: 22))
+                        .padding(.bottom)
+                    // MARK: - Count Pill
+                    HStack {
+                        HStack {
+                            Image(systemName: "person.3")
+                            if let targetQuantity = viewModel.touchOneMailing?.targetQuantity {
+                                Text("\(targetQuantity)")
+                                    .font(Font.custom("Silka-Medium", size: 18))
+                            }
+                        }
+                        .padding(.horizontal, 19)
+                        .padding(.vertical, 6)
                     }
+                    .background(Color.addressableDarkerGray)
+                    .cornerRadius(50.0)
+                    .frame(minWidth: 98, minHeight: 34)
+                    // MARK: - Instructions
+                    Text("Feel free to remove any that you feel aren't suitable. " +
+                            "They will be replaced with alternatives to ensure you get the same reach")
+                        .font(Font.custom("Silka-Regular", size: 12))
+                        .padding()
+                        .foregroundColor(Color.addressableFadedBlack)
+                        .lineSpacing(2)
+                        .multilineTextAlignment(.center)
                 }
-                .padding(.horizontal, 19)
-                .padding(.vertical, 6)
             }
-            .background(Color.addressableDarkerGray)
-            .cornerRadius(50.0)
-            .frame(minWidth: 98, minHeight: 34)
-            // MARK: - Instructions
-            Text("Feel free to remove any that you feel aren't suitable. " +
-                    "They will be replaced with alternatives to ensure you get the same reach")
-                .font(Font.custom("Silka-Regular", size: 12))
-                .padding()
-                .foregroundColor(Color.addressableFadedBlack)
-                .lineSpacing(2)
-                .multilineTextAlignment(.center)
             // MARK: - Recipient List
             if viewModel.touchOneMailing != nil {
                 // swiftlint:disable force_unwrapping
@@ -57,6 +66,12 @@ struct ComposeRadiusAudienceConfirmationView: View {
                 let activeSheetTypeBinding = Binding<MailingDetailSheetTypes?>(
                     get: { nil },
                     set: { _ in })
+                let drag = DragGesture()
+                    .onEnded { _ in
+                        withAnimation(.easeInOut) {
+                            self.expandRecipientList.toggle()
+                        }
+                    }
                 MailingRecipientsListView(
                     viewModel: MailingRecipientsListViewModel(
                         provider: app.dependencyProvider,
@@ -64,7 +79,9 @@ struct ComposeRadiusAudienceConfirmationView: View {
                         numActiveRecipients: $viewModel.numActiveRecipients
                     ),
                     activeSheetType: activeSheetTypeBinding
-                ).equatable()
+                )
+                .equatable()
+                .gesture(drag)
             } else {
                 ProgressView()
                     .progressViewStyle(CircularProgressViewStyle())

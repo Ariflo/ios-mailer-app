@@ -38,10 +38,9 @@ struct MailingCardItemView: View {
         .frame(minWidth: 324, minHeight: 59)
         .overlay(
             RoundedRectangle(cornerRadius: 3)
-                .stroke(Color.addressableFadedBlack, lineWidth: 1)
+                .stroke(Color.white, lineWidth: 1)
         )
         .background(Color.white)
-        .padding(.top, 10)
     }
     private func isTouchTwoMailing() -> Bool {
         if let relatedTouchMailing = mailing.relatedMailing {

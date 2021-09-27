@@ -17,7 +17,7 @@ struct CalendarTileView: View {
                 .padding(EdgeInsets(top: 2, leading: 8, bottom: 2, trailing: 8))
                 .foregroundColor(Color.white)
                 .textCase(.uppercase)
-                .background(Color.addressableRed)
+                .background(Color.addressableBlack)
             Text(getFormattedTargetDropDay())
                 .font(Font.custom("Silka-Semibold", size: 16))
                 .foregroundColor(Color.black)

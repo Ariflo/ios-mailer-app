@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MessageChatView: View {
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: MessagesViewModel
     @State var typingMessage: String = ""
     let lead: IncomingLead
@@ -53,6 +54,10 @@ struct MessageChatView: View {
         .onAppear {
             viewModel.connectToSocket()
             viewModel.getMessages(for: lead.id)
+            app.updateBadgeCount(with: app.pushEvents.filter {
+                $0[PushNotificationEvents.incomingLeadMessage.rawValue] == nil ||
+                    $0[PushNotificationEvents.incomingLeadMessage.rawValue] != lead.id
+            })
         }
         .onDisappear {
             viewModel.disconnectFromSocket()

@@ -27,8 +27,6 @@ struct MailingCoverImagePagerView: View, Equatable {
     @EnvironmentObject var app: Application
     @ObservedObject var viewModel: MailingCoverImagePagerViewModel
     @Binding var isEditingMailing: Bool
-    @Binding var minimizePagerView: Bool
-    @Binding var maximizePagerView: Bool
     @Binding var selectedMailingImageIndex: Int
     @Binding var selectedCoverImageIndex: Int
     @Binding var activeSheetType: MailingDetailSheetTypes?
@@ -38,8 +36,6 @@ struct MailingCoverImagePagerView: View, Equatable {
     init(
         viewModel: MailingCoverImagePagerViewModel,
         isEditingMailing: Binding<Bool>,
-        minimizePagerView: Binding<Bool>,
-        maximizePagerView: Binding<Bool>,
         selectedMailingImageIndex: Binding<Int>,
         isEditingMailingCoverImage: Bool,
         selectedCoverImageIndex: Binding<Int>,
@@ -47,8 +43,6 @@ struct MailingCoverImagePagerView: View, Equatable {
     ) {
         self.viewModel = viewModel
         self._isEditingMailing = isEditingMailing
-        self._minimizePagerView = minimizePagerView
-        self._maximizePagerView = maximizePagerView
         self.isEditingMailingCoverImage = isEditingMailingCoverImage
         self._selectedMailingImageIndex = selectedMailingImageIndex
         self._selectedCoverImageIndex = selectedCoverImageIndex
@@ -151,10 +145,7 @@ struct MailingCoverImagePagerView: View, Equatable {
                 )
             )
             .disabled(isEditingMailing && !isEditingMailingCoverImage)
-            .frame(
-                minHeight: maximizePagerView ? 500 : 0,
-                maxHeight: isEditingMailing || minimizePagerView ? 165 : .infinity
-            )
+            .frame(maxHeight: isEditingMailing ? 165 : .infinity)
             .id(mailingImages)
             // MARK: - Pager Label + Edit Button
             HStack {

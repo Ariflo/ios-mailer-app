@@ -44,6 +44,9 @@ extension Color {
     public static var addressableFadedBlack: Color {
         return Color(UIColor(red: 0 / 255, green: 0 / 255, blue: 0 / 255, alpha: 0.5))
     }
+    public static var addressableBlack: Color {
+        return Color(UIColor(red: 51 / 255, green: 51 / 255, blue: 51 / 255, alpha: 1.0))
+    }
     public static var addressableDarkerGray: Color {
         return Color(UIColor(red: 235 / 255, green: 235 / 255, blue: 235 / 255, alpha: 1.0))
     }

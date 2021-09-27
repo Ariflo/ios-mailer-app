@@ -21,6 +21,9 @@ struct ComposeRadiusConfirmSendView: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
+            Text(viewModel.step.rawValue)
+                .font(Font.custom("Silka-Medium", size: 22))
+                .padding(.bottom)
             ForEach(AddressableTouch.allCases, id: \.self) { touch in
                 VStack(alignment: .leading) {
                     // MARK: - Touch Inside Card Preview

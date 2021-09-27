@@ -13,6 +13,14 @@ import GoogleMaps
 import GooglePlaces
 import CoreData
 
+enum PushNotificationEvents: String, CaseIterable {
+    case mailingListStatus = "mailing_list_status"
+    case incomingLeadCall = "incoming_lead_call"
+    case incomingLeadMessage = "incoming_lead_message"
+}
+
+typealias PushNotificationEvent = [String: Int]
+
 // API Key Restrictions set on Google Cloud, safe to keep this key here for now
 let googleMapsApiKey = "AIzaSyDKJ7-97nKoAeFrCeb1yPfoVDbrS8RttKM"
 
@@ -28,7 +36,9 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
     @Published var currentView: AddressableView = KeyChainServiceUtil.shared[userBasicAuthToken] != nil ?
         .dashboard(false) : .signIn
     @Published var selectedMailing: Mailing?
+    @Published var pushNotificationEvent: PushNotificationEvent?
     @Published var callState: String = CallState.connecting.rawValue
+    @Published var pushEvents: [PushNotificationEvent] = []
 
     var callKitProvider: CallService?
     var callManager: CallManager?
@@ -81,10 +91,17 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
 
             // When the app launch after user tap on notification (originally was not running / not in background)
             if launchOptions?[UIApplication.LaunchOptionsKey.remoteNotification] != nil {
-                tracker.trackEvent(
-                    .pushNotificationPressed,
-                    context: self.persistentContainer.viewContext
-                )
+                if let notification = launchOptions?[
+                    UIApplication.LaunchOptionsKey.remoteNotification
+                ] as? [String: Any],
+                let aps = notification["aps"] as? [String: AnyObject],
+                let notificationPayload = aps["push_meta_data"] as? PushNotificationEvent {
+                    pushNotificationEvent = notificationPayload
+                    tracker.trackEvent(getPushEventTrackingEventName(
+                                        isPressed: true, from: notificationPayload),
+                                       context: self.persistentContainer.viewContext
+                    )
+                }
             }
         }
         UserDefaults.standard.set(currentVersion, forKey: "VersionOfLastRun")
@@ -116,14 +133,19 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        guard (userInfo["aps"] as? [String: AnyObject]) != nil else {
+        guard let notification = userInfo["aps"] as? [String: AnyObject] else {
             completionHandler(.failed)
             return
         }
-        if let tracker = appLevelAnalyticsTracker {
-            tracker.trackEvent(
-                .pushNotificationRecieved, context: self.persistentContainer.viewContext
-            )
+        if let tracker = appLevelAnalyticsTracker,
+           let notificationPayload = notification["push_meta_data"] as? PushNotificationEvent {
+            pushEvents.append(notificationPayload)
+            updateBadgeCount(with: pushEvents)
+
+            tracker.trackEvent(getPushEventTrackingEventName(
+                isPressed: false,
+                from: notificationPayload
+            ), context: self.persistentContainer.viewContext)
         }
         completionHandler(.newData)
     }
@@ -159,6 +181,25 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
         DispatchQueue.main.async {
             completion()
         }
+    }
+
+    private func getPushEventTrackingEventName(isPressed: Bool, from payload: PushNotificationEvent) -> AnalyticsEventName {
+        for event in PushNotificationEvents.allCases where payload[event.rawValue] != nil {
+            switch event {
+            case .mailingListStatus:
+                return isPressed ? .pushNotificationPressedList : .pushNotificationRecievedList
+            case .incomingLeadCall:
+                return isPressed ? .pushNotificationPressedCall : .pushNotificationRecievedCall
+            case .incomingLeadMessage:
+                return isPressed ? .pushNotificationPressedMessage : .pushNotificationRecievedMessage
+            }
+        }
+        return .pushNotificationRecieved
+    }
+
+    func updateBadgeCount(with newPushEvents: [PushNotificationEvent]) {
+        pushEvents = newPushEvents
+        UIApplication.shared.applicationIconBadgeNumber = pushEvents.count
     }
 
     func verifyPermissions(completion: @escaping () -> Void) {
@@ -311,14 +352,22 @@ struct AddressableApp: App {
 extension Application: UNUserNotificationCenterDelegate {
     // This function will be called when the app receive notification
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        // show the notification alert (banner), and with sound
-        completionHandler([.banner, .sound])
+        // show the notification alert (banner), and with sound and badges
+        completionHandler([.banner, .sound, .badge])
     }
     // This function will be called right after user tap on the notification
     func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
-        if let tracker = appLevelAnalyticsTracker {
-            tracker.trackEvent(.pushNotificationPressed, context: self.persistentContainer.viewContext)
+        let content = response.notification.request.content.userInfo
+        if let tracker = appLevelAnalyticsTracker,
+           let aps = content["aps"] as? [String: AnyObject],
+           let notificationPayload = aps["push_meta_data"] as? PushNotificationEvent {
+            pushNotificationEvent = notificationPayload
+
+            tracker.trackEvent(getPushEventTrackingEventName(
+                                isPressed: true,
+                                from: notificationPayload), context: self.persistentContainer.viewContext)
         }
+
         // tell the app that we have finished processing the user’s action / response
         completionHandler()
     }

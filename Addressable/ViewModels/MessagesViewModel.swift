@@ -38,7 +38,7 @@ class MessagesViewModel: ObservableObject {
         self.apiService = provider.register(provider: provider)
     }
 
-    func getIncomingLeadsWithMessages() {
+    func getIncomingLeadsWithMessages(completionHandler: @escaping (IncomingLeadsResponse) -> Void = { _ in }) {
         loading = true
         apiService.getIncomingLeadsWithMessages()
             .receive(on: DispatchQueue.main)
@@ -57,6 +57,7 @@ class MessagesViewModel: ObservableObject {
                 receiveValue: { [weak self] incomingLeads in
                     guard let self = self else { return }
                     self.incomingLeadsWithMessages = incomingLeads
+                    completionHandler(incomingLeads)
                     self.loading = false
                 })
             .store(in: &disposables)

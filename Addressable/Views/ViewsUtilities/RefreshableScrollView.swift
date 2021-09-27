@@ -24,7 +24,7 @@ struct RefreshableScrollView<Content: View>: View {
     }
 
     var body: some View {
-        return VStack {
+        return VStack(spacing: 0) {
             ScrollView(showsIndicators: false) {
                 ZStack(alignment: .top) {
                     MovingView()

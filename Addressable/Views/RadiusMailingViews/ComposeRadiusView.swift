@@ -104,10 +104,12 @@ struct ComposeRadiusView: View {
                 }.padding()
                 // MARK: - Main Menu
                 VStack {
-                    // MARK: - Main Menu Title Header
-                    Text(viewModel.step.rawValue)
-                        .font(Font.custom("Silka-Medium", size: 22))
-                        .padding(.bottom)
+                    if !isScrollableView() {
+                        // MARK: - Main Menu Title Header
+                        Text(viewModel.step.rawValue)
+                            .font(Font.custom("Silka-Medium", size: 22))
+                            .padding(.bottom)
+                    }
                     // MARK: - Main Radius Menu
                     VStack {
                         switch viewModel.step {
@@ -291,7 +293,9 @@ struct ComposeRadiusView: View {
             }
         }.edgesIgnoringSafeArea([.bottom])
     }
-
+    private func isScrollableView() -> Bool {
+        return viewModel.step == .chooseTopic || viewModel.step == .confirmAudience || viewModel.step == .confirmSend
+    }
     private func hasCompletedAllSteps(for mailing: Mailing) -> Bool {
         return mailing.layoutTemplate != nil && mailing.topicSelectionID != nil
     }

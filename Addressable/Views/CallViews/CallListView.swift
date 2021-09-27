@@ -146,6 +146,10 @@ struct CallListView: View, Equatable {
                             }
                         }
                     }
+                }.onAppear {
+                    app.updateBadgeCount(with: app.pushEvents.filter {
+                        $0[PushNotificationEvents.incomingLeadCall.rawValue] == nil
+                    })
                 }
             }
         }

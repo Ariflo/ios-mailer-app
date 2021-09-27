@@ -61,7 +61,13 @@ struct MailingRecipientsListView: View, Equatable {
                             .multilineTextAlignment(.center)
                     }
                     Spacer()
-                }.padding()
+                }.frame(
+                    minWidth: 0,
+                    maxWidth: .infinity,
+                    minHeight: 0,
+                    maxHeight: .infinity,
+                    alignment: .center
+                )
             } else {
                 VStack(spacing: 16) {
                     // MARK: - Site / Mailing Segment Control
@@ -82,9 +88,7 @@ struct MailingRecipientsListView: View, Equatable {
                     HStack(spacing: 22) {
                         ForEach(RecipientListCategory.allCases, id: \.self) { category in
                             Button(action: {
-                                withAnimation {
-                                    selectedListCategory = category
-                                }
+                                selectedListCategory = category
                             }) {
                                 HStack(spacing: 0) {
                                     Text("\(category.rawValue) \(getMailingCount(for: category))")

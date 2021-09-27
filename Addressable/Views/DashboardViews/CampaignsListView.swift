@@ -145,15 +145,10 @@ struct CampaignsListView: View {
                                     if mailingIndex < (isListFiltered ? mailingList.count :
                                                         maxMailingsDisplayCount) {
                                         let mailing = mailingList[mailingIndex]
-                                        MailingRowItem(tapAction: {
-                                            if isIncompleteRadius(mailing) &&
-                                                mailing.mailingStatus != MailingState.canceled.rawValue {
-                                                app.currentView = .composeRadius
-                                            } else {
-                                                selectedMenuItem = .mailingDetail
-                                            }
-                                            app.selectedMailing = mailing
-                                        }, mailing: mailing)
+                                        MailingRowItem(
+                                            tapAction: { mailingRowSelected(for: mailing) },
+                                            mailing: mailing
+                                        )
                                     }
                                 }
                             }
@@ -164,6 +159,23 @@ struct CampaignsListView: View {
         }
         .background(Color.addressableLightGray)
         .ignoresSafeArea(.all, edges: [.bottom])
+        .onChange(of: app.pushNotificationEvent) { _ in
+            if let pushEvent = app.pushNotificationEvent,
+               let mailingId = pushEvent[PushNotificationEvents.mailingListStatus.rawValue],
+               let mailing = viewModel.mailings.first(where: { $0.id == mailingId }) {
+                mailingRowSelected(for: mailing)
+            }
+        }
+    }
+    private func mailingRowSelected(for mailing: Mailing) {
+        app.selectedMailing = mailing
+
+        if isIncompleteRadius(mailing) &&
+            mailing.mailingStatus != MailingState.canceled.rawValue {
+            app.currentView = .composeRadius
+        } else {
+            selectedMenuItem = .mailingDetail
+        }
     }
     private func isIncompleteRadius(_ mailing: Mailing) -> Bool {
         return mailing.relatedMailing == nil && mailing.type == MailingType.radius.rawValue

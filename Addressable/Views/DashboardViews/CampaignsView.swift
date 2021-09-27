@@ -225,6 +225,12 @@ struct CampaignsView: View, Equatable {
             viewModel.getLeads()
             viewModel.getIncomingLeadsWithMessages()
             viewModel.getAllMailingCampaigns()
+
+            if !app.pushEvents.isEmpty {
+                app.updateBadgeCount(with: app.pushEvents.filter {
+                    $0[PushNotificationEvents.mailingListStatus.rawValue] == nil
+                })
+            }
         }
     }
     private func showMenu() {

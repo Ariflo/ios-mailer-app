@@ -41,9 +41,10 @@ struct AppView: View {
             case .dashboard(let shouldDisplayIncomingLeadSurvey):
                 DashboardView(
                     viewModel: DashboardViewModel(provider: app.dependencyProvider),
-                    displayIncomingLeadSurvey: shouldDisplayIncomingLeadSurvey)
-                    .environmentObject(app)
-                    .navigationBarHidden(true)
+                    displayIncomingLeadSurvey: shouldDisplayIncomingLeadSurvey
+                )
+                .environmentObject(app)
+                .navigationBarHidden(true)
             case .activeCall:
                 AddressableCallView(viewModel: CallsViewModel(provider: app.dependencyProvider))
                     .environmentObject(app)

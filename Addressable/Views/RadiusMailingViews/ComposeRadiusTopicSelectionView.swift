@@ -56,6 +56,9 @@ struct ComposeRadiusTopicSelectionView: View {
                 Spacer()
             } else if !viewModel.loadingTopics {
                 ScrollView(.vertical, showsIndicators: false) {
+                    Text(viewModel.step.rawValue)
+                        .font(Font.custom("Silka-Medium", size: 22))
+                        .padding(.bottom)
                     Text("Select your campaign and complete the merge tags below each touch.")
                         .font(Font.custom("Silka-Medium", size: 14))
                         .foregroundColor(Color.black.opacity(0.3))

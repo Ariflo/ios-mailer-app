@@ -88,11 +88,11 @@ extension AnalyticEvent {
         from allEvents: [AnalyticEvent]
     ) -> UUID {
         if let lastEvent = allEvents.isEmpty ? lastEventPostFlush : allEvents.last {
-            let isLoginAfterInstall = lastEvent.eventType == AnalyticsEvent.mobileAppInstalled.rawValue &&
-                newEvent.eventType == AnalyticsEvent.mobileLoginSuccess.rawValue
+            let isLoginAfterInstall = lastEvent.eventType == AnalyticsEventName.mobileAppInstalled.rawValue &&
+                newEvent.eventType == AnalyticsEventName.mobileLoginSuccess.rawValue
 
             if !timePassedSinceLastEvent(in: [lastEvent, newEvent], min: 30) &&
-                (isLoginAfterInstall || newEvent.eventType != AnalyticsEvent.mobileLoginSuccess.rawValue) {
+                (isLoginAfterInstall || newEvent.eventType != AnalyticsEventName.mobileLoginSuccess.rawValue) {
                 return lastEvent.sessionID
             }
         }
