@@ -83,27 +83,7 @@ struct SignInView: View {
                                 return
                             }
                             KeyChainServiceUtil.shared[userData] = String(data: encodedCurrentUserData, encoding: .utf8)
-
-                            // For the case where a user signs into the application on a previously registered device
-                            // register said user with the device on Addressable's DB
-                            guard let callManager = app.callManager,
-                                  let deviceToken = KeyChainServiceUtil.shared[latestDeviceID] else {
-                                // In this case the device was not previously registered, safe to proceed
-                                logInToApplication()
-                                return
-                            }
-                            callManager.fetchToken(
-                                deviceID: deviceToken
-                            ) { tokenData in
-                                guard tokenData?.jwtToken != nil else {
-                                    alertText = "Sorry something went wrong, " +
-                                        "try again or reach out to an Addressable " +
-                                        "representative if the problem persists."
-                                    showingAlert = true
-                                    return
-                                }
-                                logInToApplication()
-                            }
+                            logInToApplication()
                         }
                     }
                 }) {
@@ -129,8 +109,10 @@ struct SignInView: View {
                 .mobileLoginSuccess,
                 context: app.persistentContainer.viewContext
             )
-            app.currentView = .dashboard(false)
-            authorizedUser = 1
+            DispatchQueue.main.async {
+                app.currentView = .dashboard(false)
+                authorizedUser = 1
+            }
         } else {
             viewModel.analyticsTracker.trackEvent(
                 .mobileLoginFailed,

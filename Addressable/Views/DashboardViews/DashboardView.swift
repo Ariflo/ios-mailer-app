@@ -81,22 +81,22 @@ struct DashboardView: View {
                     .background(Color.white)
                     .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
                     // MARK: - Current Call Banner
-                    if app.callManager?.currentActiveCall != nil {
+                    if app.callManager?.currentActiveCall != nil && !displayIncomingLeadSurvey {
                         Button(action: {
                             app.currentView = .activeCall
                         }) {
                             HStack(spacing: 12) {
                                 Image(systemName: "phone")
-                                    .imageScale(.large)
+                                    .imageScale(.medium)
                                     .padding(.leading, 8)
                                 Text("Return To Call")
                                     .font(Font.custom("Silka-Medium", size: 12))
                                 Spacer()
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(Color.black)
-                                    .imageScale(.medium)
+                                    .imageScale(.small)
                                     .padding()
-                            }.padding(.bottom, 8)
+                            }.padding(.vertical, 8)
                         }
                         .frame(maxHeight: 34)
                         .foregroundColor(Color.addressablePurple)

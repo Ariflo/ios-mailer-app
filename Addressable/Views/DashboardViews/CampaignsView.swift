@@ -70,7 +70,7 @@ struct CampaignsView: View, Equatable {
                         }) {
                             HStack(spacing: 12) {
                                 Image(systemName: "bell.fill")
-                                    .imageScale(.large)
+                                    .imageScale(.medium)
                                     .padding(.leading, 8)
                                 Text("\(viewModel.numOfUntaggedLeads) Recent Untagged " +
                                         "Lead\(viewModel.numOfUntaggedLeads > 1 ? "s" : "")")
@@ -78,9 +78,9 @@ struct CampaignsView: View, Equatable {
                                 Spacer()
                                 Image(systemName: "chevron.right")
                                     .foregroundColor(Color.black)
-                                    .imageScale(.medium)
+                                    .imageScale(.small)
                                     .padding()
-                            }.padding(.bottom, 8)
+                            }.padding(.vertical, 8)
                         }
                         .frame(maxHeight: 34)
                         .foregroundColor(Color.addressablePurple)

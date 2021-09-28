@@ -222,46 +222,56 @@ struct ProfileSettingSectionView: View {
                     )
                 } else {
                     VStack(alignment: .center, spacing: 12) {
-                        VStack(spacing: 8) {
-                            Text("Name")
-                                .font(Font.custom("Silka-Bold", size: 14))
-                                .foregroundColor(Color.black)
-                            Text("\(getCurrentUser()?.firstName ?? "Unknown") " +
-                                    "\(getCurrentUser()?.lastName ?? "name")")
-                                .font(Font.custom("Silka-Medium", size: 14))
-                                .foregroundColor(Color.black)
+                        if let firstName = getCurrentUser()?.firstName,
+                           let lastName = getCurrentUser()?.lastName {
+                            VStack(spacing: 8) {
+                                Text("Name")
+                                    .font(Font.custom("Silka-Bold", size: 14))
+                                    .foregroundColor(Color.black)
+                                Text("\(firstName) \(lastName)")
+                                    .font(Font.custom("Silka-Medium", size: 14))
+                                    .foregroundColor(Color.black)
+                            }
+                            .padding(.vertical, 10)
+                            .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
                         }
-                        .padding(.vertical, 10)
-                        .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
-                        VStack(spacing: 8) {
-                            Text("Company Name")
-                                .font(Font.custom("Silka-Bold", size: 14))
-                                .foregroundColor(Color.black)
-                            Text("\(getCurrentUser()?.companyName ?? "Unknown")")
-                                .font(Font.custom("Silka-Medium", size: 14))
-                                .foregroundColor(Color.black)
-                        }
-                        .padding(.bottom, 10)
-                        .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
-                        VStack(spacing: 8) {
-                            Text("Address")
-                                .font(Font.custom("Silka-Bold", size: 14))
-                                .foregroundColor(Color.black)
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack {
-                                    Text("\(getCurrentUser()?.addressLine1 ?? "Unknown"),")
-                                        .font(Font.custom("Silka-Medium", size: 14))
+                        if let companyName = getCurrentUser()?.companyName {
+                            if !companyName.trimmingCharacters(in: .whitespaces).isEmpty {
+                                VStack(spacing: 8) {
+                                    Text("Company Name")
+                                        .font(Font.custom("Silka-Bold", size: 14))
                                         .foregroundColor(Color.black)
-                                    Text("\(getCurrentUser()?.addressLine2 ?? "Unknown")")
+                                    Text("\(companyName)")
                                         .font(Font.custom("Silka-Medium", size: 14))
                                         .foregroundColor(Color.black)
                                 }
-                                Text("\(getCurrentUser()?.city ?? "Unknown"), " +
-                                        " \(getCurrentUser()?.state ?? "Unknown") " +
-                                        "\(getCurrentUser()?.zipcode ?? "Unknown")")
-                                    .font(Font.custom("Silka-Medium", size: 14))
-                                    .foregroundColor(Color.black)
-                            }.padding(.bottom, 10)
+                                .padding(.bottom, 10)
+                                .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
+                            }
+                        }
+                        if let addressLine1 = getCurrentUser()?.addressLine1,
+                           let addressLine2 = getCurrentUser()?.addressLine2,
+                           let city = getCurrentUser()?.city,
+                           let state = getCurrentUser()?.state,
+                           let zipcode = getCurrentUser()?.zipcode {
+                            if !addressLine1.trimmingCharacters(in: .whitespaces).isEmpty &&
+                                !city.trimmingCharacters(in: .whitespaces).isEmpty &&
+                                !state.trimmingCharacters(in: .whitespaces).isEmpty &&
+                                !zipcode.trimmingCharacters(in: .whitespaces).isEmpty {
+                                VStack(spacing: 8) {
+                                    Text("Address")
+                                        .font(Font.custom("Silka-Bold", size: 14))
+                                        .foregroundColor(Color.black)
+                                    VStack(alignment: .center, spacing: 4) {
+                                        Text("\(addressLine1), \(addressLine2)")
+                                            .font(Font.custom("Silka-Medium", size: 14))
+                                            .foregroundColor(Color.black)
+                                        Text("\(city), \(state) \(zipcode)")
+                                            .font(Font.custom("Silka-Medium", size: 14))
+                                            .foregroundColor(Color.black)
+                                    }.padding(.bottom, 10)
+                                }
+                            }
                         }
                     }
                 }

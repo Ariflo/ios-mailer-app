@@ -111,7 +111,6 @@ struct ProfileView: View, Equatable {
                                     .mobileLogoutSuccess,
                                     context: app.persistentContainer.viewContext
                                 )
-                                KeyChainServiceUtil.shared.clearAll()
                                 logOutOfApplication()
                             }
                         },
@@ -137,12 +136,19 @@ struct ProfileView: View, Equatable {
         }
     }
     private func logOutOfApplication() {
-        if KeyChainServiceUtil.shared[userBasicAuthToken] == nil &&
-            KeyChainServiceUtil.shared[userMobileClientIdentity] == nil &&
-            KeyChainServiceUtil.shared[userData] == nil {
-            app.currentView = .signIn
-            successfullyLoggedOut = 1
+        // Deregister Device w/ Twilio
+        if let delegate = app.callKitProvider {
+            delegate.credentialsInvalidated()
         }
+        // Unregister device w/ Apple
+        UIApplication.shared.unregisterForRemoteNotifications()
+
+        // Reset KeyChain Store
+        KeyChainServiceUtil.shared.clearAll()
+
+        // Return to Sign-in
+        app.currentView = .signIn
+        successfullyLoggedOut = 1
     }
 }
 

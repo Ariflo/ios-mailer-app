@@ -116,39 +116,43 @@ struct CampaignsListView: View {
             .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
             // MARK: - Campaigns Mailing List
             RefreshableScrollView(refreshing: $viewModel.refreshMailingData) {
-                let isListFiltered = !(selectedFilters.isEmpty && mailingSearchTerm.isEmpty)
-
-                if viewModel.mailings.filter { mailing in isRelatedToSearchQuery(mailing) }.isEmpty &&
-                    !viewModel.mailings.isEmpty {
-                    HStack {
-                        Spacer()
-                        Text("No mailings match '\(mailingSearchTerm)' search term")
-                            .font(Font.custom("Silka-Regular", size: 16))
-                            .padding()
-                        Spacer()
-                    }.background(Color.addressableLightGray)
+                if viewModel.mailings.isEmpty {
+                    EmptyListView(message: "Tap on the plus (+) button below to create a mailing.")
                 } else {
-                    ForEach(MailingStatus.allCases, id: \.self) { status in
-                        isListFiltered || getMailings(with: status).isEmpty ? nil :
-                            CampaignSectionHeaderView(
-                                status: status,
-                                count: getMailings(with: status).count,
-                                selectedFilters: $selectedFilters
-                            )
-                        if let mailingStatus = selectedFilters.isEmpty ? status :
-                            getMailingStatusFromFilters(with: status) {
-                            if !getMailings(with: mailingStatus).isEmpty {
-                                let mailingList = getMailings(
-                                    with: mailingStatus).filter { isRelatedToSearchQuery($0)
-                                }
-                                ForEach(mailingList.indices) { mailingIndex in
-                                    if mailingIndex < (isListFiltered ? mailingList.count :
-                                                        maxMailingsDisplayCount) {
-                                        let mailing = mailingList[mailingIndex]
-                                        MailingRowItem(
-                                            tapAction: { mailingRowSelected(for: mailing) },
-                                            mailing: mailing
-                                        )
+                    let isListFiltered = !(selectedFilters.isEmpty && mailingSearchTerm.isEmpty)
+
+                    if viewModel.mailings.filter { mailing in isRelatedToSearchQuery(mailing) }.isEmpty &&
+                        !viewModel.mailings.isEmpty {
+                        HStack {
+                            Spacer()
+                            Text("No mailings match '\(mailingSearchTerm)' search term")
+                                .font(Font.custom("Silka-Regular", size: 16))
+                                .padding()
+                            Spacer()
+                        }.background(Color.addressableLightGray)
+                    } else {
+                        ForEach(MailingStatus.allCases, id: \.self) { status in
+                            isListFiltered || getMailings(with: status).isEmpty ? nil :
+                                CampaignSectionHeaderView(
+                                    status: status,
+                                    count: getMailings(with: status).count,
+                                    selectedFilters: $selectedFilters
+                                )
+                            if let mailingStatus = selectedFilters.isEmpty ? status :
+                                getMailingStatusFromFilters(with: status) {
+                                if !getMailings(with: mailingStatus).isEmpty {
+                                    let mailingList = getMailings(
+                                        with: mailingStatus).filter { isRelatedToSearchQuery($0)
+                                    }
+                                    ForEach(mailingList.indices) { mailingIndex in
+                                        if mailingIndex < (isListFiltered ? mailingList.count :
+                                                            maxMailingsDisplayCount) {
+                                            let mailing = mailingList[mailingIndex]
+                                            MailingRowItem(
+                                                tapAction: { mailingRowSelected(for: mailing) },
+                                                mailing: mailing
+                                            )
+                                        }
                                     }
                                 }
                             }
