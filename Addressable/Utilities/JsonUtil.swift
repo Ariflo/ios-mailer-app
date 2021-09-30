@@ -12,7 +12,10 @@ func decode<T: Decodable>(_ data: Data) -> AnyPublisher<T, ApiError> {
     return Just(data)
         .decode(type: T.self, decoder: JSONDecoder())
         .mapError { error in
-            .parsing(description: error.localizedDescription)
+            #if DEBUG || STAGING
+            print("**** Descriptive Parsing Error ***** \(error)")
+            #endif
+            return .parsing(description: error.localizedDescription)
         }
         .eraseToAnyPublisher()
 }

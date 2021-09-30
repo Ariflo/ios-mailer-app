@@ -159,7 +159,6 @@ struct DashboardView: View {
                         ).disabled(showNavMenu)
                     }
                 }
-                .adaptsToKeyboard()
                 .offset(x: showNavMenu ? -(geometry.size.width / 2) : 0)
             }
             .ignoresSafeArea(.all, edges: [.bottom])

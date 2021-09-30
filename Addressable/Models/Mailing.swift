@@ -118,8 +118,8 @@ struct MailingResponse: Codable {
 }
 // MARK: - ReturnAddress
 struct ReturnAddress: Codable {
-    let fromFirstName, fromLastName, fromBusinessName, fromAddressLine1: String
-    let fromAddressLine2, fromCity, fromState, fromZipcode: String
+    let fromFirstName, fromLastName, fromBusinessName, fromAddressLine1: String?
+    let fromAddressLine2, fromCity, fromState, fromZipcode: String?
 
     enum CodingKeys: String, CodingKey {
         case fromFirstName = "from_first_name"

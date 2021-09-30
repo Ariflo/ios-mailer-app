@@ -126,7 +126,7 @@ struct ComposeRadiusView: View {
                             ComposeRadiusConfirmationView(
                                 emptyMessage: "Our team is now building your mailing list." +
                                     " You will receive a notification when the list is " +
-                                    "ready for your review. Generally 24-48 hours."
+                                    "ready for your review."
                             )
                         case .confirmAudience:
                             ComposeRadiusAudienceConfirmationView(
@@ -252,7 +252,7 @@ struct ComposeRadiusView: View {
                 viewModel.getDataTreeDefaultSearchCriteria()
                 if let currentStepIndex = ComposeRadiusSteps.allCases.firstIndex(of: viewModel.step),
                    let cardSelectionStepIndex = ComposeRadiusSteps.allCases.firstIndex(of: .selectCard) {
-                    if currentStepIndex <= cardSelectionStepIndex {
+                    if currentStepIndex <= cardSelectionStepIndex || viewModel.step == .confirmAudience {
                         viewModel.getRadiusMailingCoverImageOptions()
                     }
                 }

@@ -66,13 +66,13 @@ class EditReturnAddressViewModel: ObservableObject {
     }
 
     func populateFields() {
-        fromFirstName = mailing.fromAddress.fromFirstName
-        fromLastName = mailing.fromAddress.fromLastName
-        fromBusinessName = mailing.fromAddress.fromBusinessName
-        fromAddressLine1 = mailing.fromAddress.fromAddressLine1
-        fromAddressLine2 = mailing.fromAddress.fromAddressLine2
-        fromCity = mailing.fromAddress.fromCity
-        fromState = mailing.fromAddress.fromState
-        fromZipcode = mailing.fromAddress.fromZipcode
+        fromFirstName = mailing.fromAddress.fromFirstName ?? ""
+        fromLastName = mailing.fromAddress.fromLastName ?? ""
+        fromBusinessName = mailing.fromAddress.fromBusinessName ?? ""
+        fromAddressLine1 = mailing.fromAddress.fromAddressLine1 ?? ""
+        fromAddressLine2 = mailing.fromAddress.fromAddressLine2 ?? ""
+        fromCity = mailing.fromAddress.fromCity ?? ""
+        fromState = mailing.fromAddress.fromState ?? ""
+        fromZipcode = mailing.fromAddress.fromZipcode ?? ""
     }
 }

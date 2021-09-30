@@ -35,6 +35,7 @@ struct CampaignsView: View, Equatable {
     @State var showSphereMenuOption = false
     @State var showAudienceOption = false
     @State var showSingleMenuOption = false
+    @State var hideCreateButton = false
 
     init(viewModel: CampaignsViewModel, selectedMenuItem: Binding<MainMenu>) {
         self.viewModel = viewModel
@@ -138,7 +139,8 @@ struct CampaignsView: View, Equatable {
                     if !viewModel.loadingMailings {
                         CampaignsListView(
                             viewModel: viewModel,
-                            selectedMenuItem: $selectedMenuItem
+                            selectedMenuItem: $selectedMenuItem,
+                            hideCreateButton: $hideCreateButton
                         )
                         .environmentObject(app)
                     }
@@ -202,7 +204,7 @@ struct CampaignsView: View, Equatable {
                         .background(Color.addressableLightGray)
                         .cornerRadius(10)
 
-                        Button(action: {
+                        !hideCreateButton ? Button(action: {
                             // Display Add Campaign Menu Options
                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                                 withAnimation {
@@ -217,7 +219,7 @@ struct CampaignsView: View, Equatable {
                                 .background(Color.white)
                                 .cornerRadius(50)
                                 .shadow(color: .gray, radius: 0.2, x: 1, y: 1)
-                        }
+                        }.transition(.move(edge: .trailing)) : nil
                     }.padding()
                 }
             }

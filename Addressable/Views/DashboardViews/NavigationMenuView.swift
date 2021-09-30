@@ -14,7 +14,7 @@ struct NavigationMenuView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 40) {
             ForEach(MainMenu.allCases, id: \.self) { menuItem in
-                if menuItem != .mailingDetail {
+                if menuItem != .mailingDetail && isSmartNumberEnabled(menuItem) {
                     Button(action: {
                         // Navigate to selected menu item
                         selectedMenuItem = menuItem
@@ -65,6 +65,19 @@ struct NavigationMenuView: View {
         case .feedback:
             return "exclamationmark.bubble"
         }
+    }
+    private func isSmartNumberEnabled(_ menuItem: MainMenu) -> Bool {
+        if menuItem == .calls || menuItem == .messages {
+            guard let keyStoreUser = KeyChainServiceUtil.shared[userData],
+                  let userData = keyStoreUser.data(using: .utf8),
+                  let user = try? JSONDecoder().decode(User.self, from: userData) else {
+                print("isSmartNumberEnabled() fetch user from keystore fetch error")
+                return false
+            }
+            return !user.smartNumbers.isEmpty
+        }
+        // return true for all other options
+        return true
     }
 }
 #if DEBUG

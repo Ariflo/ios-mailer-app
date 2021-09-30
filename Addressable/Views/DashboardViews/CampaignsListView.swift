@@ -42,6 +42,7 @@ struct CampaignsListView: View {
     @ObservedObject var viewModel: CampaignsViewModel
 
     @Binding var selectedMenuItem: MainMenu
+    @Binding var hideCreateButton: Bool
 
     @State var mailingSearchTerm: String = ""
     @State var selectedFilters: [String] = []
@@ -49,9 +50,14 @@ struct CampaignsListView: View {
 
     let maxMailingsDisplayCount: Int = 3
 
-    init(viewModel: CampaignsViewModel, selectedMenuItem: Binding<MainMenu>) {
+    init(
+        viewModel: CampaignsViewModel,
+        selectedMenuItem: Binding<MainMenu>,
+        hideCreateButton: Binding<Bool>
+    ) {
         self.viewModel = viewModel
         self._selectedMenuItem = selectedMenuItem
+        self._hideCreateButton = hideCreateButton
     }
 
     var body: some View {
@@ -159,7 +165,21 @@ struct CampaignsListView: View {
                         }
                     }
                 }
-            }.padding(.horizontal, 20)
+            }
+            .simultaneousGesture(
+                DragGesture().onChanged {
+                    if $0.translation.height > 0 {
+                        withAnimation(.easeIn(duration: 0.5)) {
+                            hideCreateButton = false
+                        }
+                    } else {
+                        withAnimation(.easeOut(duration: 0.5)) {
+                            hideCreateButton = true
+                        }
+                    }
+                }
+            )
+            .padding(.horizontal, 20)
         }
         .background(Color.addressableLightGray)
         .ignoresSafeArea(.all, edges: [.bottom])

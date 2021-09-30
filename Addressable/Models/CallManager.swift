@@ -295,3 +295,13 @@ struct NewCaller: Codable {
         case fromNumber = "from_number"
     }
 }
+// MARK: - SmartNumber
+struct SmartNumber: Codable {
+    let id: Int
+    let displayNumber: String
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case displayNumber = "display_number"
+    }
+}

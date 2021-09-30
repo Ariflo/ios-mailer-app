@@ -21,6 +21,7 @@ struct User: Codable, Identifiable {
     let accountID: Int
     let dre: String?
     let phone: String?
+    let smartNumbers: [SmartNumber]
     let companyName: String?
     let addressLine1: String
     let addressLine2: String?
@@ -35,6 +36,7 @@ struct User: Codable, Identifiable {
         case accountID = "account_id"
         case dre
         case phone
+        case smartNumbers = "smart_numbers"
         case companyName = "company_name"
         case addressLine1 = "address_line_1"
         case addressLine2 = "address_line_2"

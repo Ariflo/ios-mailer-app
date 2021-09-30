@@ -26,152 +26,154 @@ struct CloneMailingView: View {
 
     var body: some View {
         NavigationView {
-            ZStack(alignment: .top) {
-                Color.white.edgesIgnoringSafeArea(.all)
-                VStack(spacing: 34) {
-                    Text("Select the items that you would like to clone.")
-                        .font(Font.custom("Silka-Regular", size: 16))
-                        .foregroundColor(Color.addressableFadedBlack)
-                        .padding(.horizontal, 20)
-                        .multilineTextAlignment(.center)
-                    VStack(alignment: .leading, spacing: 24) {
-                        ForEach(CloneMailingTextFieldOptions.allCases, id: \.self) { option in
-                            let textFieldBinding = Binding<String>(
-                                get: {
-                                    switch option {
-                                    case .mailingName:
-                                        return viewModel.mailingName
-                                    case .targetQuantity:
-                                        return viewModel.targetQuantity
-                                    default:
-                                        return ""
-                                    }
-                                },
-                                set: { textFieldValue in
-                                    switch option {
-                                    case .mailingName:
-                                        viewModel.mailingName = textFieldValue
-                                    case .targetQuantity:
-                                        viewModel.targetQuantity = textFieldValue
-                                    default:
-                                        break
-                                    }
-                                })
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(option.rawValue).font(Font.custom("Silka-Light", size: 12))
-                                switch option {
-                                case .mailingName,
-                                     .targetQuantity:
-                                    TextField("", text: textFieldBinding)
-                                        .modifier(TextFieldModifier())
-                                        .keyboardType(option == .targetQuantity ? .numberPad : .default)
-                                case .targetDropDate:
-                                    HStack(alignment: .bottom, spacing: 8) {
-                                        if viewModel.isEditingTargetDropDate {
-                                            DatePicker(
-                                                selection: Binding<Date>(
-                                                    get: {
-                                                        getTargetDropDateObject()
-                                                    }, set: {
-                                                        viewModel.setSelectedDropDate(selectedDate: $0)
-                                                    }),
-                                                in: getTargetDropDateObject()...,
-                                                displayedComponents: .date
-                                            ) {}.fixedSize().frame(alignment: .leading)
-                                        } else {
-                                            Text("\(getFormattedTargetDropDate())")
-                                                .font(Font.custom("Silka-Medium", size: 16))
-                                                .foregroundColor(Color.black)
-                                                .multilineTextAlignment(.leading)
+            ScrollView(showsIndicators: false) {
+                ZStack(alignment: .top) {
+                    Color.white.edgesIgnoringSafeArea(.all)
+                    VStack(spacing: 34) {
+                        Text("Select the items that you would like to clone.")
+                            .font(Font.custom("Silka-Regular", size: 16))
+                            .foregroundColor(Color.addressableFadedBlack)
+                            .padding(.horizontal, 20)
+                            .multilineTextAlignment(.center)
+                        VStack(alignment: .leading, spacing: 24) {
+                            ForEach(CloneMailingTextFieldOptions.allCases, id: \.self) { option in
+                                let textFieldBinding = Binding<String>(
+                                    get: {
+                                        switch option {
+                                        case .mailingName:
+                                            return viewModel.mailingName
+                                        case .targetQuantity:
+                                            return viewModel.targetQuantity
+                                        default:
+                                            return ""
                                         }
-                                        Button(action: {
-                                            viewModel.isEditingTargetDropDate.toggle()
-                                        }) {
-                                            Text(viewModel.isEditingTargetDropDate ?
-                                                    "Set New Drop Date" :
-                                                    "Edit Drop Date")
-                                                .font(Font.custom("Silka-Medium", size: 12))
-                                                .foregroundColor(Color.addressableFadedBlack)
-                                                .underline()
-                                                .multilineTextAlignment(.center)
+                                    },
+                                    set: { textFieldValue in
+                                        switch option {
+                                        case .mailingName:
+                                            viewModel.mailingName = textFieldValue
+                                        case .targetQuantity:
+                                            viewModel.targetQuantity = textFieldValue
+                                        default:
+                                            break
                                         }
-                                    }.padding(.top)
+                                    })
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(option.rawValue).font(Font.custom("Silka-Light", size: 12))
+                                    switch option {
+                                    case .mailingName,
+                                         .targetQuantity:
+                                        TextField("", text: textFieldBinding)
+                                            .modifier(TextFieldModifier())
+                                            .keyboardType(option == .targetQuantity ? .numbersAndPunctuation : .default)
+                                    case .targetDropDate:
+                                        HStack(alignment: .bottom, spacing: 8) {
+                                            if viewModel.isEditingTargetDropDate {
+                                                DatePicker(
+                                                    selection: Binding<Date>(
+                                                        get: {
+                                                            getTargetDropDateObject()
+                                                        }, set: {
+                                                            viewModel.setSelectedDropDate(selectedDate: $0)
+                                                        }),
+                                                    in: getTargetDropDateObject()...,
+                                                    displayedComponents: .date
+                                                ) {}.fixedSize().frame(alignment: .leading)
+                                            } else {
+                                                Text("\(getFormattedTargetDropDate())")
+                                                    .font(Font.custom("Silka-Medium", size: 16))
+                                                    .foregroundColor(Color.black)
+                                                    .multilineTextAlignment(.leading)
+                                            }
+                                            Button(action: {
+                                                viewModel.isEditingTargetDropDate.toggle()
+                                            }) {
+                                                Text(viewModel.isEditingTargetDropDate ?
+                                                        "Set New Drop Date" :
+                                                        "Edit Drop Date")
+                                                    .font(Font.custom("Silka-Medium", size: 12))
+                                                    .foregroundColor(Color.addressableFadedBlack)
+                                                    .underline()
+                                                    .multilineTextAlignment(.center)
+                                            }
+                                        }.padding(.top)
+                                    }
                                 }
                             }
                         }
-                    }
-                    VStack(alignment: .leading, spacing: 24) {
-                        if let layoutTemplate = viewModel.mailing.layoutTemplate {
-                            CheckView(
-                                isChecked: viewModel.useLayoutTemplate,
-                                title: "Use Layout Template:",
-                                subTitles: [layoutTemplate.name]
-                            ) {
-                                viewModel.useLayoutTemplate.toggle()
+                        VStack(alignment: .leading, spacing: 24) {
+                            if let layoutTemplate = viewModel.mailing.layoutTemplate {
+                                CheckView(
+                                    isChecked: viewModel.useLayoutTemplate,
+                                    title: "Use Layout Template:",
+                                    subTitles: [layoutTemplate.name]
+                                ) {
+                                    viewModel.useLayoutTemplate.toggle()
+                                }
+                                .multilineTextAlignment(.center)
                             }
-                            .multilineTextAlignment(.center)
-                        }
-                        if let messageTemplateName = viewModel.mailing.customNoteTemplateName {
-                            CheckView(
-                                isChecked: viewModel.useMessageTemplate,
-                                title: "Use Message Template:",
-                                subTitles: [messageTemplateName]
-                            ) {
-                                viewModel.useMessageTemplate.toggle()
+                            if let messageTemplateName = viewModel.mailing.customNoteTemplateName {
+                                CheckView(
+                                    isChecked: viewModel.useMessageTemplate,
+                                    title: "Use Message Template:",
+                                    subTitles: [messageTemplateName]
+                                ) {
+                                    viewModel.useMessageTemplate.toggle()
+                                }
+                                .multilineTextAlignment(.center)
                             }
-                            .multilineTextAlignment(.center)
-                        }
-                        viewModel.mailing.listUploadIdToNameMap.isEmpty ? nil :
-                            CheckView(
-                                isChecked: viewModel.useAudienceList,
-                                title: "Use List(s):",
-                                subTitles: viewModel.mailing.listUploadIdToNameMap
-                                    .reduce([]) { audienceNames, audienceMap in
-                                        audienceNames + audienceMap.values
-                                    }
-                            ) {
-                                viewModel.useAudienceList.toggle()
-                            }
-                            .multilineTextAlignment(.center)
-                    }
-                    Spacer()
-                    HStack(spacing: 8) {
-                        Button(action: {
-                            presentationMode.wrappedValue.dismiss()
-                        }) {
-                            Text("Cancel")
-                                .font(Font.custom("Silka-Medium", size: 18))
-                                .padding()
-                                .foregroundColor(Color.addressableDarkGray)
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 5)
-                                        .stroke(Color.addressableDarkGray, lineWidth: 1)
-                                )
+                            viewModel.mailing.listUploadIdToNameMap.isEmpty ? nil :
+                                CheckView(
+                                    isChecked: viewModel.useAudienceList,
+                                    title: "Use List(s):",
+                                    subTitles: viewModel.mailing.listUploadIdToNameMap
+                                        .reduce([]) { audienceNames, audienceMap in
+                                            audienceNames + audienceMap.values
+                                        }
+                                ) {
+                                    viewModel.useAudienceList.toggle()
+                                }
                                 .multilineTextAlignment(.center)
                         }
-                        Button(action: {
-                            viewModel.cloneMailing { clonedMailing in
-                                guard clonedMailing != nil else {
-                                    showingAlert = true
-                                    return
-                                }
-                                // swiftlint:disable force_unwrapping
-                                viewModel.mailing = clonedMailing!
+                        Spacer()
+                        HStack(spacing: 8) {
+                            Button(action: {
                                 presentationMode.wrappedValue.dismiss()
+                            }) {
+                                Text("Cancel")
+                                    .font(Font.custom("Silka-Medium", size: 18))
+                                    .padding()
+                                    .foregroundColor(Color.addressableDarkGray)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 5)
+                                            .stroke(Color.addressableDarkGray, lineWidth: 1)
+                                    )
+                                    .multilineTextAlignment(.center)
                             }
-                        }) {
-                            Text("Clone Mailing")
-                                .font(Font.custom("Silka-Medium", size: 18))
-                                .padding()
-                                .foregroundColor(Color.white)
-                                .background(Color.addressablePurple)
-                                .cornerRadius(5)
-                                .multilineTextAlignment(.center)
+                            Button(action: {
+                                viewModel.cloneMailing { clonedMailing in
+                                    guard clonedMailing != nil else {
+                                        showingAlert = true
+                                        return
+                                    }
+                                    // swiftlint:disable force_unwrapping
+                                    viewModel.mailing = clonedMailing!
+                                    presentationMode.wrappedValue.dismiss()
+                                }
+                            }) {
+                                Text("Clone Mailing")
+                                    .font(Font.custom("Silka-Medium", size: 18))
+                                    .padding()
+                                    .foregroundColor(Color.white)
+                                    .background(Color.addressablePurple)
+                                    .cornerRadius(5)
+                                    .multilineTextAlignment(.center)
+                            }
+                            .disabled(shouldDisableCloneButton())
+                            .opacity(shouldDisableCloneButton() ? 0.4 : 1)
                         }
-                        .disabled(shouldDisableCloneButton())
-                        .opacity(shouldDisableCloneButton() ? 0.4 : 1)
-                    }
-                }.padding(20)
+                    }.padding(20)
+                }
             }
             .navigationBarTitle("Clone '\(viewModel.mailing.name) \(getTouchNumber())'", displayMode: .inline)
         }.alert(isPresented: $showingAlert) {
