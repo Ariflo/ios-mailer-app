@@ -57,6 +57,7 @@ struct ProfileView: View, Equatable {
                     Image("StyleSamples")
                         .resizable()
                         .scaledToFit()
+                        .padding(.horizontal)
                 }
                 .gesture(drag)
                 .frame(

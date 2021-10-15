@@ -157,7 +157,7 @@ struct AddressableCallView: View {
                         Button(action: {
                             // Display Outgoing Call View
                             DispatchQueue.main.async {
-                                app.currentView = .dashboard(false)
+                                app.currentView = .dashboard(false, false)
                             }
                         }) {
                             Image(systemName: "mail")

@@ -38,7 +38,7 @@ struct NavigationMenuView: View {
             Spacer()
             if let versionNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
                let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-                Text("Addressable v\(appVersion) (\(versionNumber)) - Beta")
+                Text("Addressable v\(appVersion) (\(versionNumber))")
                     .font(Font.custom("Silka-Medium", size: 18))
                     .multilineTextAlignment(.center)
                     .foregroundColor(Color.black)

@@ -134,7 +134,7 @@ extension CallService: CXProviderDelegate {
         print("provider:performEndCallAction:")
 
         DispatchQueue.main.async {[weak self] in
-            self?.app.currentView = .dashboard(true)
+            self?.app.currentView = .dashboard(true, false)
         }
 
         if let invite = callManager.activeCallInvites[action.callUUID.uuidString] {
@@ -375,7 +375,7 @@ extension CallService: CallDelegate {
         app.callState = CallState.ended.rawValue
 
         DispatchQueue.main.async { [weak self] in
-            self?.app.currentView = .dashboard(true)
+            self?.app.currentView = .dashboard(true, false)
 
             // reset CallState on disconnect
             self?.app.callState = CallState.connecting.rawValue

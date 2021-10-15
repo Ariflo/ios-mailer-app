@@ -96,7 +96,7 @@ struct SignInView: View {
             }
             if let versionNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
                let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
-                Text("v\(appVersion) (\(versionNumber)) - Beta")
+                Text("v\(appVersion) (\(versionNumber))")
                     .foregroundColor(Color.black)
                     .padding()
             }
@@ -110,7 +110,7 @@ struct SignInView: View {
                 context: app.persistentContainer.viewContext
             )
             DispatchQueue.main.async {
-                app.currentView = .dashboard(false)
+                app.currentView = .dashboard(false, true)
                 authorizedUser = 1
             }
         } else {

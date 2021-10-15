@@ -39,6 +39,7 @@ enum MailingState: String, CaseIterable {
 
 struct CampaignsListView: View {
     @EnvironmentObject var app: Application
+    @FetchRequest(sortDescriptors: []) var campaignMailings: FetchedResults<PersistedCampaign>
     @ObservedObject var viewModel: CampaignsViewModel
 
     @Binding var selectedMenuItem: MainMenu
@@ -122,13 +123,16 @@ struct CampaignsListView: View {
             .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
             // MARK: - Campaigns Mailing List
             RefreshableScrollView(refreshing: $viewModel.refreshMailingData) {
-                if viewModel.mailings.isEmpty {
+                if campaignMailings.isEmpty {
                     EmptyListView(message: "Tap on the plus (+) button below to create a mailing.")
                 } else {
                     let isListFiltered = !(selectedFilters.isEmpty && mailingSearchTerm.isEmpty)
+                    let mailings: [Mailing] = campaignMailings.compactMap { campaignMailing in
+                        try? JSONDecoder().decode(Mailing.self, from: campaignMailing.mailing)
+                    }
 
-                    if viewModel.mailings.filter { mailing in isRelatedToSearchQuery(mailing) }.isEmpty &&
-                        !viewModel.mailings.isEmpty {
+                    if mailings.filter { mailing in isRelatedToSearchQuery(mailing) }.isEmpty &&
+                        !mailings.isEmpty {
                         HStack {
                             Spacer()
                             Text("No mailings match '\(mailingSearchTerm)' search term")
@@ -184,9 +188,13 @@ struct CampaignsListView: View {
         .background(Color.addressableLightGray)
         .ignoresSafeArea(.all, edges: [.bottom])
         .onChange(of: app.pushNotificationEvent) { _ in
+            let mailings: [Mailing] = campaignMailings.compactMap { campaignMailing in
+                try? JSONDecoder().decode(Mailing.self, from: campaignMailing.mailing)
+            }
+
             if let pushEvent = app.pushNotificationEvent,
                let mailingId = pushEvent[PushNotificationEvents.mailingListStatus.rawValue],
-               let mailing = viewModel.mailings.first(where: { $0.id == mailingId }) {
+               let mailing = mailings.first(where: { $0.id == mailingId }) {
                 mailingRowSelected(for: mailing)
             }
         }
@@ -217,14 +225,17 @@ struct CampaignsListView: View {
         return selectedFilters.contains(status.rawValue) ? status : nil
     }
     private func getMailings(with status: MailingStatus) -> [Mailing] {
+        let mailings: [Mailing] = campaignMailings.compactMap { campaignMailing in
+            try? JSONDecoder().decode(Mailing.self, from: campaignMailing.mailing)
+        }
         switch status {
         case .mailed:
-            return viewModel.mailings.filter {
+            return mailings.filter {
                 $0.mailingStatus == MailingState.mailed.rawValue ||
                     $0.mailingStatus == MailingState.remailed.rawValue
             }
         case .processing:
-            return viewModel.mailings.filter {
+            return mailings.filter {
                 $0.mailingStatus == MailingState.production.rawValue ||
                     $0.mailingStatus == MailingState.printReady.rawValue ||
                     $0.mailingStatus == MailingState.printing.rawValue ||
@@ -234,12 +245,12 @@ struct CampaignsListView: View {
                     $0.mailingStatus == MailingState.productionReady.rawValue
             }
         case .upcoming:
-            return viewModel.mailings.filter {
+            return mailings.filter {
                 $0.mailingStatus == MailingState.scheduled.rawValue
             }
 
         case .draft:
-            return viewModel.mailings.filter {
+            return mailings.filter {
                 $0.mailingStatus == MailingState.draft.rawValue ||
                     $0.mailingStatus == MailingState.pending.rawValue ||
                     $0.mailingStatus == MailingState.listReady.rawValue ||
@@ -247,12 +258,12 @@ struct CampaignsListView: View {
                     $0.mailingStatus == MailingState.listApproved.rawValue
             }
         case .archived:
-            return viewModel.mailings.filter {
+            return mailings.filter {
                 $0.mailingStatus == MailingState.archived.rawValue ||
                     $0.mailingStatus == MailingState.delivered.rawValue
             }
         case .canceled:
-            return viewModel.mailings.filter {
+            return mailings.filter {
                 $0.mailingStatus == MailingState.canceled.rawValue
             }
         }
@@ -281,11 +292,13 @@ struct CampaignsListView_Previews: PreviewProvider {
         let selectedMenuItem = Binding<MainMenu>(
             get: { MainMenu.campaigns }, set: { _ in }
         )
-
-        CampaignsListView(
-            viewModel: CampaignsViewModel(provider: DependencyProvider()),
-            selectedMenuItem: selectedMenuItem
-        )
+        if let context = (UIApplication.shared.delegate as? Application)?.persistentContainer.viewContext {
+            CampaignsListView(
+                viewModel: CampaignsViewModel(managedObjectContext: context, provider: DependencyProvider()),
+                selectedMenuItem: selectedMenuItem,
+                hideCreateButton: Binding<Bool>(get: { false }, set: { _ in })
+            )
+        }
     }
 }
 #endif

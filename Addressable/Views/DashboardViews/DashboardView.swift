@@ -18,14 +18,17 @@ struct DashboardView: View {
 
     @State var showNavMenu = false
     @State var displayIncomingLeadSurvey: Bool = false
+    @State var showSmartNumberWarning: Bool = false
     @State var selectedMenuItem: MainMenu = .campaigns
     @State var subjectLead: IncomingLead?
 
+    var isComingFromSignIn: Bool = false
     var shouldDisplayIncomingLeadSurvey: Bool = false
 
-    init(viewModel: DashboardViewModel, displayIncomingLeadSurvey: Bool) {
+    init(viewModel: DashboardViewModel, displayIncomingLeadSurvey: Bool, isComingFromSignIn: Bool) {
         self.viewModel = viewModel
         self.shouldDisplayIncomingLeadSurvey = displayIncomingLeadSurvey
+        self.isComingFromSignIn = isComingFromSignIn
     }
 
     var body: some View {
@@ -107,8 +110,10 @@ struct DashboardView: View {
                     switch selectedMenuItem {
                     case .campaigns:
                         CampaignsView(
-                            viewModel: CampaignsViewModel(provider: app.dependencyProvider),
-                            selectedMenuItem: $selectedMenuItem
+                            viewModel: CampaignsViewModel(managedObjectContext: app.persistentContainer.viewContext,
+                                                          provider: app.dependencyProvider),
+                            selectedMenuItem: $selectedMenuItem,
+                            showSmartNumberWarning: $showSmartNumberWarning
                         )
                         .equatable()
                         .environmentObject(app)
@@ -186,6 +191,7 @@ struct DashboardView: View {
                         selectedMenuItem = .calls
                     }
                 }
+                showSmartNumberWarning = isComingFromSignIn && isSmartNumberEnabled()
             }
             .onChange(of: app.pushNotificationEvent) { _ in
                 if let pushEvent = app.pushNotificationEvent {
@@ -220,6 +226,15 @@ struct DashboardView: View {
             selectedMenuItem = .mailingDetail
         }
     }
+    private func isSmartNumberEnabled() -> Bool {
+        guard let keyStoreUser = KeyChainServiceUtil.shared[userData],
+              let userData = keyStoreUser.data(using: .utf8),
+              let user = try? JSONDecoder().decode(User.self, from: userData) else {
+            print("isSmartNumberEnabled() fetch user from keystore fetch error")
+            return false
+        }
+        return !user.smartNumbers.isEmpty
+    }
 }
 
 #if DEBUG
@@ -227,7 +242,9 @@ struct DashboardView_Previews: PreviewProvider {
     static var previews: some View {
         DashboardView(
             viewModel: DashboardViewModel(provider: DependencyProvider()),
-            displayIncomingLeadSurvey: false)
+            displayIncomingLeadSurvey: false,
+            isComingFromSignIn: false
+        )
     }
 }
 #endif

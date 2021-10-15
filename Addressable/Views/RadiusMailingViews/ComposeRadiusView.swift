@@ -158,7 +158,7 @@ struct ComposeRadiusView: View {
                                         viewModel.step.back()
                                         return
                                     }
-                                    app.currentView = .dashboard(false)
+                                    app.currentView = .dashboard(false, false)
                                 }
                             ) {
                                 Text(viewModel.step == .audienceProcessing ||
@@ -181,7 +181,7 @@ struct ComposeRadiusView: View {
                             action: {
                                 guard viewModel.step != .audienceProcessing &&
                                         viewModel.step != .radiusSent else {
-                                    app.currentView = .dashboard(false)
+                                    app.currentView = .dashboard(false, false)
                                     return
                                 }
 

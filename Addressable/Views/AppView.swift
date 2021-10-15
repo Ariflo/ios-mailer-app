@@ -9,7 +9,7 @@ import SwiftUI
 
 enum AddressableView {
     case signIn
-    case dashboard(Bool)
+    case dashboard(Bool, Bool)
     case activeCall
     case composeRadius
 }
@@ -38,10 +38,11 @@ struct AppView: View {
                 )
                 .navigationBarHidden(true)
                 .environmentObject(app)
-            case .dashboard(let shouldDisplayIncomingLeadSurvey):
+            case let .dashboard(shouldDisplayIncomingLeadSurvey, isComingFromSignIn):
                 DashboardView(
                     viewModel: DashboardViewModel(provider: app.dependencyProvider),
-                    displayIncomingLeadSurvey: shouldDisplayIncomingLeadSurvey
+                    displayIncomingLeadSurvey: shouldDisplayIncomingLeadSurvey,
+                    isComingFromSignIn: isComingFromSignIn
                 )
                 .environmentObject(app)
                 .navigationBarHidden(true)

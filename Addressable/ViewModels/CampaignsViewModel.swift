@@ -7,9 +7,9 @@
 
 import SwiftUI
 import Combine
+import CoreData
 
 class CampaignsViewModel: ObservableObject {
-    @Published var mailings: [Mailing] = []
     @Published var loadingMailings: Bool = false
     @Published var loadingLeads: Bool = false
     @Published var loadingLeadsWithMessages: Bool = false
@@ -31,8 +31,10 @@ class CampaignsViewModel: ObservableObject {
 
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
+    private var context: NSManagedObjectContext
 
-    init(provider: DependencyProviding) {
+    init(managedObjectContext: NSManagedObjectContext, provider: DependencyProviding) {
+        context = managedObjectContext
         apiService = provider.register(provider: provider)
     }
 
@@ -53,9 +55,25 @@ class CampaignsViewModel: ObservableObject {
                     }
                 },
                 receiveValue: { [weak self] campaignsData in
-                    guard let self = self else { return }
-                    self.mailings = campaignsData.campaigns.compactMap { $0.mailing }
+                    guard let self = self,
+                          let persistedCampaigns: [PersistedCampaign] = try? self.context.fetch(
+                            PersistedCampaign.fetchRequest()
+                          ) else { return }
                     // TODO: Include Audience, Sphere, and the rest when the features are added
+                    let storedMailings: [Mailing] = persistedCampaigns.compactMap { campaignMailing in
+                        try? JSONDecoder().decode(Mailing.self, from: campaignMailing.mailing)
+                    }
+                    for mailing in campaignsData.campaigns
+                        .compactMap({ $0.mailing }) where !storedMailings.contains(mailing) {
+                        guard let encodedMailingData = try? JSONEncoder().encode(mailing) else {
+                            print("New Mailing Encoding Error")
+                            return
+                        }
+                        PersistedCampaign.createWith(
+                            mailingData: encodedMailingData,
+                            using: self.context
+                        )
+                    }
                     self.numOfCampaigns = campaignsData.campaigns.compactMap { $0.mailing }
                         .filter { $0.relatedMailing == nil || $0.relatedMailing?.parentMailingID != nil }.count
                     self.numOfCards = campaignsData.campaigns

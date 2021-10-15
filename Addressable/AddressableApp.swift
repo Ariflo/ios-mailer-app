@@ -34,7 +34,7 @@ protocol PushKitEventDelegate: AnyObject {
 // TODO: Name this back to 'AppDelegate' when Lint issue is solved - https://github.com/realm/SwiftLint/issues/2786
 class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, ObservableObject {
     @Published var currentView: AddressableView = KeyChainServiceUtil.shared[userBasicAuthToken] != nil ?
-        .dashboard(false) : .signIn
+        .dashboard(false, false) : .signIn
     @Published var selectedMailing: Mailing?
     @Published var pushNotificationEvent: PushNotificationEvent?
     @Published var callState: String = CallState.connecting.rawValue
@@ -47,13 +47,22 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
 
     // MARK: - Core Data Stack -
     lazy var persistentContainer: NSPersistentContainer = {
-        let container = NSPersistentContainer(name: "AnalyticEvents")
-        container.loadPersistentStores { _, error in
-            if let error = error as NSError? {
-                fatalError("Unresolved error \(error), \(error.userInfo)")
+        let bundles = [Bundle(for: AnalyticEvent.self), Bundle(for: PersistedCampaign.self)]
+        if let dbModel = NSManagedObjectModel.mergedModel(from: bundles) {
+            let container = PersistentContainer(
+                name: "AddressableDatabase",
+                managedObjectModel: dbModel
+            )
+
+            container.loadPersistentStores { _, error in
+                if let error = error as NSError? {
+                    fatalError("Unresolved error \(error), \(error.userInfo)")
+                }
             }
+            return container
+        } else {
+            fatalError("Unresolved error in persistentContainer, unable to get model from NSManagedObjectModel")
         }
-        return container
     }()
 
     lazy var dependencyProvider = DependencyProvider()

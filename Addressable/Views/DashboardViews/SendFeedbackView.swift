@@ -20,14 +20,14 @@ struct SendFeedbackView: View {
         ScrollView(showsIndicators: false) {
             VStack(spacing: 24) {
                 // MARK: - Feedback Title
-                Text("Beta Program Feedback")
+                Text("Feedback")
                     .font(Font.custom("Silka-Medium", size: 20))
                     .padding()
                 if feebackSent {
                     // MARK: - Feedback Complete Message
                     Spacer()
                     Text("Feedback Sent! Please continue to let us know if you run into other issues and thank you " +
-                            "for being a part of our beta program.")
+                            "for reaching out.")
                         .font(Font.custom("Silka-Regular", size: 16))
                         .foregroundColor(Color.addressableFadedBlack)
                         .multilineTextAlignment(.center)

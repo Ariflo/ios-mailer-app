@@ -30,6 +30,7 @@ struct CampaignsView: View, Equatable {
     @ObservedObject var viewModel: CampaignsViewModel
 
     @Binding var selectedMenuItem: MainMenu
+    @Binding var showSmartNumberWarning: Bool
 
     @State var showRadiusMenuOption = false
     @State var showSphereMenuOption = false
@@ -37,9 +38,10 @@ struct CampaignsView: View, Equatable {
     @State var showSingleMenuOption = false
     @State var hideCreateButton = false
 
-    init(viewModel: CampaignsViewModel, selectedMenuItem: Binding<MainMenu>) {
+    init(viewModel: CampaignsViewModel, selectedMenuItem: Binding<MainMenu>, showSmartNumberWarning: Binding<Bool>) {
         self.viewModel = viewModel
         self._selectedMenuItem = selectedMenuItem
+        self._showSmartNumberWarning = showSmartNumberWarning
     }
 
     var body: some View {
@@ -234,6 +236,15 @@ struct CampaignsView: View, Equatable {
                 })
             }
         }
+        .alert(isPresented: $showSmartNumberWarning) {
+            Alert(
+                title: Text("Smart Number Forwarding"),
+                message: Text("All telephoney related features (ie. Calls, Messages, QR code scans) " +
+                                "will be forwarded to this device via this app." +
+                                " If you are not the intended recipient please tap on the " +
+                                "hamburger menu > tap 'Profile' > 'Logout' immediately.")
+            )
+        }
     }
     private func showMenu() {
         withAnimation {
@@ -256,16 +267,3 @@ struct CampaignsView: View, Equatable {
         }
     }
 }
-#if DEBUG
-struct CampaignsView_Previews: PreviewProvider {
-    static var previews: some View {
-        let selectedMenuItem = Binding<MainMenu>(
-            get: { MainMenu.campaigns }, set: { _ in }
-        )
-        CampaignsView(
-            viewModel: CampaignsViewModel(provider: DependencyProvider()),
-            selectedMenuItem: selectedMenuItem
-        )
-    }
-}
-#endif

@@ -35,6 +35,7 @@
 		CA3B8F8A265430AC005A12EF /* DataTreeSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3B8F89265430AC005A12EF /* DataTreeSearch.swift */; };
 		CA3B8F8C26557FEE005A12EF /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3B8F8B26557FEE005A12EF /* ProfileViewModel.swift */; };
 		CA3CE817259BC38500A230E1 /* DashboardViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA3CE816259BC38500A230E1 /* DashboardViewModel.swift */; };
+		CA401349270658E9002C9305 /* Campaigns.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = CA401347270658E9002C9305 /* Campaigns.xcdatamodeld */; };
 		CA4263BB26B9E20400F533A5 /* CloneMailingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4263BA26B9E20400F533A5 /* CloneMailingView.swift */; };
 		CA4263BD26B9E27000F533A5 /* CloneMailingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4263BC26B9E27000F533A5 /* CloneMailingViewModel.swift */; };
 		CA4263BF26BDCD7A00F533A5 /* MessageTemplateSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA4263BE26BDCD7A00F533A5 /* MessageTemplateSelectionView.swift */; };
@@ -73,6 +74,8 @@
 		CA93F49E25C9E41000271404 /* AddressableCallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA93F49D25C9E41000271404 /* AddressableCallView.swift */; };
 		CA9504DD2627834500F0245E /* PreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9504DC2627834500F0245E /* PreviewViewModel.swift */; };
 		CA9504E2262783F200F0245E /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9504E1262783F200F0245E /* PreviewView.swift */; };
+		CA955AEA27066C3400036779 /* PersistedCampaign +CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA955AE827066C3400036779 /* PersistedCampaign +CoreDataProperties.swift */; };
+		CA955AEB27066C3400036779 /* PersistedCampaign+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA955AE927066C3400036779 /* PersistedCampaign+CoreDataClass.swift */; };
 		CA9A3B4326CDC53C00193EDE /* UtilityProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9A3B4226CDC53C00193EDE /* UtilityProvider.swift */; };
 		CA9A3B4526CDC5AF00193EDE /* AnalyticsTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9A3B4426CDC5AF00193EDE /* AnalyticsTracker.swift */; };
 		CAA2A73C26B3111D0007FAD6 /* SendFeedbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAA2A73B26B3111D0007FAD6 /* SendFeedbackView.swift */; };
@@ -160,6 +163,7 @@
 		CAF36E9A26866C4A00AF5744 /* CallListSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF36E9926866C4A00AF5744 /* CallListSectionHeaderView.swift */; };
 		CAF5A52026C1F83900F55B54 /* SelectAudienceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF5A51F26C1F83900F55B54 /* SelectAudienceView.swift */; };
 		CAF5A52226C1F8C900F55B54 /* SelectAudienceViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAF5A52126C1F8C900F55B54 /* SelectAudienceViewModel.swift */; };
+		CAFCCE9127067FAA00A7775F /* PersistentContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFCCE9027067FAA00A7775F /* PersistentContainer.swift */; };
 		CAFDBEA925D5DDD5002D17B4 /* ComposeRadiusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFDBEA825D5DDD5002D17B4 /* ComposeRadiusView.swift */; };
 		CAFDBEAE25D5DF0D002D17B4 /* GoogleMapsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFDBEAD25D5DF0D002D17B4 /* GoogleMapsView.swift */; };
 		CAFDBEC525D6F3D3002D17B4 /* ComposeRadiusViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAFDBEC425D6F3D3002D17B4 /* ComposeRadiusViewModel.swift */; };
@@ -224,6 +228,7 @@
 		CA3B8F89265430AC005A12EF /* DataTreeSearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataTreeSearch.swift; sourceTree = "<group>"; };
 		CA3B8F8B26557FEE005A12EF /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		CA3CE816259BC38500A230E1 /* DashboardViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewModel.swift; sourceTree = "<group>"; };
+		CA401348270658E9002C9305 /* Campaigns.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Campaigns.xcdatamodel; sourceTree = "<group>"; };
 		CA4263BA26B9E20400F533A5 /* CloneMailingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloneMailingView.swift; sourceTree = "<group>"; };
 		CA4263BC26B9E27000F533A5 /* CloneMailingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloneMailingViewModel.swift; sourceTree = "<group>"; };
 		CA4263BE26BDCD7A00F533A5 /* MessageTemplateSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTemplateSelectionView.swift; sourceTree = "<group>"; };
@@ -261,6 +266,8 @@
 		CA93F49D25C9E41000271404 /* AddressableCallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddressableCallView.swift; sourceTree = "<group>"; };
 		CA9504DC2627834500F0245E /* PreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewModel.swift; sourceTree = "<group>"; };
 		CA9504E1262783F200F0245E /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
+		CA955AE827066C3400036779 /* PersistedCampaign +CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistedCampaign +CoreDataProperties.swift"; sourceTree = "<group>"; };
+		CA955AE927066C3400036779 /* PersistedCampaign+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PersistedCampaign+CoreDataClass.swift"; sourceTree = "<group>"; };
 		CA9A3B4226CDC53C00193EDE /* UtilityProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilityProvider.swift; sourceTree = "<group>"; };
 		CA9A3B4426CDC5AF00193EDE /* AnalyticsTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsTracker.swift; sourceTree = "<group>"; };
 		CAA2A73B26B3111D0007FAD6 /* SendFeedbackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendFeedbackView.swift; sourceTree = "<group>"; };
@@ -348,6 +355,7 @@
 		CAF36E9926866C4A00AF5744 /* CallListSectionHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallListSectionHeaderView.swift; sourceTree = "<group>"; };
 		CAF5A51F26C1F83900F55B54 /* SelectAudienceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAudienceView.swift; sourceTree = "<group>"; };
 		CAF5A52126C1F8C900F55B54 /* SelectAudienceViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAudienceViewModel.swift; sourceTree = "<group>"; };
+		CAFCCE9027067FAA00A7775F /* PersistentContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistentContainer.swift; sourceTree = "<group>"; };
 		CAFDBEA825D5DDD5002D17B4 /* ComposeRadiusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusView.swift; sourceTree = "<group>"; };
 		CAFDBEAD25D5DF0D002D17B4 /* GoogleMapsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoogleMapsView.swift; sourceTree = "<group>"; };
 		CAFDBEC425D6F3D3002D17B4 /* ComposeRadiusViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposeRadiusViewModel.swift; sourceTree = "<group>"; };
@@ -445,6 +453,7 @@
 				B370BC1F2576BAC10066624A /* Info.plist */,
 				B370BC1C2576BAC10066624A /* Preview Content */,
 				CABE1C2426D5A15700A3F033 /* AnalyticEvents.xcdatamodeld */,
+				CA401347270658E9002C9305 /* Campaigns.xcdatamodeld */,
 			);
 			path = Addressable;
 			sourceTree = "<group>";
@@ -515,6 +524,8 @@
 			children = (
 				CA365DD026D58F85005BC4DE /* AnalyticEvent+CoreDataClass.swift */,
 				CA365DD126D58F85005BC4DE /* AnalyticEvent+CoreDataProperties.swift */,
+				CA955AE927066C3400036779 /* PersistedCampaign+CoreDataClass.swift */,
+				CA955AE827066C3400036779 /* PersistedCampaign +CoreDataProperties.swift */,
 			);
 			path = CoreDataModels;
 			sourceTree = "<group>";
@@ -538,6 +549,7 @@
 				CABE1C2726D5C43600A3F033 /* Analytics.swift */,
 				CACC525326DEDF1E00EBE92A /* Handwriting.swift */,
 				CA4E232926E011A00055ADDF /* Account.swift */,
+				CAFCCE9027067FAA00A7775F /* PersistentContainer.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -941,6 +953,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CA955AEA27066C3400036779 /* PersistedCampaign +CoreDataProperties.swift in Sources */,
+				CA955AEB27066C3400036779 /* PersistedCampaign+CoreDataClass.swift in Sources */,
 				CA85567725B0E34F0063274D /* MessagesViewModel.swift in Sources */,
 				CA85567C25B0E5C50063274D /* Message.swift in Sources */,
 				CA27E00826FAA182005B434B /* Popup.swift in Sources */,
@@ -948,6 +962,7 @@
 				CA48C83F2656DBB5003A23EC /* Mailing.swift in Sources */,
 				CA48C8452656DF86003A23EC /* MultiTouchTopic.swift in Sources */,
 				CAB4F985267A66AE00B44D02 /* ArrayUtil.swift in Sources */,
+				CA401349270658E9002C9305 /* Campaigns.xcdatamodeld in Sources */,
 				CAC8B086259BE6D400D4447F /* KeychainServiceUtil.swift in Sources */,
 				CA36D90626B0B3F600CCD114 /* ConfirmAndSendMailingViewModel.swift in Sources */,
 				CA62A7A425DED59B005BF410 /* DictionaryUtil.swift in Sources */,
@@ -1029,6 +1044,7 @@
 				CACE58AA2666C89800BDD0A9 /* CampaignsListView.swift in Sources */,
 				CAA2A73C26B3111D0007FAD6 /* SendFeedbackView.swift in Sources */,
 				CA3B8F8C26557FEE005A12EF /* ProfileViewModel.swift in Sources */,
+				CAFCCE9127067FAA00A7775F /* PersistentContainer.swift in Sources */,
 				CAFECD23263209F2009A7837 /* ComposeRadiusTopicSelectionView.swift in Sources */,
 				CAC8B0BD259D020500D4447F /* ProfileView.swift in Sources */,
 				CABE1C3026D8473200A3F033 /* UIDeviceUtil.swift in Sources */,
@@ -1220,7 +1236,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				CURRENT_SCHEME_NAME = Debug;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
@@ -1237,7 +1253,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.4;
+				MARKETING_VERSION = 0.1.5;
 				OTHER_LDFLAGS = "-ObjC";
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app.dev;
@@ -1256,7 +1272,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				CURRENT_SCHEME_NAME = Release;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
@@ -1273,7 +1289,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.4;
+				MARKETING_VERSION = 0.1.5;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1431,7 +1447,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				CURRENT_SCHEME_NAME = Sandbox;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
@@ -1448,7 +1464,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.4;
+				MARKETING_VERSION = 0.1.5;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app.sandbox;
 				PRODUCT_NAME = "$(CURRENT_SCHEME_NAME)";
@@ -1571,7 +1587,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 1;
 				CURRENT_SCHEME_NAME = Staging;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
@@ -1588,7 +1604,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.1.4;
+				MARKETING_VERSION = 0.1.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_BUNDLE_IDENTIFIER = com.conversion.robotics.app.dev;
@@ -1710,6 +1726,16 @@
 /* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
+		CA401347270658E9002C9305 /* Campaigns.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				CA401348270658E9002C9305 /* Campaigns.xcdatamodel */,
+			);
+			currentVersion = CA401348270658E9002C9305 /* Campaigns.xcdatamodel */;
+			path = Campaigns.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
 		CABE1C2426D5A15700A3F033 /* AnalyticEvents.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
