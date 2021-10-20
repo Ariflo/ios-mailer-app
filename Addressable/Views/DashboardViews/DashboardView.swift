@@ -195,13 +195,16 @@ struct DashboardView: View {
             }
             .onChange(of: app.pushNotificationEvent) { _ in
                 if let pushEvent = app.pushNotificationEvent {
-                    for event in PushNotificationEvents.allCases where pushEvent[event.rawValue] != nil {
+                    for event in PushNotificationEvents.allCases {
                         switch event {
                         case .mailingListStatus:
+                            guard pushEvent.mailingListStatus != nil else { break }
                             selectedMenuItem = .campaigns
                         case .incomingLeadCall:
+                            guard pushEvent.incomingLeadCall != nil else { break }
                             selectedMenuItem = .calls
                         case .incomingLeadMessage:
+                            guard pushEvent.incomingLeadMessage != nil else { break }
                             selectedMenuItem = .messages
                         }
                     }

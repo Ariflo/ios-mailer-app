@@ -18,6 +18,7 @@
 		CA054A81265C309800729D13 /* CampaignsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA054A80265C309800729D13 /* CampaignsView.swift */; };
 		CA054A83265C310300729D13 /* CampaignsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA054A82265C310300729D13 /* CampaignsViewModel.swift */; };
 		CA054A85265C361B00729D13 /* CustomHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA054A84265C361B00729D13 /* CustomHeader.swift */; };
+		CA0E5737271F3578004921EB /* PushNotificationEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0E5736271F3578004921EB /* PushNotificationEvent.swift */; };
 		CA0FE8DE264B614900AAE273 /* StringsUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA0FE8DD264B614900AAE273 /* StringsUtil.swift */; };
 		CA120FEB263486CD0077D743 /* TargetCriteriaMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA120FEA263486CD0077D743 /* TargetCriteriaMenuView.swift */; };
 		CA120FFB2634BFBB0077D743 /* SliderUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA120FFA2634BFBA0077D743 /* SliderUtils.swift */; };
@@ -211,6 +212,7 @@
 		CA054A80265C309800729D13 /* CampaignsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignsView.swift; sourceTree = "<group>"; };
 		CA054A82265C310300729D13 /* CampaignsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampaignsViewModel.swift; sourceTree = "<group>"; };
 		CA054A84265C361B00729D13 /* CustomHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeader.swift; sourceTree = "<group>"; };
+		CA0E5736271F3578004921EB /* PushNotificationEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationEvent.swift; sourceTree = "<group>"; };
 		CA0FE8DD264B614900AAE273 /* StringsUtil.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringsUtil.swift; sourceTree = "<group>"; };
 		CA120FEA263486CD0077D743 /* TargetCriteriaMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetCriteriaMenuView.swift; sourceTree = "<group>"; };
 		CA120FFA2634BFBA0077D743 /* SliderUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderUtils.swift; sourceTree = "<group>"; };
@@ -550,6 +552,7 @@
 				CACC525326DEDF1E00EBE92A /* Handwriting.swift */,
 				CA4E232926E011A00055ADDF /* Account.swift */,
 				CAFCCE9027067FAA00A7775F /* PersistentContainer.swift */,
+				CA0E5736271F3578004921EB /* PushNotificationEvent.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -998,6 +1001,7 @@
 				CA9504E2262783F200F0245E /* PreviewView.swift in Sources */,
 				CA88420225A39F2700E0D75A /* SignInViewModel.swift in Sources */,
 				CAB4F997267BCC1100B44D02 /* MailingCoverImagePagerViewModel.swift in Sources */,
+				CA0E5737271F3578004921EB /* PushNotificationEvent.swift in Sources */,
 				CACE58B62669731800BDD0A9 /* CampaignsFilterBoxesView.swift in Sources */,
 				CA85565D25AFC5ED0063274D /* CallsViewModel.swift in Sources */,
 				CAF5A52026C1F83900F55B54 /* SelectAudienceView.swift in Sources */,
@@ -1236,7 +1240,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				CURRENT_SCHEME_NAME = Debug;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
@@ -1272,7 +1276,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				CURRENT_SCHEME_NAME = Release;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
@@ -1447,7 +1451,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				CURRENT_SCHEME_NAME = Sandbox;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;
@@ -1587,7 +1591,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = Addressable/Addressable.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				CURRENT_SCHEME_NAME = Staging;
 				DEVELOPMENT_ASSET_PATHS = "\"Addressable/Preview Content\"";
 				DEVELOPMENT_TEAM = 9R7UG52664;

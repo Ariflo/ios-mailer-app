@@ -19,6 +19,7 @@ struct IncomingLead: Codable, Identifiable {
     let status: String?
     let qualityScore: Int?
     let userNotes: [UserNote]
+    let voicemailUrl: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -37,6 +38,7 @@ struct IncomingLead: Codable, Identifiable {
         case status
         case qualityScore = "quality_score"
         case userNotes = "user_notes"
+        case voicemailUrl = "voicemail_url"
     }
 }
 

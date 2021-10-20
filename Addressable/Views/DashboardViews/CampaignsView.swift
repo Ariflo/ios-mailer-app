@@ -232,7 +232,7 @@ struct CampaignsView: View, Equatable {
 
             if !app.pushEvents.isEmpty {
                 app.updateBadgeCount(with: app.pushEvents.filter {
-                    $0[PushNotificationEvents.mailingListStatus.rawValue] == nil
+                    $0.mailingListStatus == nil
                 })
             }
         }

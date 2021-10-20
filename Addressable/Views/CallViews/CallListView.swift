@@ -84,18 +84,36 @@ struct CallListView: View, Equatable {
                                                 .font(Font.custom("Silka-Medium", size: 14)) :
                                                 Text(lead.fromNumber ?? "Unknown Number")
                                                 .font(Font.custom("Silka-Medium", size: 14))
-                                            if callLabel == .inbox {
-                                                Text(score > 0 ? "Update Tag" : "Tag Lead")
-                                                    .font(Font.custom("Silka-Medium", size: 14))
-                                                    .padding(8)
-                                                    .multilineTextAlignment(.center)
-                                                    .foregroundColor(Color.white)
-                                                    .background(Color.addressablePurple)
-                                                    .cornerRadius(5)
-                                                    .onTapGesture {
-                                                        subjectLead = lead
-                                                        displayIncomingLeadSurvey = true
-                                                    }
+                                            HStack {
+                                                if callLabel == .inbox {
+                                                    Text(score > 0 ? "Update Tag" : "Tag Lead")
+                                                        .font(Font.custom("Silka-Medium", size: 14))
+                                                        .padding(8)
+                                                        .multilineTextAlignment(.center)
+                                                        .foregroundColor(Color.white)
+                                                        .background(Color.addressablePurple)
+                                                        .cornerRadius(5)
+                                                        .onTapGesture {
+                                                            subjectLead = lead
+                                                            displayIncomingLeadSurvey = true
+                                                        }
+                                                }
+
+                                                if let voiceMailUrl = lead.voicemailUrl {
+                                                    Text("Play Voicemail")
+                                                        .font(Font.custom("Silka-Medium", size: 14))
+                                                        .padding(8)
+                                                        .multilineTextAlignment(.center)
+                                                        .foregroundColor(Color.white)
+                                                        .background(Color.addressablePurple)
+                                                        .cornerRadius(5)
+                                                        .onTapGesture {
+                                                            guard let url = URL(
+                                                                string: voiceMailUrl
+                                                            ) else { return }
+                                                            UIApplication.shared.open(url)
+                                                        }
+                                                }
                                             }
                                             Text(lead.createdAt)
                                                 .font(Font.custom("Silka-Medium", size: 14))
@@ -148,7 +166,7 @@ struct CallListView: View, Equatable {
                     }
                 }.onAppear {
                     app.updateBadgeCount(with: app.pushEvents.filter {
-                        $0[PushNotificationEvents.incomingLeadCall.rawValue] == nil
+                        $0.incomingLeadCall == nil
                     })
                 }
             }

@@ -33,7 +33,8 @@ struct MessageListView: View, Equatable {
         crmID: nil,
         status: "",
         qualityScore: nil,
-        userNotes: []
+        userNotes: [],
+        voicemailUrl: nil
     )
     @Binding var selectedMenuItem: MainMenu
 
@@ -100,7 +101,7 @@ struct MessageListView: View, Equatable {
         .onAppear {
             viewModel.getIncomingLeadsWithMessages { incomingLeads in
                 if let pushEvent = app.pushNotificationEvent,
-                   let leadId = pushEvent[PushNotificationEvents.incomingLeadMessage.rawValue],
+                   let leadId = pushEvent.incomingLeadMessage?.leadId,
                    let lead = incomingLeads.first(where: { $0.id == leadId }) {
                     selectedLead = lead
                     navigateToChat = true

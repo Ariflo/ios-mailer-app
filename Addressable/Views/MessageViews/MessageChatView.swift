@@ -55,8 +55,8 @@ struct MessageChatView: View {
             viewModel.connectToSocket()
             viewModel.getMessages(for: lead.id)
             app.updateBadgeCount(with: app.pushEvents.filter {
-                $0[PushNotificationEvents.incomingLeadMessage.rawValue] == nil ||
-                    $0[PushNotificationEvents.incomingLeadMessage.rawValue] != lead.id
+                $0.incomingLeadMessage == nil ||
+                    $0.incomingLeadMessage?.leadId != lead.id
             })
         }
         .onDisappear {

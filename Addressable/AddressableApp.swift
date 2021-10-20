@@ -19,8 +19,6 @@ enum PushNotificationEvents: String, CaseIterable {
     case incomingLeadMessage = "incoming_lead_message"
 }
 
-typealias PushNotificationEvent = [String: Int]
-
 // API Key Restrictions set on Google Cloud, safe to keep this key here for now
 let googleMapsApiKey = "AIzaSyDKJ7-97nKoAeFrCeb1yPfoVDbrS8RttKM"
 
@@ -103,11 +101,16 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
                 if let notification = launchOptions?[
                     UIApplication.LaunchOptionsKey.remoteNotification
                 ] as? [String: Any],
-                let aps = notification["aps"] as? [String: AnyObject],
-                let notificationPayload = aps["push_meta_data"] as? PushNotificationEvent {
-                    pushNotificationEvent = notificationPayload
+                let aps = notification["aps"] as? [String: Data],
+                let notificationPayload = aps["push_meta_data"] {
+                    guard let data = try? JSONSerialization.data(withJSONObject: notificationPayload),
+                          let payload = try? JSONDecoder().decode(PushNotificationEvent.self, from: data) else {
+                        print("launchOptions() pushNotificationEvent parseing error")
+                        return true
+                    }
+                    pushNotificationEvent = payload
                     tracker.trackEvent(getPushEventTrackingEventName(
-                                        isPressed: true, from: notificationPayload),
+                                        isPressed: true, from: payload),
                                        context: self.persistentContainer.viewContext
                     )
                 }
@@ -142,18 +145,23 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
         didReceiveRemoteNotification userInfo: [AnyHashable: Any],
         fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void
     ) {
-        guard let notification = userInfo["aps"] as? [String: AnyObject] else {
+        guard let notification = userInfo["aps"] as? [String: Data] else {
             completionHandler(.failed)
             return
         }
         if let tracker = appLevelAnalyticsTracker,
-           let notificationPayload = notification["push_meta_data"] as? PushNotificationEvent {
-            pushEvents.append(notificationPayload)
+           let notificationPayload = notification["push_meta_data"] {
+            guard let data = try? JSONSerialization.data(withJSONObject: notificationPayload),
+                  let payload = try? JSONDecoder().decode(PushNotificationEvent.self, from: data) else {
+                print("application() pushNotificationEvent parseing error")
+                return
+            }
+            pushEvents.append(payload)
             updateBadgeCount(with: pushEvents)
 
             tracker.trackEvent(getPushEventTrackingEventName(
                 isPressed: false,
-                from: notificationPayload
+                from: payload
             ), context: self.persistentContainer.viewContext)
         }
         completionHandler(.newData)
@@ -193,13 +201,16 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
     }
 
     private func getPushEventTrackingEventName(isPressed: Bool, from payload: PushNotificationEvent) -> AnalyticsEventName {
-        for event in PushNotificationEvents.allCases where payload[event.rawValue] != nil {
+        for event in PushNotificationEvents.allCases {
             switch event {
             case .mailingListStatus:
+                guard payload.mailingListStatus != nil else { break }
                 return isPressed ? .pushNotificationPressedList : .pushNotificationRecievedList
             case .incomingLeadCall:
+                guard payload.incomingLeadCall != nil else { break }
                 return isPressed ? .pushNotificationPressedCall : .pushNotificationRecievedCall
             case .incomingLeadMessage:
+                guard payload.incomingLeadMessage != nil else { break }
                 return isPressed ? .pushNotificationPressedMessage : .pushNotificationRecievedMessage
             }
         }
@@ -369,12 +380,17 @@ extension Application: UNUserNotificationCenterDelegate {
         let content = response.notification.request.content.userInfo
         if let tracker = appLevelAnalyticsTracker,
            let aps = content["aps"] as? [String: AnyObject],
-           let notificationPayload = aps["push_meta_data"] as? PushNotificationEvent {
-            pushNotificationEvent = notificationPayload
+           let notificationPayload = aps["push_meta_data"] {
+            guard let data = try? JSONSerialization.data(withJSONObject: notificationPayload),
+                  let payload = try? JSONDecoder().decode(PushNotificationEvent.self, from: data) else {
+                print("userNotificationCenter() pushNotificationEvent parseing error")
+                return
+            }
+            pushNotificationEvent = payload
 
             tracker.trackEvent(getPushEventTrackingEventName(
                                 isPressed: true,
-                                from: notificationPayload), context: self.persistentContainer.viewContext)
+                                from: payload), context: self.persistentContainer.viewContext)
         }
 
         // tell the app that we have finished processing the user’s action / response

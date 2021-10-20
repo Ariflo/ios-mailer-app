@@ -193,7 +193,7 @@ struct CampaignsListView: View {
             }
 
             if let pushEvent = app.pushNotificationEvent,
-               let mailingId = pushEvent[PushNotificationEvents.mailingListStatus.rawValue],
+               let mailingId = pushEvent.mailingListStatus?.mailingId,
                let mailing = mailings.first(where: { $0.id == mailingId }) {
                 mailingRowSelected(for: mailing)
             }
