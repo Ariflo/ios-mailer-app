@@ -5,7 +5,6 @@
 //  Created by Ari on 2/11/21.
 //
 import SwiftUI
-import GoogleMaps
 
 // MARK: - ListEntryStatus
 enum ListEntryMembershipStatus: String {

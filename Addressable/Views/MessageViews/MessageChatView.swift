@@ -133,7 +133,9 @@ struct MessageChatView_Previews: PreviewProvider {
                             crmID: nil,
                             status: "",
                             qualityScore: nil,
-                            userNotes: [])
+                            calls: [],
+                            userNotes: [],
+                            voicemailUrl: nil)
         )
     }
 }

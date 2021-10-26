@@ -23,15 +23,11 @@ struct ComposeRadiusSelectLocationView: View {
             }, set: {
                 if $0.isEmpty { locationSelected = false }
                 viewModel.locationEntry = $0
-                viewModel.getPlacesFromQuery(locationQuery: $0)
+                viewModel.searchEngine.query = $0
             })
         VStack {
             // MARK: - MapView
-            GoogleMapsView(
-                coordinates: (viewModel.latitude, viewModel.longitude),
-                locationSelected: locationSelected,
-                zoom: locationSelected ? 15.0 : 10.0
-            )
+            MapboxMapView(selectedCoordinates: viewModel.selectedCoordinates)
             VStack(alignment: .leading) {
                 // MARK: - Address Input
                 VStack(alignment: .leading, spacing: 15) {
@@ -42,19 +38,20 @@ struct ComposeRadiusSelectLocationView: View {
                         TextField("", text: locationEntryBinding)
                             .textContentType(.fullStreetAddress)
                             .modifier(TextFieldModifier())
-
                         // MARK: - Address Search Results
                         if !viewModel.locationEntry.isEmpty && !locationSelected {
-                            List(viewModel.places, id: \.placeID) { place in
-                                Button(action: {
-                                    locationSelected = true
-                                    viewModel.setPlaceOnMap(for: place.placeID)
-                                    viewModel.locationEntry = place.attributedFullText.string
-                                    viewModel.resetPlacesList()
-                                    hideKeyboard()
-                                }) {
-                                    Text(place.attributedFullText.string)
-                                        .font(Font.custom("Silka-Medium", size: 14))
+                            List(viewModel.locationSearchSuggestions, id: \.id) { searchSuggestion in
+                                if let addressSuggestion = searchSuggestion.address?.formattedAddress(style: .medium) {
+                                    Button(action: {
+                                        // Location Selected
+                                        viewModel.searchEngine.select(suggestion: searchSuggestion)
+                                        viewModel.locationEntry = addressSuggestion
+                                        locationSelected = true
+                                        hideKeyboard()
+                                    }) {
+                                        Text(addressSuggestion)
+                                            .font(Font.custom("Silka-Medium", size: 14))
+                                    }
                                 }
                             }
                             .listStyle(PlainListStyle())
@@ -85,9 +82,6 @@ struct ComposeRadiusSelectLocationView: View {
                     .cornerRadius(5)
                 }
             }.padding(40)
-        }
-        .onAppear {
-            viewModel.maybeInitializeMapWithCurrentLocation()
         }
         .sheet(isPresented: $displayTargetCriteriaMenu) {
             TargetCriteriaMenuView(viewModel: viewModel)

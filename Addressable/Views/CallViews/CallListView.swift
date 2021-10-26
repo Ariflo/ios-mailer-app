@@ -28,6 +28,7 @@ struct CallListView: View, Equatable {
     @State var displayInboxCalls: Bool = true
     @State var displayRemovalCalls: Bool = false
     @State var displaySpamCalls: Bool = false
+    @State var displayMissedCallsView: Bool = false
 
     init(viewModel: CallsViewModel, selectedMenuItem: Binding<MainMenu>, displayIncomingLeadSurvey: Binding<Bool>, lead: Binding<IncomingLead?>) {
         self.viewModel = viewModel
@@ -99,8 +100,8 @@ struct CallListView: View, Equatable {
                                                         }
                                                 }
 
-                                                if let voiceMailUrl = lead.voicemailUrl {
-                                                    Text("Play Voicemail")
+                                                if !lead.calls.isEmpty {
+                                                    Text("Call History (\(lead.calls.count))")
                                                         .font(Font.custom("Silka-Medium", size: 14))
                                                         .padding(8)
                                                         .multilineTextAlignment(.center)
@@ -108,10 +109,8 @@ struct CallListView: View, Equatable {
                                                         .background(Color.addressablePurple)
                                                         .cornerRadius(5)
                                                         .onTapGesture {
-                                                            guard let url = URL(
-                                                                string: voiceMailUrl
-                                                            ) else { return }
-                                                            UIApplication.shared.open(url)
+                                                            subjectLead = lead
+                                                            displayMissedCallsView = true
                                                         }
                                                 }
                                             }
@@ -170,6 +169,9 @@ struct CallListView: View, Equatable {
                     })
                 }
             }
+        }
+        .sheet(isPresented: $displayMissedCallsView) {
+            MissedCallsView(subjectLead: $subjectLead)
         }
         .background(Color.addressableLightGray)
     }

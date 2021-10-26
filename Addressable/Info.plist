@@ -28,6 +28,8 @@
 	<string>${DOMAIN_SCHEME}</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>MBXAccessToken</key>
+	<string></string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSExceptionDomains</key>
@@ -52,6 +54,11 @@
 				<true/>
 			</dict>
 		</dict>
+	</dict>
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict>
+		<key>LocationAccuracyAuthorizationDescription</key>
+		<string>This application temporarily requires your precise location.</string>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>$(EXECUTABLE_NAME) would like to access your location to send Radius Mailings</string>

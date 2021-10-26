@@ -9,21 +9,16 @@
 
 import SwiftUI
 import Combine
-import GooglePlaces
+import MapboxMaps
+import MapboxSearch
 
 class ComposeRadiusViewModel: NSObject, ObservableObject {
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
-    private let locationManager = CLLocationManager()
-    private var placesClient = GMSPlacesClient.shared()
 
-    @Published var places: [GMSAutocompletePrediction] = []
-    @Published var location: CLLocation? {
-        willSet { objectWillChange.send() }
-    }
-
-    var latitude: CLLocationDegrees = 0
-    var longitude: CLLocationDegrees = 0
+    let searchEngine = SearchEngine()
+    @Published var locationSearchSuggestions: [SearchSuggestion] = []
+    @Published var selectedCoordinates: CLLocationCoordinate2D?
 
     @Published var selectedLocationAddress1 = ""
     @Published var selectedLocationAddress2 = ""
@@ -97,15 +92,15 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     var selectedDropDate: String = ""
     let mailingTouches: [Mailing] = []
 
+    private var latitude: CLLocationDegrees = 0
+    private var longitude: CLLocationDegrees = 0
+
     init(provider: DependencyProviding, selectedMailing: Mailing?) {
         apiService = provider.register(provider: provider)
 
         super.init()
 
-        self.locationManager.delegate = self
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        self.locationManager.requestWhenInUseAuthorization()
-        self.locationManager.startUpdatingLocation()
+        searchEngine.delegate = self
 
         if selectedMailing != nil {
             // In the case that the selected radius mailing is the touch two mailing,
@@ -121,23 +116,6 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
                 }
             } else {
                 self.populateForm(with: selectedMailing!)
-            }
-        }
-
-        DispatchQueue.main.async {
-            self.getPlacesFromQuery(locationQuery: self.locationEntry) {[weak self] places in
-                guard let self = self else { return }
-                guard places != nil else { return }
-
-                var selectedMailingPlace: GMSAutocompletePrediction?
-                for place in places! {
-                    if self.locationEntry.contains(place.attributedPrimaryText.string) {
-                        selectedMailingPlace = place
-                        break
-                    }
-                }
-                guard selectedMailingPlace != nil else { return }
-                self.setPlaceOnMap(for: selectedMailingPlace!.placeID)
             }
         }
     }
@@ -163,69 +141,6 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
         selectedLocationCity = radiusMailing.subjectListEntry!.siteCity
         selectedLocationState = radiusMailing.subjectListEntry!.siteState
         selectedLocationZipcode = radiusMailing.subjectListEntry!.siteZipcode
-    }
-
-    func maybeInitializeMapWithCurrentLocation() {
-        latitude = location?.coordinate.latitude ?? 0
-        longitude = location?.coordinate.longitude ?? 0
-    }
-
-    func getPlacesFromQuery(
-        locationQuery: String,
-        completion: @escaping (_ places: [GMSAutocompletePrediction]?) -> Void = { _ in }
-    ) {
-        let filter = GMSAutocompleteFilter()
-        filter.type = .address
-
-        placesClient.findAutocompletePredictions(
-            fromQuery: locationQuery,
-            filter: filter,
-            sessionToken: GMSAutocompleteSessionToken.init()
-        ) {[weak self] results, error in
-            if let error = error {
-                print("Autocomplete error: \(error)")
-                completion(nil)
-                return
-            }
-            if let results = results {
-                self?.places = results
-                completion(results)
-            }
-        }
-    }
-
-    func setPlaceOnMap(for placeID: String) {
-        placesClient.lookUpPlaceID(placeID) {[weak self] place, error in
-            if let error = error {
-                print("lookup place id query error: \(error.localizedDescription)")
-                return
-            }
-
-            guard let place = place else {
-                print("No place details for \(placeID)")
-                return
-            }
-
-            let streetNumber = place.addressComponents?.first { $0.types.contains("street_number") }?.name ?? ""
-            let streetName = place.addressComponents?.first { $0.types.contains("route") }?.name ?? ""
-
-            self?.latitude = place.coordinate.latitude
-            self?.longitude = place.coordinate.longitude
-            self?.selectedLocationAddress1 = "\(streetNumber) \(streetName)"
-            self?.selectedLocationCity = place.addressComponents?.first {
-                $0.types.contains("locality")
-            }?.shortName ?? ""
-            self?.selectedLocationState = place.addressComponents?.first {
-                $0.types.contains("administrative_area_level_1")
-            }?.shortName ?? ""
-            self?.selectedLocationZipcode = place.addressComponents?.first {
-                $0.types.contains("postal_code")
-            }?.name ?? ""
-        }
-    }
-
-    func resetPlacesList() {
-        places = []
     }
 
     func getRadiusMailingCoverImageOptions() {
@@ -810,9 +725,33 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
     }
 }
 
-extension ComposeRadiusViewModel: CLLocationManagerDelegate {
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        guard let location = locations.last else { return }
-        self.location = location
+extension ComposeRadiusViewModel: LocationPermissionsDelegate {
+    func locationManager(_ locationManager: LocationManager, didChangeAccuracyAuthorization accuracyAuthorization: CLAccuracyAuthorization) {
+        if accuracyAuthorization == .reducedAccuracy {
+            // Present a button on screen that asks for full accuracy
+            // This button can have a selector as defined above
+        }
+    }
+}
+
+extension ComposeRadiusViewModel: SearchEngineDelegate {
+    func suggestionsUpdated(suggestions: [SearchSuggestion], searchEngine: SearchEngine) {
+        locationSearchSuggestions = suggestions
+    }
+
+    func resultResolved(result: SearchResult, searchEngine: SearchEngine) {
+        selectedCoordinates = result.coordinate
+        if let selectedAddress = result.address {
+            selectedLocationAddress1 = "\(selectedAddress.houseNumber ?? "") \(selectedAddress.street ?? "")"
+            selectedLocationCity = "\(selectedAddress.place ?? "")"
+            selectedLocationState = "\(selectedAddress.region ?? "")"
+            selectedLocationZipcode = "\(selectedAddress.postcode ?? "")"
+            latitude = result.coordinate.latitude
+            longitude = result.coordinate.longitude
+        }
+    }
+
+    func searchErrorHappened(searchError: SearchError, searchEngine: SearchEngine) {
+        print("Error during search: \(searchError)")
     }
 }

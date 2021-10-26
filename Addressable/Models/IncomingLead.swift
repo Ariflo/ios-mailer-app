@@ -18,6 +18,7 @@ struct IncomingLead: Codable, Identifiable {
     let zipcode, crmID: String?
     let status: String?
     let qualityScore: Int?
+    let calls: [IncomingCall]
     let userNotes: [UserNote]
     let voicemailUrl: String?
 
@@ -37,6 +38,7 @@ struct IncomingLead: Codable, Identifiable {
         case crmID = "crm_id"
         case status
         case qualityScore = "quality_score"
+        case calls
         case userNotes = "user_notes"
         case voicemailUrl = "voicemail_url"
     }
@@ -107,5 +109,24 @@ struct Note: Codable {
     enum CodingKeys: String, CodingKey {
         case userID = "user_id"
         case note
+    }
+}
+
+// MARK: - IncomingCall
+struct IncomingCall: Codable, Identifiable {
+    var callSid: String
+    let date: String
+    let duration: String
+    let voicemailURL: String?
+    let incomingLeadID: Int
+
+    var id: String { callSid }
+
+    enum CodingKeys: String, CodingKey {
+        case callSid = "call_sid"
+        case date = "call_date"
+        case duration = "duration_minutes"
+        case voicemailURL = "voicemail_url"
+        case incomingLeadID = "incoming_lead_id"
     }
 }

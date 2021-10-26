@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import GooglePlaces
 
 enum MainMenu: String, CaseIterable {
     case campaigns, calls, messages, profile, mailingDetail, feedback

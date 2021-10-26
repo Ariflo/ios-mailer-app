@@ -33,6 +33,7 @@ struct MessageListView: View, Equatable {
         crmID: nil,
         status: "",
         qualityScore: nil,
+        calls: [],
         userNotes: [],
         voicemailUrl: nil
     )

@@ -9,8 +9,6 @@ import SwiftUI
 import PushKit
 import Combine
 import UserNotifications
-import GoogleMaps
-import GooglePlaces
 import CoreData
 
 enum PushNotificationEvents: String, CaseIterable {
@@ -18,9 +16,6 @@ enum PushNotificationEvents: String, CaseIterable {
     case incomingLeadCall = "incoming_lead_call"
     case incomingLeadMessage = "incoming_lead_message"
 }
-
-// API Key Restrictions set on Google Cloud, safe to keep this key here for now
-let googleMapsApiKey = "AIzaSyDKJ7-97nKoAeFrCeb1yPfoVDbrS8RttKM"
 
 protocol PushKitEventDelegate: AnyObject {
     func credentialsUpdated(credentials: PKPushCredentials, deviceID: String)
@@ -70,9 +65,6 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        GMSServices.provideAPIKey(googleMapsApiKey)
-        GMSPlacesClient.provideAPIKey(googleMapsApiKey)
-
         UNUserNotificationCenter.current().delegate = self
 
         callManager = CallManager(application: self)
