@@ -14,6 +14,7 @@ import MapboxSearch
 
 class ComposeRadiusViewModel: NSObject, ObservableObject {
     private let apiService: ApiService
+    let analyticsTracker: AnalyticsTracker
     private var disposables = Set<AnyCancellable>()
 
     let searchEngine = SearchEngine()
@@ -97,6 +98,7 @@ class ComposeRadiusViewModel: NSObject, ObservableObject {
 
     init(provider: DependencyProviding, selectedMailing: Mailing?) {
         apiService = provider.register(provider: provider)
+        analyticsTracker = provider.register(provider: provider)
 
         super.init()
 

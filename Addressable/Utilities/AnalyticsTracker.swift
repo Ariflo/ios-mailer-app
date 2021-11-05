@@ -24,6 +24,7 @@ enum AnalyticsEventName: String {
     case pushNotificationRecievedMessage = "mobile_app_push_notification_recieved_incoming_lead_sms_message"
     case pushNotificationRecieved = "mobile_app_push_notification_recieved"
     case mobileAppCrashed = "mobile_app_crashed"
+    case mobileRadiusMailSent = "mobile_app_radius_mailing_sent"
 }
 
 class AnalyticsTracker {

@@ -224,6 +224,10 @@ struct ComposeRadiusView: View {
                                     viewModel.updateRadiusMailingData(for: .targetDate) { updatedMailing in
                                         guard updatedMailing != nil else { return }
                                     }
+                                    viewModel.analyticsTracker.trackEvent(
+                                        .mobileRadiusMailSent,
+                                        context: app.persistentContainer.viewContext
+                                    )
                                 }
                                 viewModel.step.next()
                             }
