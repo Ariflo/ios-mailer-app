@@ -40,36 +40,39 @@ struct TagIncomingLeadView: View {
             ZStack(alignment: .top) {
                 Color.white.edgesIgnoringSafeArea(.all)
                 VStack(alignment: .leading, spacing: 25) {
-                    Button(
-                        action: {
-                            if viewModel.subjectLead != nil {
-                                // swiftlint:disable force_unwrapping
-                                viewModel.tagIncomingLead(for: viewModel.subjectLead!.id) { taggedLead in
-                                    guard taggedLead != nil else {
-                                        print("Unable to tagIncomingLead() in TagIncomingLeadView")
-                                        return
+                    HStack {
+                        Button(
+                            action: {
+                                if let lead = viewModel.subjectLead {
+                                    viewModel.tagIncomingLead(for: lead.id) { taggedLead in
+                                        guard taggedLead != nil else {
+                                            print("Unable to tagIncomingLead() in TagIncomingLeadView")
+                                            return
+                                        }
+                                        taggingComplete()
                                     }
-                                    taggingComplete()
+                                } else {
+                                    print("No subjectLead to tag")
                                 }
-                            } else {
-                                print("No subjectLead to tag")
                             }
+                        ) {
+                            Text("Save")
                         }
-                    ) {
-                        Text("Save")
-                    }.padding()
-
-                    if let callerID = app.callManager?.currentCallerID.caller {
-                        Text("Tag your call with \(callerID)")
-                            .font(Font.custom("Silka-Bold", size: 16))
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 12)
-                    } else {
-                        Text("Tag Your Last Caller")
-                            .font(Font.custom("Silka-Bold", size: 16))
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, 12)
+                        Spacer()
+                        if let callerID = app.callManager?.currentCallerID.caller {
+                            Text("Tag your call with \(callerID)")
+                                .font(Font.custom("Silka-Bold", size: 16))
+                                .multilineTextAlignment(.center)
+                        } else {
+                            Text("Tag Your Last Caller")
+                                .font(Font.custom("Silka-Bold", size: 16))
+                                .multilineTextAlignment(.center)
+                        }
+                        Spacer()
                     }
+                    .padding()
+                    .background(Color.addressableLightGray)
+                    .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
 
                     viewModel.isRemovalSelectedTag != .removeYes ?
                         VStack(alignment: .leading) {
@@ -97,22 +100,20 @@ struct TagIncomingLeadView: View {
                         Text("Notes")
                             .font(Font.custom("Silka-Medium", size: 14))
                             .padding(.horizontal, 12)
-                        if viewModel.subjectLead != nil {
-                            ForEach(viewModel.subjectLead!.userNotes) { userNote in
-                                HStack {
-                                    VStack(alignment: .leading) {
-                                        Text(userNote.userName)
-                                            .font(Font.custom("Silka-Bold", size: 12))
-                                        Text("[\(userNote.createdAt)]")
-                                            .font(Font.custom("Silka-Medium", size: 12))
-                                    }
-                                    Spacer()
-                                    Text(userNote.note)
-                                        .font(Font.custom("Silka-Regular", size: 12))
-                                        .padding(.trailing, 12)
+                        ForEach(viewModel.leadNotes) { userNote in
+                            HStack {
+                                VStack(alignment: .leading) {
+                                    Text(userNote.userName)
+                                        .font(Font.custom("Silka-Bold", size: 12))
+                                    Text("[\(userNote.createdAt)]")
+                                        .font(Font.custom("Silka-Medium", size: 12))
                                 }
-                                .padding(.horizontal, 12)
+                                Spacer()
+                                Text(userNote.note)
+                                    .font(Font.custom("Silka-Regular", size: 12))
+                                    .padding(.trailing, 12)
                             }
+                            .padding(.horizontal, 12)
                         }
                         addNote ?
                             MultilineTextView(text: $viewModel.userNotes)
