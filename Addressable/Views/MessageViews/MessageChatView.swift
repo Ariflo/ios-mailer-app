@@ -48,7 +48,7 @@ struct MessageChatView: View {
             }.frame(minHeight: CGFloat(50)).padding()
         }
         .navigationBarTitle(
-            Text("\(lead.firstName != nil || lead.firstName!.contains("unknown")  ? "Unknown Name" : lead.firstName!)"),
+            Text("\(lead.firstName ?? "Unknown Name")"),
             displayMode: .inline
         )
         .onAppear {
