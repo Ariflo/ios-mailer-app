@@ -19,10 +19,12 @@ class TagIncomingLeadViewModel: ObservableObject {
     @Binding var subjectLead: IncomingLead?
 
     private let apiService: ApiService
+    let analyticsTracker: AnalyticsTracker
     private var disposables = Set<AnyCancellable>()
 
     init(provider: DependencyProviding, lead: Binding<IncomingLead?>) {
         apiService = provider.register(provider: provider)
+        analyticsTracker = provider.register(provider: provider)
         _subjectLead = lead
 
         if let selectedlead = subjectLead {

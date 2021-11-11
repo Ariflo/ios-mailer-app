@@ -9,6 +9,7 @@ import SwiftUI
 // swiftlint:disable type_body_length file_length
 struct ProfileSettingSectionView: View {
     let section: ProfileSections
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: ProfileViewModel
     @Binding var displayHandwritingSytles: Bool
     @Binding var showingAlert: Bool
@@ -327,6 +328,10 @@ struct ProfileSettingSectionView: View {
             withAnimation {
                 displayHandwritingSytles = true
             }
+            viewModel.analyticsTracker.trackEvent(
+                .mobileHandwritingStylesDisplayed,
+                context: app.persistentContainer.viewContext
+            )
         case .balance:
             guard let user = getCurrentUser(),
                   let scheme = Bundle.main.object(forInfoDictionaryKey: "DOMAIN_SCHEME") as? String,
@@ -338,6 +343,10 @@ struct ProfileSettingSectionView: View {
                 return
             }
             UIApplication.shared.open(url)
+            viewModel.analyticsTracker.trackEvent(
+                .mobileTokenPurchaseBtnPressed,
+                context: app.persistentContainer.viewContext
+            )
         case .team:
             guard let user = getCurrentUser(),
                   let scheme = Bundle.main.object(forInfoDictionaryKey: "DOMAIN_SCHEME") as? String,
@@ -352,10 +361,18 @@ struct ProfileSettingSectionView: View {
                 return
             }
             UIApplication.shared.open(url)
+            viewModel.analyticsTracker.trackEvent(
+                .mobileTeamMemberInviteBtnPressed,
+                context: app.persistentContainer.viewContext
+            )
         case .address:
             withAnimation {
                 isEditingUserAddress = true
             }
+            viewModel.analyticsTracker.trackEvent(
+                .mobileAddressUpdatePressed,
+                context: app.persistentContainer.viewContext
+            )
         case .api:
             guard let scheme = Bundle.main.object(forInfoDictionaryKey: "DOMAIN_SCHEME") as? String,
                   let host = Bundle.main.object(forInfoDictionaryKey: "API_DOMAIN_NAME") as? String,
@@ -366,6 +383,10 @@ struct ProfileSettingSectionView: View {
                 return
             }
             UIApplication.shared.open(url)
+            viewModel.analyticsTracker.trackEvent(
+                .mobileLearnMoreAPIPressed,
+                context: app.persistentContainer.viewContext
+            )
         }
     }
     private func getButtonText(for section: ProfileSections) -> String {

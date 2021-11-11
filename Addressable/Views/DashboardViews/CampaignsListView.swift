@@ -70,6 +70,10 @@ struct CampaignsListView: View {
                         withAnimation {
                             displayFilterMenu.toggle()
                         }
+                        viewModel.analyticsTracker.trackEvent(
+                            .mobileFilterMenuTapped,
+                            context: app.persistentContainer.viewContext
+                        )
                     }) {
                         CustomHeader(
                             name: "Filters",
@@ -152,8 +156,7 @@ struct CampaignsListView: View {
                                 getMailingStatusFromFilters(with: status) {
                                 if !getMailings(with: mailingStatus).isEmpty {
                                     let mailingList = getMailings(
-                                        with: mailingStatus).filter { isRelatedToSearchQuery($0)
-                                    }
+                                        with: mailingStatus).filter { isRelatedToSearchQuery($0) }
                                     ForEach(mailingList.indices) { mailingIndex in
                                         if mailingIndex < (isListFiltered ? mailingList.count :
                                                             maxMailingsDisplayCount) {
@@ -205,8 +208,16 @@ struct CampaignsListView: View {
         if isIncompleteRadius(mailing) &&
             mailing.mailingStatus != MailingState.canceled.rawValue {
             app.currentView = .composeRadius
+            viewModel.analyticsTracker.trackEvent(
+                .mobileMailingSelectedComposeRadius,
+                context: app.persistentContainer.viewContext
+            )
         } else {
             selectedMenuItem = .mailingDetail
+            viewModel.analyticsTracker.trackEvent(
+                .mobileNavigationMailingDetailSelected,
+                context: app.persistentContainer.viewContext
+            )
         }
     }
     private func isIncompleteRadius(_ mailing: Mailing) -> Bool {

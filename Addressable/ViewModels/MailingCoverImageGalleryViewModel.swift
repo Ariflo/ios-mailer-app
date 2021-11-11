@@ -11,6 +11,7 @@ import Combine
 
 class MailingCoverImageGalleryViewModel: ObservableObject {
     private let apiService: ApiService
+    let analyticsTracker: AnalyticsTracker
     private var disposables = Set<AnyCancellable>()
     @Binding var mailing: Mailing
 
@@ -32,6 +33,7 @@ class MailingCoverImageGalleryViewModel: ObservableObject {
         selectedImageId: Binding<Int>
     ) {
         apiService = provider.register(provider: provider)
+        analyticsTracker = provider.register(provider: provider)
         _mailing = selectedMailing
         _selectedFrontCoverImageData = selectedFrontImageData
         _selectedBackCoverImageData = selectedBackImageData

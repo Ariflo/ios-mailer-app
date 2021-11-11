@@ -47,4 +47,29 @@ extension PersistedCampaign {
             #endif
         }
     }
+
+    static func updateStoredMailing(with mailingID: Int, mailingData: Data, using context: NSManagedObjectContext) {
+        guard let allCampaignMailings: [PersistedCampaign] = try? context.fetch(self.fetchRequest()) else {
+            print("allCampaignMailings Fetch Error")
+            return
+        }
+
+        for campaign in allCampaignMailings where isStoredMailing(with: mailingID, campaign) {
+            let managedObjectData: NSManagedObject = campaign
+
+            context.delete(managedObjectData)
+            #if DEBUG || STAGING
+            print("OUTDATED PERSISTED MAILING REMOVED")
+            #endif
+
+            createWith(mailingData: mailingData, using: context)
+        }
+    }
+
+    private static func isStoredMailing(with mailingID: Int, _ storedCampaign: PersistedCampaign) -> Bool {
+        if let storedMailing = try? JSONDecoder().decode(Mailing.self, from: storedCampaign.mailing) {
+            return storedMailing.id == mailingID
+        }
+        return false
+    }
 }

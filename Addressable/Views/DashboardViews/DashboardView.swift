@@ -43,16 +43,45 @@ struct DashboardView: View {
         return GeometryReader { geometry in
             ZStack(alignment: .trailing) {
                 if showNavMenu {
-                    NavigationMenuView(showNavMenu: $showNavMenu, selectedMenuItem: $selectedMenuItem)
-                        .frame(width: geometry.size.width / 2)
-                        .transition(.move(edge: .trailing))
-                        .zIndex(-1)
+                    NavigationMenuView(
+                        showNavMenu: $showNavMenu,
+                        selectedMenuItem: $selectedMenuItem
+                    ) { menuItem in
+                        var menuItemSelectedAnalyticEvent: AnalyticsEventName = .mobileNavigationMenuSelected
+
+                        switch menuItem {
+                        case .campaigns:
+                            menuItemSelectedAnalyticEvent = .mobileNavigationCampaignsMenuSelected
+                        case .calls:
+                            menuItemSelectedAnalyticEvent = .mobileNavigationCallsMenuSelected
+                        case .messages:
+                            menuItemSelectedAnalyticEvent = .mobileNavigationMessagesMenuSelected
+                        case .profile:
+                            menuItemSelectedAnalyticEvent = .mobileNavigationProfileMenuSelected
+                        case .mailingDetail:
+                            menuItemSelectedAnalyticEvent = .mobileNavigationMailingDetailSelected
+                        case .feedback:
+                            menuItemSelectedAnalyticEvent = .mobileNavigationFeedbackMenuSelected
+                        }
+
+                        viewModel.analyticsTracker.trackEvent(
+                            menuItemSelectedAnalyticEvent,
+                            context: app.persistentContainer.viewContext
+                        )
+                    }
+                    .frame(width: geometry.size.width / 2)
+                    .transition(.move(edge: .trailing))
+                    .zIndex(-1)
                 }
                 VStack(spacing: 0) {
                     // MARK: - Main Menu Header
                     HStack(alignment: .center) {
                         Button(action: {
                             selectedMenuItem = .campaigns
+                            viewModel.analyticsTracker.trackEvent(
+                                .mobileNavigationAddressableHeaderTap,
+                                context: app.persistentContainer.viewContext
+                            )
                         }) {
                             Text("Addressable")
                                 .font(Font.custom("Silka-Medium", size: 22))
@@ -86,6 +115,10 @@ struct DashboardView: View {
                     if app.callManager?.currentActiveCall != nil && !displayIncomingLeadSurvey {
                         Button(action: {
                             app.currentView = .activeCall
+                            viewModel.analyticsTracker.trackEvent(
+                                .mobileReturnToCallBannerTapped,
+                                context: app.persistentContainer.viewContext
+                            )
                         }) {
                             HStack(spacing: 12) {
                                 Image(systemName: "phone")

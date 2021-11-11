@@ -70,6 +70,10 @@ struct CampaignsView: View, Equatable {
                         app.callManager?.currentActiveCall == nil {
                         Button(action: {
                             selectedMenuItem = .calls
+                            viewModel.analyticsTracker.trackEvent(
+                                .mobileUntaggedLeadsBannerTapped,
+                                context: app.persistentContainer.viewContext
+                            )
                         }) {
                             HStack(spacing: 12) {
                                 Image(systemName: "bell.fill")
@@ -162,6 +166,10 @@ struct CampaignsView: View, Equatable {
                                         Button(action: {
                                             app.currentView = .composeRadius
                                             app.selectedMailing = nil
+                                            viewModel.analyticsTracker.trackEvent(
+                                                .mobileAddRadiusMailingTapped,
+                                                context: app.persistentContainer.viewContext
+                                            )
                                         }) {
                                             AddMenuItem(icon: "mappin.and.ellipse", label: menuOption.rawValue)
                                         }
@@ -170,6 +178,10 @@ struct CampaignsView: View, Equatable {
                                     if showSphereMenuOption {
                                         Button(action: {
                                             // Navigate to Sphere view
+                                            viewModel.analyticsTracker.trackEvent(
+                                                .mobileAddSphereMailingTapped,
+                                                context: app.persistentContainer.viewContext
+                                            )
                                         }) {
                                             AddMenuItem(icon: "globe", label: menuOption.rawValue, isComingSoon: true)
                                         }
@@ -180,6 +192,10 @@ struct CampaignsView: View, Equatable {
                                     if showAudienceOption {
                                         Button(action: {
                                             // Navigate to Audience view
+                                            viewModel.analyticsTracker.trackEvent(
+                                                .mobileAddAudienceMailingTapped,
+                                                context: app.persistentContainer.viewContext
+                                            )
                                         }) {
                                             AddMenuItem(
                                                 icon: "person.3",
@@ -194,6 +210,10 @@ struct CampaignsView: View, Equatable {
                                     if showSingleMenuOption {
                                         Button(action: {
                                             // Navigate to Single Card view
+                                            viewModel.analyticsTracker.trackEvent(
+                                                .mobileAddSingleMailingTapped,
+                                                context: app.persistentContainer.viewContext
+                                            )
                                         }) {
                                             AddMenuItem(icon: "mail", label: menuOption.rawValue, isComingSoon: true)
                                         }
@@ -265,5 +285,9 @@ struct CampaignsView: View, Equatable {
                 showSingleMenuOption.toggle()
             }
         }
+        viewModel.analyticsTracker.trackEvent(
+            .mobileAddPlusButtonTapped,
+            context: app.persistentContainer.viewContext
+        )
     }
 }

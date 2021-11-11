@@ -10,6 +10,7 @@ import Combine
 
 class MailingDetailViewModel: ObservableObject {
     private let apiService: ApiService
+    let analyticsTracker: AnalyticsTracker
     private var disposables = Set<AnyCancellable>()
 
     @Published var mailing: Mailing
@@ -21,6 +22,7 @@ class MailingDetailViewModel: ObservableObject {
 
     init(provider: DependencyProviding, selectedMailing: Mailing) {
         apiService = provider.register(provider: provider)
+        analyticsTracker = provider.register(provider: provider)
         mailing = selectedMailing
 
         if let layoutTemplateId = selectedMailing.layoutTemplate?.id {

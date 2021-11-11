@@ -13,9 +13,11 @@ class DashboardViewModel: ObservableObject {
 
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
+    let analyticsTracker: AnalyticsTracker
 
     init(provider: DependencyProviding) {
         apiService = provider.register(provider: provider)
+        analyticsTracker = provider.register(provider: provider)
     }
 
     func getMailing(with id: Int, completion: @escaping (Mailing?) -> Void) {

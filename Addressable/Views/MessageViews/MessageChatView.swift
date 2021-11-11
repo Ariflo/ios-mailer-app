@@ -4,7 +4,6 @@
 //
 //  Created by Ari on 1/14/21.
 //
-// swiftlint:disable force_unwrapping
 import SwiftUI
 
 struct MessageChatView: View {
@@ -42,6 +41,10 @@ struct MessageChatView: View {
                                             body: typingMessage,
                                             messageSid: viewModel.messageSid))
                     typingMessage = ""
+                    viewModel.analyticsTracker.trackEvent(
+                        .mobileLeadMessageSent,
+                        context: app.persistentContainer.viewContext
+                    )
                 }) {
                     Text("Send")
                 }

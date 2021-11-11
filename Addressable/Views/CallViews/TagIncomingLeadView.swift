@@ -29,12 +29,20 @@ struct TagIncomingLeadView: View {
     }
 
     var body: some View {
-        let isRealOrSpamSegmentView = CustomSegmentedPickerView(viewModel: viewModel, tagOptions: [.person, .spam])
+        let isRealOrSpamSegmentView = CustomSegmentedPickerView(
+            viewModel: viewModel,
+            tagOptions: [.person, .spam]
+        ).environmentObject(app)
 
-        let isInterestedSegmentView = CustomSegmentedPickerView(viewModel: viewModel,
-                                                                tagOptions: [.lowInterest, .fair, .lead])
+        let isInterestedSegmentView = CustomSegmentedPickerView(
+            viewModel: viewModel,
+            tagOptions: [.lowInterest, .fair, .lead]
+        ).environmentObject(app)
 
-        let isRemovalSegmentView = CustomSegmentedPickerView(viewModel: viewModel, tagOptions: [.removeNo, .removeYes])
+        let isRemovalSegmentView = CustomSegmentedPickerView(
+            viewModel: viewModel,
+            tagOptions: [.removeNo, .removeYes]
+        ).environmentObject(app)
 
         ScrollView {
             ZStack(alignment: .top) {
@@ -50,6 +58,10 @@ struct TagIncomingLeadView: View {
                                             return
                                         }
                                         taggingComplete()
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileLeadTagged,
+                                            context: app.persistentContainer.viewContext
+                                        )
                                     }
                                 } else {
                                     print("No subjectLead to tag")
@@ -149,6 +161,10 @@ struct TagIncomingLeadView: View {
                                 } else {
                                     viewModel.saveUserNote { updatedLead in
                                         guard updatedLead != nil else { return }
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileUserNoteSaved,
+                                            context: app.persistentContainer.viewContext
+                                        )
                                         addNote = false
                                     }
                                 }

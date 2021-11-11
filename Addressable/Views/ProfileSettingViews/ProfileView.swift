@@ -81,6 +81,7 @@ struct ProfileView: View, Equatable {
                         alertType: $alertType,
                         isEditingUserAddress: $isEditingUserAddress
                     )
+                    .environmentObject(app)
                     .padding(.top, section == .handwriting ? 0 : -10)
                 }
                 // MARK: - Sign Out Button

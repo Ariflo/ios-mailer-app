@@ -10,6 +10,7 @@ import Combine
 
 class CallsViewModel: ObservableObject {
     private let apiService: ApiService
+    let analyticsTracker: AnalyticsTracker
     private var disposables = Set<AnyCancellable>()
 
     @Published var loading: Bool = false
@@ -27,6 +28,7 @@ class CallsViewModel: ObservableObject {
 
     init(provider: DependencyProviding) {
         apiService = provider.register(provider: provider)
+        analyticsTracker = provider.register(provider: provider)
     }
 
     func getLeads() {

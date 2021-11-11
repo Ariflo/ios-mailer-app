@@ -30,12 +30,14 @@ class MessagesViewModel: ObservableObject {
     }
 
     private let apiService: ApiService
+    let analyticsTracker: AnalyticsTracker
     private var disposables = Set<AnyCancellable>()
 
     var messageSid: String = ""
 
     init(provider: DependencyProviding) {
-        self.apiService = provider.register(provider: provider)
+        apiService = provider.register(provider: provider)
+        analyticsTracker = provider.register(provider: provider)
     }
 
     func getIncomingLeadsWithMessages(completionHandler: @escaping (IncomingLeadsResponse) -> Void = { _ in }) {

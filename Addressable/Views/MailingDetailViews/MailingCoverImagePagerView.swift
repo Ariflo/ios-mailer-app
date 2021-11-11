@@ -67,7 +67,14 @@ struct MailingCoverImagePagerView: View, Equatable {
                             cancelRefreshMailingTask: {
                                 viewModel.refreshMailingTask.cancel()
                             }
-                        ).tag(index)
+                        )
+                        .tag(index)
+                        .onAppear {
+                            viewModel.analyticsTracker.trackEvent(
+                                .mobileOuterEnvelopeViewDisplayed,
+                                context: app.persistentContainer.viewContext
+                            )
+                        }
                     case .cardFront:
                         if viewModel.mailing.layoutTemplate == nil && viewModel.selectedFrontCoverImageData == nil {
                             EmptyListView(
@@ -85,6 +92,12 @@ struct MailingCoverImagePagerView: View, Equatable {
                                 }
                             )
                             .tag(index)
+                            .onAppear {
+                                viewModel.analyticsTracker.trackEvent(
+                                    .mobileFrontCardViewDisplayed,
+                                    context: app.persistentContainer.viewContext
+                                )
+                            }
                         }
                     case .cardInside:
                         if viewModel.mailing.customNoteTemplateID == nil {
@@ -116,7 +129,14 @@ struct MailingCoverImagePagerView: View, Equatable {
                                 cancelRefreshMailingTask: {
                                     viewModel.refreshMailingTask.cancel()
                                 }
-                            ).tag(index)
+                            )
+                            .tag(index)
+                            .onAppear {
+                                viewModel.analyticsTracker.trackEvent(
+                                    .mobileInsideCardViewDisplayed,
+                                    context: app.persistentContainer.viewContext
+                                )
+                            }
                         }
                     case .cardBack:
                         if viewModel.mailing.layoutTemplate == nil && viewModel.selectedBackCoverImageData == nil {
@@ -135,6 +155,12 @@ struct MailingCoverImagePagerView: View, Equatable {
                                 }
                             )
                             .tag(index)
+                            .onAppear {
+                                viewModel.analyticsTracker.trackEvent(
+                                    .mobileBackCardViewDisplayed,
+                                    context: app.persistentContainer.viewContext
+                                )
+                            }
                         }
                     }
                 }

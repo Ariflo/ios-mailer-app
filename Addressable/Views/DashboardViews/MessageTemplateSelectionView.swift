@@ -12,6 +12,7 @@ struct MessageTemplateSelectionView: View, Equatable {
         lhs.viewModel.mailing == rhs.viewModel.mailing
     }
 
+    @EnvironmentObject var app: Application
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var viewModel: MessageTemplateSelectionViewModel
     @StateObject var messageTemplatePreviewViewModel = PreviewViewModel()
@@ -58,6 +59,10 @@ struct MessageTemplateSelectionView: View, Equatable {
                         Menu {
                             ForEach(viewModel.messageTemplates) { messageTemplate in
                                 Button {
+                                    viewModel.analyticsTracker.trackEvent(
+                                        .mobileChangeMessageTemplateDetailsView,
+                                        context: app.persistentContainer.viewContext
+                                    )
                                     viewModel.selectedMessageTemplateID = messageTemplate.id
                                     viewModel.messageTemplateMergeVariables = messageTemplate
                                         .mergeVars
@@ -113,6 +118,10 @@ struct MessageTemplateSelectionView: View, Equatable {
                                         setIsLoading: { value in isMessagePreviewLoading = value },
                                         setIsEditingOn: {
                                             isEditingMessageTemplate = true
+                                            viewModel.analyticsTracker.trackEvent(
+                                                .mobileEditMessageTemplateFromDetailsView,
+                                                context: app.persistentContainer.viewContext
+                                            )
                                         }
                                     )
                                     if !isMessagePreviewLoading {

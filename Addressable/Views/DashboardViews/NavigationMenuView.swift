@@ -11,6 +11,8 @@ struct NavigationMenuView: View {
     @Binding var showNavMenu: Bool
     @Binding var selectedMenuItem: MainMenu
 
+    var sendAnalyticEventForMenuSelection: (MainMenu) -> Void
+
     var body: some View {
         VStack(alignment: .leading, spacing: 40) {
             ForEach(MainMenu.allCases, id: \.self) { menuItem in
@@ -18,6 +20,7 @@ struct NavigationMenuView: View {
                     Button(action: {
                         // Navigate to selected menu item
                         selectedMenuItem = menuItem
+                        sendAnalyticEventForMenuSelection(menuItem)
                         withAnimation {
                             showNavMenu = false
                         }
@@ -89,7 +92,10 @@ struct NavigationMenuView_Previews: PreviewProvider {
         let showPreviewNavMenu = Binding<Bool>(
             get: { false }, set: { _ in }
         )
-        NavigationMenuView(showNavMenu: showPreviewNavMenu, selectedMenuItem: selectedPreviewMenuItem)
+        NavigationMenuView(
+            showNavMenu: showPreviewNavMenu,
+            selectedMenuItem: selectedPreviewMenuItem
+        ) { _ in }
     }
 }
 #endif

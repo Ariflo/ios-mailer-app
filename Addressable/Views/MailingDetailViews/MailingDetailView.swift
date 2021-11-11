@@ -28,7 +28,7 @@ enum MailingDetailSheetTypes: Identifiable {
     }
 }
 
-// swiftlint:disable type_body_length
+// swiftlint:disable type_body_length file_length
 struct MailingDetailView: View, Equatable {
     static func == (lhs: MailingDetailView, rhs: MailingDetailView) -> Bool {
         lhs.viewModel.mailing == rhs.viewModel.mailing
@@ -161,7 +161,12 @@ struct MailingDetailView: View, Equatable {
                         ),
                         isEditingReturnAddress: $isEditingMailing,
                         toggleAlert: toggleMessageToastView
-                    )
+                    ) {
+                        viewModel.analyticsTracker.trackEvent(
+                            .mobileMailingDetailReturnAddressUpdated,
+                            context: app.persistentContainer.viewContext
+                        )
+                    }
                     .padding(20)
                     .transition(.move(edge: .top)) : nil
                 // MARK: - Display Mailing Recipients Button
@@ -193,6 +198,7 @@ struct MailingDetailView: View, Equatable {
                         isEditingBackCardCover: isEditingBackCardCover || selectedCoverImageIndex > 0
                     )
                     .equatable()
+                    .environmentObject(app)
                     .padding(20)
                     .transition(.move(edge: .bottom)) : nil
                 Spacer()
@@ -226,7 +232,9 @@ struct MailingDetailView: View, Equatable {
                         selectedMailing: $viewModel.mailing
                     ),
                     toggleAlert: toggleMessageToastView
-                ).equatable()
+                )
+                .equatable()
+                .environmentObject(app)
             case .addAudience:
                 SelectAudienceView(
                     viewModel: SelectAudienceViewModel(
@@ -324,9 +332,17 @@ struct MailingDetailView: View, Equatable {
         switch menuOption {
         case .sendMailing:
             activeSheetType = .confirmAndSendMailing
+            viewModel.analyticsTracker.trackEvent(
+                .mobileSendMailingFromDetailsView,
+                context: app.persistentContainer.viewContext
+            )
         case .revert,
              .cancelMailing:
             isShowingAlert = true
+            viewModel.analyticsTracker.trackEvent(
+                .mobileCancelRevertMailingFromDetailsView,
+                context: app.persistentContainer.viewContext
+            )
         case .addTokens:
             guard let keyStoreUser = KeyChainServiceUtil.shared[userData],
                   let userData = keyStoreUser.data(using: .utf8),
@@ -340,9 +356,17 @@ struct MailingDetailView: View, Equatable {
                 return
             }
             UIApplication.shared.open(url)
+            viewModel.analyticsTracker.trackEvent(
+                .mobileAddTokensFromDetailsView,
+                context: app.persistentContainer.viewContext
+            )
         case .clone,
              .sendAgain:
             activeSheetType = .cloneMailing
+            viewModel.analyticsTracker.trackEvent(
+                .mobileCloneMailingFromDetailsView,
+                context: app.persistentContainer.viewContext
+            )
         }
     }
     private func getMailingStatus() -> MailingStatus {

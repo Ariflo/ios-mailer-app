@@ -66,11 +66,28 @@ struct CallListView: View, Equatable {
             } else {
                 RefreshableScrollView(refreshing: $viewModel.refreshIncomingLeadsData) {
                     ForEach(CallLabel.allCases, id: \.self) { callLabel in
+                        // MARK: - Call List Section Header
                         CallListSectionHeaderView(
                             label: callLabel,
                             count: getLeads(for: callLabel, forCount: true).count,
                             displaySection: getDisplaySection(for: callLabel)
-                        )
+                        ) {
+                            var sectionHeaderTappedAnalyticsEvent: AnalyticsEventName = .mobileCallSectionHeaderTapped
+
+                            switch callLabel {
+                            case .inbox:
+                                sectionHeaderTappedAnalyticsEvent = .mobileCallInboxSectionHeaderTapped
+                            case .removals:
+                                sectionHeaderTappedAnalyticsEvent = .mobileCallRemovalSectionHeaderTapped
+                            case .spam:
+                                sectionHeaderTappedAnalyticsEvent = .mobileCallSpamSectionHeaderTapped
+                            }
+                            viewModel.analyticsTracker.trackEvent(
+                                sectionHeaderTappedAnalyticsEvent,
+                                context: app.persistentContainer.viewContext
+                            )
+                        }
+                        // MARK: - Call List
                         VStack(spacing: 0) {
                             ForEach(getLeads(for: callLabel)) { lead in
                                 if let score = lead.qualityScore {
@@ -97,6 +114,10 @@ struct CallListView: View, Equatable {
                                                         .onTapGesture {
                                                             subjectLead = lead
                                                             displayIncomingLeadSurvey = true
+                                                            viewModel.analyticsTracker.trackEvent(
+                                                                .mobileTagLeadMenuDisplayed,
+                                                                context: app.persistentContainer.viewContext
+                                                            )
                                                         }
                                                 }
 
@@ -111,6 +132,10 @@ struct CallListView: View, Equatable {
                                                         .onTapGesture {
                                                             subjectLead = lead
                                                             displayMissedCallsView = true
+                                                            viewModel.analyticsTracker.trackEvent(
+                                                                .mobileLeadCallHistoryMenuDisplayed,
+                                                                context: app.persistentContainer.viewContext
+                                                            )
                                                         }
                                                 }
                                             }
@@ -142,6 +167,10 @@ struct CallListView: View, Equatable {
                                                         // Make outgoing call
                                                         callManager.startCall(to: lead)
                                                     }
+                                                    viewModel.analyticsTracker.trackEvent(
+                                                        .mobileLeadOutgoingCallInitiated,
+                                                        context: app.persistentContainer.viewContext
+                                                    )
                                                 }
                                         } else {
                                             Image(systemName: "arrow.uturn.left")
@@ -151,6 +180,10 @@ struct CallListView: View, Equatable {
                                                 .onTapGesture {
                                                     subjectLead = lead
                                                     displayIncomingLeadSurvey = true
+                                                    viewModel.analyticsTracker.trackEvent(
+                                                        .mobileLeadReverseRemovalOrSpamTag,
+                                                        context: app.persistentContainer.viewContext
+                                                    )
                                                 }
                                         }
                                     }

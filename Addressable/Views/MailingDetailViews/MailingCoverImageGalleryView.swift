@@ -12,6 +12,7 @@ struct MailingCoverImageGalleryView: View, Equatable {
         lhs.viewModel.mailing == rhs.viewModel.mailing
     }
 
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: MailingCoverImageGalleryViewModel
     @Binding var isEditingMailing: Bool
 
@@ -61,6 +62,11 @@ struct MailingCoverImageGalleryView: View, Equatable {
                                 viewModel.selectedFrontCoverImageData = nil
                                 viewModel.selectedBackCoverImageData = nil
                                 viewModel.selectedCoverImageId = 0
+
+                                viewModel.analyticsTracker.trackEvent(
+                                    .mobileUpdatedCardImage,
+                                    context: app.persistentContainer.viewContext
+                                )
                             }
                         }
                     }

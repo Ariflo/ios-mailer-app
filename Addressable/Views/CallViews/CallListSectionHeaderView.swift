@@ -13,6 +13,8 @@ struct CallListSectionHeaderView: View {
 
     @Binding var displaySection: Bool
 
+    var sendSecitonHeaderTapAnalyticsEvent: () -> Void
+
     var body: some View {
         HStack {
             Text(label.rawValue.capitalizingFirstLetter())
@@ -29,6 +31,7 @@ struct CallListSectionHeaderView: View {
                 // Hide Section
                 withAnimation(.easeIn) {
                     displaySection.toggle()
+                    sendSecitonHeaderTapAnalyticsEvent()
                 }
             }) {
                 Image(systemName: displaySection ? "chevron.up" : "chevron.down")
@@ -47,7 +50,7 @@ struct CallListSectionHeaderView_Previews: PreviewProvider {
         let displaySectionBinding = Binding<Bool>(
             get: { true }, set: { _ in }
         )
-        CallListSectionHeaderView(label: .inbox, count: 2, displaySection: displaySectionBinding)
+        CallListSectionHeaderView(label: .inbox, count: 2, displaySection: displaySectionBinding) {}
     }
 }
 #endif

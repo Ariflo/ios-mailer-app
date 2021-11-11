@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CustomSegmentedPickerView: View {
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: TagIncomingLeadViewModel
 
     @State var selectedIndex = 0
@@ -21,6 +22,15 @@ struct CustomSegmentedPickerView: View {
     }
 
     var body: some View {
+        let isRealOrSpamSelectedTagAnalyticEvents: [AnalyticsEventName] = [
+            .mobileLeadTaggedPerson, .mobileLeadTaggedSpam
+        ]
+        let isInterestedSelectedTagAnalyticEvents: [AnalyticsEventName] = [
+            .mobileLeadTaggedLowInterest, .mobileLeadTaggedFair, .mobileLeadTaggedLead
+        ]
+        let isRemovalSelectedTagAnalyticEvents: [AnalyticsEventName] = [
+            .mobileLeadTaggedNotRemoval, .mobileLeadTaggedRemoval
+        ]
         VStack {
             ZStack {
                 HStack(spacing: 10) {
@@ -30,10 +40,22 @@ struct CustomSegmentedPickerView: View {
                             switch tagOptions[index] {
                             case .person, .spam:
                                 viewModel.isRealOrSpamSelectedTag = tagOptions[index]
+                                viewModel.analyticsTracker.trackEvent(
+                                    isRealOrSpamSelectedTagAnalyticEvents[index],
+                                    context: app.persistentContainer.viewContext
+                                )
                             case .lowInterest, .fair, .lead:
                                 viewModel.isInterestedSelectedTag = tagOptions[index]
+                                viewModel.analyticsTracker.trackEvent(
+                                    isInterestedSelectedTagAnalyticEvents[index],
+                                    context: app.persistentContainer.viewContext
+                                )
                             case .removeYes, .removeNo:
                                 viewModel.isRemovalSelectedTag = tagOptions[index]
+                                viewModel.analyticsTracker.trackEvent(
+                                    isRemovalSelectedTagAnalyticEvents[index],
+                                    context: app.persistentContainer.viewContext
+                                )
                             }
                         }) {
                             SegmentedControlIconOptionView(option: tagOptions[index])

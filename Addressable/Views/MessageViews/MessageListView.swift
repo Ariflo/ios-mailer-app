@@ -83,6 +83,10 @@ struct MessageListView: View, Equatable {
                                 .padding()
                         }
                         .onTapGesture {
+                            viewModel.analyticsTracker.trackEvent(
+                                .mobileLeadMessageThreadTapped,
+                                context: app.persistentContainer.viewContext
+                            )
                             selectedLead = lead
                             navigateToChat = true
                         }
