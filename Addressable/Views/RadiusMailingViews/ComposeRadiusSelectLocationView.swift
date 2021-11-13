@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ComposeRadiusSelectLocationView: View {
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: ComposeRadiusViewModel
     @State var locationSelected: Bool = false
     @State var displayTargetCriteriaMenu: Bool = false
@@ -44,6 +45,10 @@ struct ComposeRadiusSelectLocationView: View {
                                 if let addressSuggestion = searchSuggestion.address?.formattedAddress(style: .medium) {
                                     Button(action: {
                                         // Location Selected
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileSaleLocationSelected,
+                                            context: app.persistentContainer.viewContext
+                                        )
                                         viewModel.searchEngine.select(suggestion: searchSuggestion)
                                         viewModel.locationEntry = addressSuggestion
                                         locationSelected = true
@@ -60,6 +65,10 @@ struct ComposeRadiusSelectLocationView: View {
                     }
                     // MARK: - Targeting Criteria Button
                     Button(action: {
+                        viewModel.analyticsTracker.trackEvent(
+                            .mobileTargetCriteriaMenuDisplayed,
+                            context: app.persistentContainer.viewContext
+                        )
                         displayTargetCriteriaMenu = true
                     }) {
                         HStack(spacing: 15) {
@@ -84,7 +93,7 @@ struct ComposeRadiusSelectLocationView: View {
             }.padding(40)
         }
         .sheet(isPresented: $displayTargetCriteriaMenu) {
-            TargetCriteriaMenuView(viewModel: viewModel)
+            TargetCriteriaMenuView(viewModel: viewModel).environmentObject(app)
         }
     }
 }

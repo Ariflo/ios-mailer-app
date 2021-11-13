@@ -13,6 +13,7 @@ enum SelectAudienceViewAlerts {
 
 struct SelectAudienceView: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: SelectAudienceViewModel
     @State var showingAlert: Bool = false
     @State var selectedAlert: SelectAudienceViewAlerts = .addAudienceConfirmation
@@ -50,6 +51,10 @@ struct SelectAudienceView: View {
                         Button(action: {
                             selectedAudience = audience
                             selectedAlert = .addAudienceConfirmation
+                            viewModel.analyticsTracker.trackEvent(
+                                .mobileAddAudienceSelection,
+                                context: app.persistentContainer.viewContext
+                            )
                             showingAlert = true
                         }) {
                             HStack {
@@ -92,6 +97,10 @@ struct SelectAudienceView: View {
                             viewModel.addAudience(with: audience.id) { mailingWithAudience in
                                 if let newMailing = mailingWithAudience {
                                     viewModel.mailing = newMailing
+                                    viewModel.analyticsTracker.trackEvent(
+                                        .mobileAddAudienceSelectionSuccess,
+                                        context: app.persistentContainer.viewContext
+                                    )
                                     presentationMode.wrappedValue.dismiss()
                                 } else {
                                     selectedAlert = .error

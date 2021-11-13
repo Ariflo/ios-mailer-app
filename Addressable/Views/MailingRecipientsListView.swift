@@ -24,6 +24,7 @@ struct MailingRecipientsListView: View, Equatable {
             lhs.viewModel.mailing.activeRecipientCount == rhs.viewModel.mailing.activeRecipientCount
     }
 
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: MailingRecipientsListViewModel
 
     @State var selectedListCategory: RecipientListCategory = .mailingList
@@ -88,6 +89,26 @@ struct MailingRecipientsListView: View, Equatable {
                     HStack(spacing: 22) {
                         ForEach(RecipientListCategory.allCases, id: \.self) { category in
                             Button(action: {
+                                var mailingRecipientTabPressedAnalyticEvent: AnalyticsEventName =
+                                    .mobileMailingRecipientTabTapped
+                                switch category {
+                                case .mailingList:
+                                    mailingRecipientTabPressedAnalyticEvent =
+                                        .mobileMailingRecipientMailingListTapped
+                                case .removed:
+                                    mailingRecipientTabPressedAnalyticEvent =
+                                        .mobileMailingRecipientRemovedTabTapped
+                                case .unavailable:
+                                    mailingRecipientTabPressedAnalyticEvent =
+                                        .mobileMailingRecipientUnavaliableTapped
+                                case .all:
+                                    mailingRecipientTabPressedAnalyticEvent =
+                                        .mobileMailingRecipientAllTabTapped
+                                }
+                                viewModel.analyticsTracker.trackEvent(
+                                    mailingRecipientTabPressedAnalyticEvent,
+                                    context: app.persistentContainer.viewContext
+                                )
                                 selectedListCategory = category
                             }) {
                                 HStack(spacing: 0) {
@@ -167,6 +188,12 @@ struct MailingRecipientsListView: View, Equatable {
                                                             ListEntryMembershipStatus.member.rawValue :
                                                             ListEntryMembershipStatus.rejected.rawValue
                                                     )
+                                                    viewModel.analyticsTracker.trackEvent(
+                                                        selectedListCategory == .removed ?
+                                                            .mobileMailingRecipientAdded :
+                                                            .mobileMailingRecipientRemoved,
+                                                        context: app.persistentContainer.viewContext
+                                                    )
                                                 }, secondaryButton: .cancel())
                                         }
                                         .actionSheet(isPresented: $showingActionSheet) {
@@ -181,9 +208,11 @@ struct MailingRecipientsListView: View, Equatable {
                                                                 .font(Font.custom("Silka-Medium", size: 14))) {
                                                         viewModel.updateListEntry(
                                                             with: selectedRecipientID!,
-                                                            with: selectedListCategory == .removed ?
-                                                                ListEntryMembershipStatus.member.rawValue :
-                                                                ListEntryMembershipStatus.rejected.rawValue
+                                                            with: ListEntryMembershipStatus.rejected.rawValue
+                                                        )
+                                                        viewModel.analyticsTracker.trackEvent(
+                                                            .mobileMailingRecipientRemoved,
+                                                            context: app.persistentContainer.viewContext
                                                         )
                                                     },
                                                     .destructive(Text("Never Send Mail to this Address")
@@ -191,6 +220,10 @@ struct MailingRecipientsListView: View, Equatable {
                                                         // swiftlint:disable force_unwrapping
                                                         viewModel.removeListEntry(
                                                             with: selectedRecipientID!
+                                                        )
+                                                        viewModel.analyticsTracker.trackEvent(
+                                                            .mobileMailingRecipientRemoved,
+                                                            context: app.persistentContainer.viewContext
                                                         )
                                                     },
                                                     .cancel()

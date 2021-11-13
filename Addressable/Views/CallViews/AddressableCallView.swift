@@ -63,6 +63,12 @@ struct AddressableCallView: View {
                                 print("No currentActiveCall avaliable to mute")
                                 return
                             }
+                            if !callIsMuted {
+                                viewModel.analyticsTracker.trackEvent(
+                                    .mobileCallMuted,
+                                    context: app.persistentContainer.viewContext
+                                )
+                            }
                             app.callManager?.setMuted(call: currentActiveCall, isMuted: !callIsMuted)
                             callIsMuted.toggle()
                         }) {
@@ -84,6 +90,12 @@ struct AddressableCallView: View {
                     // MARK: - Speaker
                     VStack(spacing: 8) {
                         Button(action: {
+                            if !callIsOnSpeaker {
+                                viewModel.analyticsTracker.trackEvent(
+                                    .mobileCallSpeakerEnabled,
+                                    context: app.persistentContainer.viewContext
+                                )
+                            }
                             app.callManager?.toggleAudioToSpeaker(isSpeakerOn: !callIsOnSpeaker)
                             callIsOnSpeaker.toggle()
                         }) {
@@ -112,6 +124,12 @@ struct AddressableCallView: View {
                                 print("No currentActiveCall avaliable to hold")
                                 return
                             }
+                            if !callOnHold {
+                                viewModel.analyticsTracker.trackEvent(
+                                    .mobileCallHoldEnabled,
+                                    context: app.persistentContainer.viewContext
+                                )
+                            }
                             app.callManager?.setHeld(call: currentActiveCall, onHold: !callOnHold)
                             callOnHold.toggle()
                         }) {
@@ -133,6 +151,10 @@ struct AddressableCallView: View {
                     // MARK: - Add Participant
                     VStack(spacing: 8) {
                         Button(action: {
+                            viewModel.analyticsTracker.trackEvent(
+                                .mobileCallParticipantAddMenuDisplayed,
+                                context: app.persistentContainer.viewContext
+                            )
                             displayKeyPad = true
                         }) {
                             Image(systemName: app.callManager?.getIsCurrentCallIncoming() ??
@@ -155,6 +177,10 @@ struct AddressableCallView: View {
                     // MARK: - Return to Campaigns
                     VStack(spacing: 8) {
                         Button(action: {
+                            viewModel.analyticsTracker.trackEvent(
+                                .mobileCallReturnToCampaigns,
+                                context: app.persistentContainer.viewContext
+                            )
                             // Display Outgoing Call View
                             DispatchQueue.main.async {
                                 app.currentView = .dashboard(false, false)
@@ -186,6 +212,10 @@ struct AddressableCallView: View {
                         print("No currentActiveCall UUID avaliable to end")
                         return
                     }
+                    viewModel.analyticsTracker.trackEvent(
+                        .mobileCallEnded,
+                        context: app.persistentContainer.viewContext
+                    )
                     callManager.endCall(with: uuid)
                 }) {
                     Image(systemName: "phone.down.fill")

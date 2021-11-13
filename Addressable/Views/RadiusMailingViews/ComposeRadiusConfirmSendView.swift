@@ -13,6 +13,7 @@ enum RadiusSocketChannels: String, CaseIterable {
 
 // MARK: - ComposeRadiusConfirmSendView
 struct ComposeRadiusConfirmSendView: View {
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: ComposeRadiusViewModel
 
     init(viewModel: ComposeRadiusViewModel) {
@@ -61,6 +62,10 @@ struct ComposeRadiusConfirmSendView: View {
                                                 get: {
                                                     getTargetDropDateObject()
                                                 }, set: {
+                                                    viewModel.analyticsTracker.trackEvent(
+                                                        .mobileUpdateDateRadiusMailing,
+                                                        context: app.persistentContainer.viewContext
+                                                    )
                                                     viewModel.setSelectedDropDate(selectedDate: $0)
                                                 }),
                                             in: getTargetDropDateObject()...,

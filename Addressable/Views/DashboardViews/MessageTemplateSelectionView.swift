@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// swiftlint:disable file_length
 struct MessageTemplateSelectionView: View, Equatable {
     static func == (lhs: MessageTemplateSelectionView, rhs: MessageTemplateSelectionView) -> Bool {
         lhs.viewModel.mailing == rhs.viewModel.mailing
@@ -144,6 +145,10 @@ struct MessageTemplateSelectionView: View, Equatable {
                 Spacer()
                 HStack(spacing: 8) {
                     Button(action: {
+                        viewModel.analyticsTracker.trackEvent(
+                            .mobileChangeMessageTemplateCancelled,
+                            context: app.persistentContainer.viewContext
+                        )
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Cancel")
@@ -162,6 +167,10 @@ struct MessageTemplateSelectionView: View, Equatable {
                                 if let newMailing = mailingWithMessageTemplate {
                                     viewModel.mailing = newMailing
                                     toggleAlert()
+                                    viewModel.analyticsTracker.trackEvent(
+                                        .mobileChangeMessageTemplateSuccess,
+                                        context: app.persistentContainer.viewContext
+                                    )
                                     presentationMode.wrappedValue.dismiss()
                                 } else {
                                     showingAlert = true

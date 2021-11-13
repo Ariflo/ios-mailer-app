@@ -19,6 +19,7 @@ enum ConfirmSendMailingAlertTypes {
 // MARK: - ConfirmAndSendMailingView
 struct ConfirmAndSendMailingView: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: ConfirmAndSendMailingViewModel
 
     @State var showingAlert: Bool = false
@@ -63,6 +64,10 @@ struct ConfirmAndSendMailingView: View {
                                     get: {
                                         getTargetDropDateObject()
                                     }, set: {
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileUpdateDateReleaseMailingDetail,
+                                            context: app.persistentContainer.viewContext
+                                        )
                                         viewModel.setSelectedDropDate(selectedDate: $0)
                                     }),
                                 in: getTargetDropDateObject()...,
@@ -94,6 +99,10 @@ struct ConfirmAndSendMailingView: View {
                 Spacer()
                 HStack(spacing: 8) {
                     Button(action: {
+                        viewModel.analyticsTracker.trackEvent(
+                            .mobileMailingDetailViewReleaseCancelled,
+                            context: app.persistentContainer.viewContext
+                        )
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Cancel")
@@ -120,6 +129,10 @@ struct ConfirmAndSendMailingView: View {
                                 showingAlert = true
                                 return
                             }
+                            viewModel.analyticsTracker.trackEvent(
+                                .mobileMailingReleasedDetailView,
+                                context: app.persistentContainer.viewContext
+                            )
                             presentationMode.wrappedValue.dismiss()
                         }
                     }) {

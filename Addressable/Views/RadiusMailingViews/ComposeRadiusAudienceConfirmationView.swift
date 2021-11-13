@@ -81,6 +81,7 @@ struct ComposeRadiusAudienceConfirmationView: View {
                     activeSheetType: activeSheetTypeBinding
                 )
                 .equatable()
+                .environmentObject(app)
                 .gesture(drag)
             } else {
                 ProgressView()

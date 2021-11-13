@@ -38,7 +38,7 @@ enum ListStatus: String {
 }
 
 // MARK: - ComposeRadiusView
-// // swiftlint:disable type_body_length
+// // swiftlint:disable type_body_length file_length
 struct ComposeRadiusView: View {
     @EnvironmentObject var app: Application
     @ObservedObject var viewModel: ComposeRadiusViewModel
@@ -113,14 +113,16 @@ struct ComposeRadiusView: View {
                     VStack {
                         switch viewModel.step {
                         case .selectLocation:
-                            ComposeRadiusSelectLocationView(viewModel: viewModel).adaptsToKeyboard()
+                            ComposeRadiusSelectLocationView(viewModel: viewModel)
+                                .environmentObject(app)
+                                .adaptsToKeyboard()
                         case .selectCard:
                             ComposeRadiusCoverImageSelectionView(viewModel: viewModel)
                         case .chooseTopic:
                             ComposeRadiusTopicSelectionView(viewModel: viewModel, showAlert: {
                                 alertType = .somethingWentWrong
                                 showingAlert = true
-                            })
+                            }).environmentObject(app)
                         case .audienceProcessing:
                             ComposeRadiusConfirmationView(
                                 emptyMessage: "Our team is now building your mailing list." +
@@ -132,7 +134,7 @@ struct ComposeRadiusView: View {
                                 viewModel: viewModel
                             ).environmentObject(app)
                         case .confirmSend:
-                            ComposeRadiusConfirmSendView(viewModel: viewModel)
+                            ComposeRadiusConfirmSendView(viewModel: viewModel).environmentObject(app)
                         case .radiusSent:
                             ComposeRadiusConfirmationView(
                                 emptyMessage: "Your Radius mailing is completed. " +
@@ -154,6 +156,10 @@ struct ComposeRadiusView: View {
                                             (isCurrentMailingListInProgress() && viewModel.step == .selectCard) ||
                                             !viewModel.canAfford
                                     else {
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileRadiusMailingWizardBack,
+                                            context: app.persistentContainer.viewContext
+                                        )
                                         viewModel.step.back()
                                         return
                                     }
@@ -180,6 +186,10 @@ struct ComposeRadiusView: View {
                             action: {
                                 guard viewModel.step != .audienceProcessing &&
                                         viewModel.step != .radiusSent else {
+                                    viewModel.analyticsTracker.trackEvent(
+                                        .mobileRadiusMailingWizardNextToDashboard,
+                                        context: app.persistentContainer.viewContext
+                                    )
                                     app.currentView = .dashboard(false, false)
                                     return
                                 }
@@ -187,22 +197,39 @@ struct ComposeRadiusView: View {
                                 if viewModel.step == .selectLocation && viewModel.touchOneMailing == nil {
                                     viewModel.createRadiusMailing { newMailing in
                                         guard newMailing != nil else { return }
+
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileRadiusMailingCreated,
+                                            context: app.persistentContainer.viewContext
+                                        )
                                     }
                                 } else if viewModel.step == .selectLocation && viewModel.touchOneMailing != nil {
                                     viewModel.updateRadiusMailingData(for: .location) { updatedMailing in
                                         guard updatedMailing != nil else { return }
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileRadiusMailingLocationUpdated,
+                                            context: app.persistentContainer.viewContext
+                                        )
                                     }
                                 }
 
                                 if viewModel.step == .selectCard {
                                     viewModel.updateRadiusMailingData(for: .cover) { updatedMailing in
                                         guard updatedMailing != nil else { return }
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileRadiusMailingCoverImageUpdated,
+                                            context: app.persistentContainer.viewContext
+                                        )
                                     }
                                 }
 
                                 if viewModel.step == .chooseTopic {
                                     viewModel.updateRadiusMailingData(for: .topic) { updatedMailing in
                                         guard updatedMailing != nil else { return }
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileRadiusMailingTopicUpdated,
+                                            context: app.persistentContainer.viewContext
+                                        )
                                         if let mailing = updatedMailing,
                                            let mailingStatus = mailing.listStatus {
                                             if mailingStatus == ListStatus.complete.rawValue {
@@ -217,6 +244,10 @@ struct ComposeRadiusView: View {
                                     // Approve List + Create Touch 2 Mailing
                                     viewModel.updateRadiusMailingData(for: .list) { updatedMailing in
                                         guard updatedMailing != nil else { return }
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileRadiusMailingAudienceConfirmed,
+                                            context: app.persistentContainer.viewContext
+                                        )
                                     }
                                 }
 
@@ -229,6 +260,10 @@ struct ComposeRadiusView: View {
                                         context: app.persistentContainer.viewContext
                                     )
                                 }
+                                viewModel.analyticsTracker.trackEvent(
+                                    .mobileRadiusMailingWizardNext,
+                                    context: app.persistentContainer.viewContext
+                                )
                                 viewModel.step.next()
                             }
                         ) {

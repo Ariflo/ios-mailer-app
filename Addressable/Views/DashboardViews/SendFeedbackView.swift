@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SendFeedbackView: View {
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: SendFeedbackViewModel
     @State var feebackSent: Bool = false
     @State var feedbackText: String = ""
@@ -56,6 +57,10 @@ struct SendFeedbackView: View {
                         Button(action: {
                             viewModel.sendFeedback(feedbackText: feedbackText) { feedbackResponse in
                                 guard feedbackResponse != nil else { return }
+                                viewModel.analyticsTracker.trackEvent(
+                                    .mobileFeedbackSent,
+                                    context: app.persistentContainer.viewContext
+                                )
                                 feebackSent = true
                             }
                         }) {

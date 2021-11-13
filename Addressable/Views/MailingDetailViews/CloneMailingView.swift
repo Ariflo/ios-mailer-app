@@ -16,6 +16,7 @@ enum CloneMailingTextFieldOptions: String, CaseIterable {
 // MARK: - CloneMailingView
 struct CloneMailingView: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: CloneMailingViewModel
 
     @State var showingAlert: Bool = false
@@ -35,6 +36,7 @@ struct CloneMailingView: View {
                             .foregroundColor(Color.addressableFadedBlack)
                             .padding(.horizontal, 20)
                             .multilineTextAlignment(.center)
+                        // MARK: - Clone Mailing Input Attributes (ie. name, drop date, number of letters)
                         VStack(alignment: .leading, spacing: 24) {
                             ForEach(CloneMailingTextFieldOptions.allCases, id: \.self) { option in
                                 let textFieldBinding = Binding<String>(
@@ -51,8 +53,16 @@ struct CloneMailingView: View {
                                     set: { textFieldValue in
                                         switch option {
                                         case .mailingName:
+                                            viewModel.analyticsTracker.trackEvent(
+                                                .mobileUpdateNameCloneMailingDetail,
+                                                context: app.persistentContainer.viewContext
+                                            )
                                             viewModel.mailingName = textFieldValue
                                         case .targetQuantity:
+                                            viewModel.analyticsTracker.trackEvent(
+                                                .mobileUpdateQuantityCloneMailingDetail,
+                                                context: app.persistentContainer.viewContext
+                                            )
                                             viewModel.targetQuantity = textFieldValue
                                         default:
                                             break
@@ -74,6 +84,10 @@ struct CloneMailingView: View {
                                                         get: {
                                                             getTargetDropDateObject()
                                                         }, set: {
+                                                            viewModel.analyticsTracker.trackEvent(
+                                                                .mobileUpdateDateCloneMailingDetail,
+                                                                context: app.persistentContainer.viewContext
+                                                            )
                                                             viewModel.setSelectedDropDate(selectedDate: $0)
                                                         }),
                                                     in: getTargetDropDateObject()...,
@@ -101,6 +115,7 @@ struct CloneMailingView: View {
                                 }
                             }
                         }
+                        // MARK: - Clone Mailing Checkbox Attributes (ie. Template, Message, List)
                         VStack(alignment: .leading, spacing: 24) {
                             if let layoutTemplate = viewModel.mailing.layoutTemplate {
                                 CheckView(
@@ -108,6 +123,12 @@ struct CloneMailingView: View {
                                     title: "Use Layout Template:",
                                     subTitles: [layoutTemplate.name]
                                 ) {
+                                    if viewModel.useLayoutTemplate {
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileCloneMailingRemoveLayoutTemplate,
+                                            context: app.persistentContainer.viewContext
+                                        )
+                                    }
                                     viewModel.useLayoutTemplate.toggle()
                                 }
                                 .multilineTextAlignment(.center)
@@ -118,6 +139,12 @@ struct CloneMailingView: View {
                                     title: "Use Message Template:",
                                     subTitles: [messageTemplateName]
                                 ) {
+                                    if viewModel.useMessageTemplate {
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileCloneMailingRemoveMessageTemplate,
+                                            context: app.persistentContainer.viewContext
+                                        )
+                                    }
                                     viewModel.useMessageTemplate.toggle()
                                 }
                                 .multilineTextAlignment(.center)
@@ -131,6 +158,12 @@ struct CloneMailingView: View {
                                             audienceNames + audienceMap.values
                                         }
                                 ) {
+                                    if viewModel.useAudienceList {
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileCloneMailingRemoveAudienceList,
+                                            context: app.persistentContainer.viewContext
+                                        )
+                                    }
                                     viewModel.useAudienceList.toggle()
                                 }
                                 .multilineTextAlignment(.center)
@@ -138,6 +171,10 @@ struct CloneMailingView: View {
                         Spacer()
                         HStack(spacing: 8) {
                             Button(action: {
+                                viewModel.analyticsTracker.trackEvent(
+                                    .mobileMailingDetailViewCloneCancelled,
+                                    context: app.persistentContainer.viewContext
+                                )
                                 presentationMode.wrappedValue.dismiss()
                             }) {
                                 Text("Cancel")
@@ -158,6 +195,10 @@ struct CloneMailingView: View {
                                     }
                                     // swiftlint:disable force_unwrapping
                                     viewModel.mailing = clonedMailing!
+                                    viewModel.analyticsTracker.trackEvent(
+                                        .mobileMailingDetailViewCloneSuccess,
+                                        context: app.persistentContainer.viewContext
+                                    )
                                     presentationMode.wrappedValue.dismiss()
                                 }
                             }) {

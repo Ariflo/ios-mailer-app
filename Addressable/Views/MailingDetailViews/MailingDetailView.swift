@@ -17,7 +17,7 @@ enum SettingsMenu: String, CaseIterable {
 }
 
 enum MailingDetailAlertTypes {
-    case confirmCancelEdit, confirmCancelMailing, mailingError
+    case confirmCancelMailing, mailingError
 }
 
 enum MailingDetailSheetTypes: Identifiable {
@@ -217,14 +217,14 @@ struct MailingDetailView: View, Equatable {
                         viewModel.mailing.layoutTemplate != nil &&
                         (viewModel.mailing.customNoteTemplateID != nil &&
                             viewModel.mailing.customNoteBody != nil)
-                )
+                ).environmentObject(app)
             case .cloneMailing:
                 CloneMailingView(
                     viewModel: CloneMailingViewModel(
                         provider: app.dependencyProvider,
                         selectedMailing: $viewModel.mailing
                     )
-                )
+                ).environmentObject(app)
             case .addMessageTemplate:
                 MessageTemplateSelectionView(
                     viewModel: MessageTemplateSelectionViewModel(
@@ -240,7 +240,7 @@ struct MailingDetailView: View, Equatable {
                     viewModel: SelectAudienceViewModel(
                         provider: app.dependencyProvider,
                         selectedMailing: $viewModel.mailing)
-                )
+                ).environmentObject(app)
             case .mailingRecipientsList:
                 NavigationView {
                     MailingRecipientsListView(
@@ -252,6 +252,7 @@ struct MailingDetailView: View, Equatable {
                         activeSheetType: $activeSheetType
                     )
                     .equatable()
+                    .environmentObject(app)
                     .padding(EdgeInsets(top: 20, leading: 20, bottom: 0, trailing: 20))
                     .navigationBarTitle("Edit Mailing Recipients", displayMode: .inline)
                     .navigationBarItems(trailing: Button(action: { activeSheetType = nil }) {
@@ -265,17 +266,6 @@ struct MailingDetailView: View, Equatable {
         }
         .alert(isPresented: $isShowingAlert) {
             switch alertType {
-            case .confirmCancelEdit:
-                return Alert(
-                    title: Text("Cancel Edit")
-                        .font(Font.custom("Silka-Bold", size: 14)),
-                    message: Text("Want to undo your recent changes?")
-                        .font(Font.custom("Silka-Medium", size: 12)),
-                    primaryButton: .default(Text("Confirm")) {
-                        withAnimation(.easeOut(duration: 0.5)) {
-                            isEditingMailing = false
-                        }
-                    }, secondaryButton: .cancel())
             case .confirmCancelMailing:
                 return Alert(
                     title: Text("Cancel '\(viewModel.mailing.name) \(getTouchNumber())'?")
@@ -285,6 +275,10 @@ struct MailingDetailView: View, Equatable {
                     primaryButton: .default(Text("Yes, Refund Tokens")) {
                         viewModel.cancelMailing { updatedMailing in
                             if let refundedMailing = updatedMailing {
+                                viewModel.analyticsTracker.trackEvent(
+                                    .mobileTokensRefunded,
+                                    context: app.persistentContainer.viewContext
+                                )
                                 viewModel.mailing = refundedMailing
                                 isShowingAlert = false
                             } else {

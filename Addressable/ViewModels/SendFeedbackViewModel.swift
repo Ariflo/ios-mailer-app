@@ -10,10 +10,12 @@ import Combine
 
 class SendFeedbackViewModel: ObservableObject {
     private let apiService: ApiService
+    let analyticsTracker: AnalyticsTracker
     private var disposables = Set<AnyCancellable>()
 
     init(provider: DependencyProviding) {
         apiService = provider.register(provider: provider)
+        analyticsTracker = provider.register(provider: provider)
     }
 
     func sendFeedback(feedbackText: String, onCompletion: @escaping (GenericAPISuccessResponse?) -> Void) {

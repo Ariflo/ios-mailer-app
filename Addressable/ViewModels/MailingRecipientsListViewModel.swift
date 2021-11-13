@@ -11,6 +11,7 @@ import Combine
 
 class MailingRecipientsListViewModel: ObservableObject {
     private let apiService: ApiService
+    let analyticsTracker: AnalyticsTracker
     private var disposables = Set<AnyCancellable>()
 
     @Binding var mailing: Mailing
@@ -21,6 +22,7 @@ class MailingRecipientsListViewModel: ObservableObject {
 
     init(provider: DependencyProviding, selectedMailing: Binding<Mailing>, numActiveRecipients: Binding<Int>) {
         apiService = provider.register(provider: provider)
+        analyticsTracker = provider.register(provider: provider)
         _mailing = selectedMailing
         _numActiveRecipients = numActiveRecipients
     }

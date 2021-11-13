@@ -12,6 +12,7 @@ class ConfirmAndSendMailingViewModel: ObservableObject {
     @Published var isEditingTargetDropDate: Bool = false
 
     private let apiService: ApiService
+    let analyticsTracker: AnalyticsTracker
     private var disposables = Set<AnyCancellable>()
 
     @Binding var mailing: Mailing
@@ -19,6 +20,7 @@ class ConfirmAndSendMailingViewModel: ObservableObject {
 
     init(provider: DependencyProviding, selectedMailing: Binding<Mailing>) {
         apiService = provider.register(provider: provider)
+        analyticsTracker = provider.register(provider: provider)
         _mailing = selectedMailing
         // Initialize selectedDropDate to current day + ten
         if let datePlusTen = Calendar.current.date(byAdding: .day, value: 10, to: Date()) {

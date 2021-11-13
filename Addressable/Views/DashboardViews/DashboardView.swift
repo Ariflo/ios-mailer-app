@@ -98,6 +98,10 @@ struct DashboardView: View {
                         #endif
                         Spacer()
                         Button(action: {
+                            viewModel.analyticsTracker.trackEvent(
+                                .mobileNavigationHamburgerMenuTapped,
+                                context: app.persistentContainer.viewContext
+                            )
                             // Open Side Menu
                             withAnimation {
                                 showNavMenu.toggle()
@@ -193,7 +197,9 @@ struct DashboardView: View {
                             viewModel: SendFeedbackViewModel(
                                 provider: app.dependencyProvider
                             )
-                        ).disabled(showNavMenu)
+                        )
+                        .environmentObject(app)
+                        .disabled(showNavMenu)
                     }
                 }
                 .offset(x: showNavMenu ? -(geometry.size.width / 2) : 0)

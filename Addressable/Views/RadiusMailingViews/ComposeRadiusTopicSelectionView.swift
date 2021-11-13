@@ -15,6 +15,7 @@ enum AddressableTouch: String, CaseIterable {
 
 // swiftlint:disable file_length
 struct ComposeRadiusTopicSelectionView: View {
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: ComposeRadiusViewModel
     @StateObject var touchOnePreviewViewModel = PreviewViewModel()
     @StateObject var touchTwoPreviewViewModel = PreviewViewModel()
@@ -74,6 +75,10 @@ struct ComposeRadiusTopicSelectionView: View {
                     Menu {
                         ForEach(viewModel.topics) { topic in
                             Button {
+                                viewModel.analyticsTracker.trackEvent(
+                                    .mobileRadiusMailingTopicSelection,
+                                    context: app.persistentContainer.viewContext
+                                )
                                 setSelectedTopic(selectedTopic: topic)
                             } label: {
                                 Text(topic.name).font(Font.custom("Silka-Medium", size: 14))
@@ -109,6 +114,10 @@ struct ComposeRadiusTopicSelectionView: View {
                                 touch: .touchOne,
                                 showAlert: showAlert,
                                 setIsEditingOff: {
+                                    viewModel.analyticsTracker.trackEvent(
+                                        .mobileRadiusMailingShowPreview,
+                                        context: app.persistentContainer.viewContext
+                                    )
                                     isEditingTouchOne = false
                                 }
                             )
@@ -120,6 +129,10 @@ struct ComposeRadiusTopicSelectionView: View {
                                 isLoading: isTouchOnePreviewLoading,
                                 setIsLoading: { value in isTouchOnePreviewLoading = value },
                                 setIsEditingOn: {
+                                    viewModel.analyticsTracker.trackEvent(
+                                        .mobileRadiusMailingEditMessageTemplate,
+                                        context: app.persistentContainer.viewContext
+                                    )
                                     isEditingTouchOne = true
                                 }
                             )
@@ -154,6 +167,10 @@ struct ComposeRadiusTopicSelectionView: View {
                                 touch: .touchTwo,
                                 showAlert: showAlert,
                                 setIsEditingOff: {
+                                    viewModel.analyticsTracker.trackEvent(
+                                        .mobileRadiusMailingShowPreview,
+                                        context: app.persistentContainer.viewContext
+                                    )
                                     isEditingTouchTwo = false
                                 }
                             )
@@ -165,6 +182,10 @@ struct ComposeRadiusTopicSelectionView: View {
                                 isLoading: isTouchTwoPreviewLoading,
                                 setIsLoading: { value in isTouchTwoPreviewLoading = value },
                                 setIsEditingOn: {
+                                    viewModel.analyticsTracker.trackEvent(
+                                        .mobileRadiusMailingEditMessageTemplate,
+                                        context: app.persistentContainer.viewContext
+                                    )
                                     isEditingTouchTwo = true
                                 }
                             )

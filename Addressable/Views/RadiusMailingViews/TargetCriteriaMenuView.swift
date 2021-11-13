@@ -26,6 +26,7 @@ enum CriteriaMenuOptions: String {
 
 struct TargetCriteriaMenuView: View {
     @Environment(\.presentationMode) var presentationMode
+    @EnvironmentObject var app: Application
     @ObservedObject var viewModel: ComposeRadiusViewModel
 
     @State var regionZipcodes: String = ""
@@ -176,6 +177,10 @@ struct TargetCriteriaMenuView: View {
                 }.padding()
                 HStack(spacing: 14) {
                     Button(action: {
+                        viewModel.analyticsTracker.trackEvent(
+                            .mobileTargetCriteriaMenuChangesCancelled,
+                            context: app.persistentContainer.viewContext
+                        )
                         // Reset Criteria
                         viewModel.getDataTreeDefaultSearchCriteria()
                         presentationMode.wrappedValue.dismiss()
@@ -191,7 +196,11 @@ struct TargetCriteriaMenuView: View {
                             .multilineTextAlignment(.center)
                     }
                     Button(action: {
-                        // Release to Production
+                        // Apply Changes
+                        viewModel.analyticsTracker.trackEvent(
+                            .mobileTargetCriteriaMenuChangesApplied,
+                            context: app.persistentContainer.viewContext
+                        )
                         presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Apply")
