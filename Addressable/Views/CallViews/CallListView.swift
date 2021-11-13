@@ -204,7 +204,12 @@ struct CallListView: View, Equatable {
             }
         }
         .sheet(isPresented: $displayMissedCallsView) {
-            MissedCallsView(subjectLead: $subjectLead)
+            MissedCallsView(subjectLead: $subjectLead) {
+                viewModel.analyticsTracker.trackEvent(
+                    .mobilePlayVoiceMailTapped,
+                    context: app.persistentContainer.viewContext
+                )
+            }
         }
         .background(Color.addressableLightGray)
     }

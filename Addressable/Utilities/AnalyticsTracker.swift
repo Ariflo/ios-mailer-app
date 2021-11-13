@@ -126,6 +126,7 @@ enum AnalyticsEventName: String {
     case mobileRadiusMailingShowPreview = "mobile_app_radius_mailing_message_template_show_preview_pressed"
     case mobileUpdateDateRadiusMailing = "mobile_app_radius_mailing_touch_one_target_date_updated"
     case mobileNavigationHamburgerMenuTapped = "mobile_app_navigation_hamburger_menu_tapped"
+    case mobilePlayVoiceMailTapped = "mobile_app_play_voicemail_pressed"
 }
 
 class AnalyticsTracker {

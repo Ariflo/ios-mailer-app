@@ -10,6 +10,8 @@ import SwiftUI
 struct MissedCallsView: View {
     @Binding var subjectLead: IncomingLead?
 
+    let playVoiceMailCallBack: () -> Void
+
     var body: some View {
         NavigationView {
             if let lead = subjectLead {
@@ -32,6 +34,7 @@ struct MissedCallsView: View {
                             .onTapGesture {
                                 guard let voicemailUrl = call.voicemailURL,
                                       let url = URL(string: voicemailUrl) else { return }
+                                playVoiceMailCallBack()
                                 UIApplication.shared.open(url)
                             } : nil
                     }
