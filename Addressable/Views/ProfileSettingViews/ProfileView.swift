@@ -12,10 +12,11 @@ enum ProfileSections: String, CaseIterable {
     case team = "Team"
     case address = "Address Information"
     case api = "API Token"
+    case smartNumber = "Smart Number Forwarding"
 }
 
 enum ProfileViewAlertTypes {
-    case confirmSignOff, appError
+    case confirmSignOff, confirmIsPrimary(Bool), appError
 }
 
 struct ProfileView: View, Equatable {
@@ -122,6 +123,22 @@ struct ProfileView: View, Equatable {
                     return Alert(title: Text("Sorry something went wrong," +
                                                 " try again or reach out to an Addressable " +
                                                 " representative if the problem persists."))
+                case .confirmIsPrimary(let isPrimary):
+                    return Alert(
+                        title: .init("Switch Primary User for Account?"),
+                        message: .init("Switching primary user `On` will " +
+                                        "remove primary status for any other device " +
+                                        "using this account username and password."),
+                        primaryButton: .default(.init("Confirm")) {
+                            viewModel.analyticsTracker.trackEvent(
+                                isPrimary ? .mobileIsPrimaryToggledOn : .mobileIsPrimaryToggledOff,
+                                context: app.persistentContainer.viewContext
+                            )
+                            viewModel.isPrimaryUser = isPrimary
+                            viewModel.updateIsPrimary()
+                        },
+                        secondaryButton: .cancel()
+                    )
                 }
             }
             .sheet(isPresented: $isEditingUserAddress) {
@@ -135,9 +152,29 @@ struct ProfileView: View, Equatable {
                     .navigationBarTitle("Update Address")
                 }
             }
+        }.onAppear {
+            viewModel.verifyMobileRegistration { response in
+                guard let response = response else { return }
+
+                guard let mobileIdentity = response.mobileIdentity else {
+                    // Case user has no mobile identity, logout of application
+                    logOutOfApplication()
+                    return
+                }
+                // Case user is not logged in, logout of application
+                if !mobileIdentity.loggedIn {
+                    logOutOfApplication()
+                }
+                viewModel.isPrimaryUser = mobileIdentity.isPrimary
+                viewModel.loadingIsPrimary = false
+            }
         }
     }
     private func logOutOfApplication() {
+        viewModel.analyticsTracker.trackEvent(
+            .mobileProfileViewUnauthorizedLogout,
+            context: app.persistentContainer.viewContext
+        )
         // Deregister Device w/ Twilio
         if let delegate = app.callKitProvider {
             delegate.credentialsInvalidated()

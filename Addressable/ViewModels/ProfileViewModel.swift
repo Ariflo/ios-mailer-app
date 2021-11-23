@@ -8,12 +8,14 @@
 import SwiftUI
 import Combine
 
+// swiftlint:disable type_body_length
 class ProfileViewModel: ObservableObject {
     @Published var account: Account?
     @Published var handwritings: [Handwriting] = []
     @Published var loadingHandwritings: Bool = false
     @Published var loadingUserAccount: Bool = false
     @Published var loadingUserAddress: Bool = false
+    @Published var loadingIsPrimary: Bool = false
 
     @Published var userFirstName: String = ""
     @Published var userLastName: String = ""
@@ -24,6 +26,8 @@ class ProfileViewModel: ObservableObject {
     @Published var userState: String = ""
     @Published var userZipcode: String = ""
     @Published var dre: String = ""
+
+    @Published var isPrimaryUser: Bool = false
 
     private let apiService: ApiService
     private var disposables = Set<AnyCancellable>()
@@ -36,7 +40,15 @@ class ProfileViewModel: ObservableObject {
     }
 
     func logout(onCompletion: @escaping (GenericAPISuccessResponse?) -> Void) {
-        apiService.logoutMobileUser()
+        guard let keyStoreDeviceId = KeyChainServiceUtil.shared[latestDeviceID],
+              let encodedDeviceIdData = try? JSONEncoder().encode(
+                DeviceIDWrapper(deviceID: keyStoreDeviceId)
+              ) else {
+            print("DeviceId Encoding Error In ProfileView")
+            return
+        }
+
+        apiService.logoutMobileUser(with: encodedDeviceIdData)
             .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { value in
@@ -219,5 +231,56 @@ class ProfileViewModel: ObservableObject {
         userState = user.state
         userZipcode = user.zipcode
         dre = user.dre ?? ""
+    }
+
+    func verifyMobileRegistration(completion: @escaping (MobileIdentityResponse?) -> Void) {
+        loadingIsPrimary = true
+        if let deviceId = KeyChainServiceUtil.shared[latestDeviceID] {
+            apiService.verifyMobileIdentity(with: deviceId)
+                .receive(on: DispatchQueue.main)
+                .sink(
+                    receiveCompletion: { value in
+                        switch value {
+                        case .failure(let error):
+                            completion(nil)
+                            print("verifyMobileRegistration() ProfileViewModel(), receiveCompletion error: \(error)")
+                        case .finished:
+                            break
+                        }
+                    },
+                    receiveValue: { mobileIdentityResponse in
+                        completion(mobileIdentityResponse)
+                    })
+                .store(in: &disposables)
+        }
+    }
+
+    func updateIsPrimary() {
+        guard let encodedIsPrimaryData = try? JSONEncoder().encode(
+            UpdateMobileIdentityWrapper(mobileIdentity: UpdatedMobileIdentity(isPrimary: isPrimaryUser))
+        ) else {
+            print("UpdateUserIsPrimary Encoding Error")
+            return
+        }
+        guard let keyStoreDeviceId = KeyChainServiceUtil.shared[latestDeviceID] else { return }
+        loadingIsPrimary = true
+        apiService.updateUserIsPrimary(with: keyStoreDeviceId, isPrimaryData: encodedIsPrimaryData)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { [weak self] value in
+                    guard let self = self else { return }
+                    switch value {
+                    case .failure(let error):
+                        print("updateIsPrimary() receiveCompletion error: \(error)")
+                        self.loadingIsPrimary = false
+                    case .finished:
+                        break
+                    }
+                },
+                receiveValue: { [weak self] _ in
+                    guard let self = self else { return }
+                    self.loadingIsPrimary = false
+                })
+            .store(in: &disposables)
     }
 }

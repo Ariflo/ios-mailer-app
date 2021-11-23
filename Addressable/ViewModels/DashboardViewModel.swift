@@ -39,4 +39,23 @@ class DashboardViewModel: ObservableObject {
                 })
             .store(in: &disposables)
     }
+
+    func verifyMobileRegistration(with deviceId: String, completion: @escaping (MobileIdentityResponse?) -> Void) {
+        apiService.verifyMobileIdentity(with: deviceId)
+            .receive(on: DispatchQueue.main)
+            .sink(
+                receiveCompletion: { value in
+                    switch value {
+                    case .failure(let error):
+                        completion(nil)
+                        print("verifyMobileRegistration(), receiveCompletion error: \(error)")
+                    case .finished:
+                        break
+                    }
+                },
+                receiveValue: { mobileIdentityResponse in
+                    completion(mobileIdentityResponse)
+                })
+            .store(in: &disposables)
+    }
 }

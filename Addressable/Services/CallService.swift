@@ -443,7 +443,8 @@ extension CallService: PushKitEventDelegate {
     }
 
     func credentialsInvalidated() {
-        callManager.fetchToken { tokenData in
+        guard let keyStoreDeviceId = KeyChainServiceUtil.shared[latestDeviceID] else { return }
+        callManager.fetchToken(deviceID: keyStoreDeviceId) { tokenData in
             guard let accessToken = tokenData?.jwtToken,
                   let deviceToken = UserDefaults.standard.data(forKey: kCachedDeviceToken) else { return }
 

@@ -19,7 +19,6 @@ struct SignInView: View {
     @State var password: String = ""
     @State var showingAlert = false
     @State var alertText: String = ""
-    @State var authorizedUser: Int?
     @State var isNavigationBarHidden: Bool = true
     @State var secured: Bool = true
 
@@ -56,44 +55,44 @@ struct SignInView: View {
                 }
             }
 
-            NavigationLink(destination: AppView().environmentObject(app), tag: 1, selection: $authorizedUser) {
-                Button(action: {
-                    let account = username.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
-                    let pwd = password.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 
-                    guard !(account.isEmpty || pwd.isEmpty) else {
-                        alertText = "Please enter a username and password."
-                        showingAlert = true
-                        return
-                    }
+            Button(action: {
+                let account = username.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                let pwd = password.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
 
-                    let loginString = String(format: "%@:%@", account, pwd)
-                    if let loginData = loginString.data(using: String.Encoding.utf8) {
-                        viewModel.login(with: loginData.base64EncodedString()) { authenticatedUser in
-                            guard authenticatedUser != nil else {
-                                alertText = "Incorrect Username or Password. Try Again!"
-                                showingAlert = true
-                                return
-                            }
+                guard !(account.isEmpty || pwd.isEmpty) else {
+                    alertText = "Please enter a username and password."
+                    showingAlert = true
+                    return
+                }
 
-                            KeyChainServiceUtil.shared[userBasicAuthToken] = loginData.base64EncodedString()
-                            // swiftlint:disable force_unwrapping
-                            guard let encodedCurrentUserData = try? JSONEncoder().encode(authenticatedUser!) else {
-                                print("encodedCurrentUserData Encoding Error")
-                                return
-                            }
-                            KeyChainServiceUtil.shared[userData] = String(data: encodedCurrentUserData, encoding: .utf8)
-                            logInToApplication()
+                let loginString = String(format: "%@:%@", account, pwd)
+                if let loginData = loginString.data(using: String.Encoding.utf8) {
+                    viewModel.login(with: loginData.base64EncodedString()) { authenticatedUser in
+                        guard authenticatedUser != nil else {
+                            alertText = "Incorrect Username or Password. Try Again!"
+                            showingAlert = true
+                            return
                         }
+
+                        KeyChainServiceUtil.shared[userBasicAuthToken] = loginData.base64EncodedString()
+                        // swiftlint:disable force_unwrapping
+                        guard let encodedCurrentUserData = try? JSONEncoder().encode(authenticatedUser!) else {
+                            print("encodedCurrentUserData Encoding Error")
+                            return
+                        }
+                        KeyChainServiceUtil.shared[userData] = String(data: encodedCurrentUserData, encoding: .utf8)
+                        logInToApplication()
                     }
-                }) {
-                    Text("Log In")
-                        .foregroundColor(Color.gray)
                 }
-                .alert(isPresented: $showingAlert) {
-                    Alert(title: Text(alertText))
-                }
+            }) {
+                Text("Log In")
+                    .foregroundColor(Color.gray)
             }
+            .alert(isPresented: $showingAlert) {
+                Alert(title: Text(alertText))
+            }
+
             if let versionNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
                let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
                 Text("v\(appVersion) (\(versionNumber))")
@@ -111,7 +110,6 @@ struct SignInView: View {
             )
             DispatchQueue.main.async {
                 app.currentView = .dashboard(false, true)
-                authorizedUser = 1
             }
         } else {
             viewModel.analyticsTracker.trackEvent(

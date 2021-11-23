@@ -84,3 +84,43 @@ struct UpdateUserAddress: Codable {
         case city, state, zipcode
     }
 }
+
+// MARK: - MobileIdentityResponse
+struct MobileIdentityResponse: Codable {
+    let mobileIdentity: MobileIdentity?
+
+    enum CodingKeys: String, CodingKey {
+        case mobileIdentity = "mobile_identity"
+    }
+}
+
+// MARK: - MobileIdentity
+struct MobileIdentity: Codable {
+    let id: Int
+    let loggedIn: Bool
+    let isPrimary: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case loggedIn = "logged_in"
+        case isPrimary = "is_primary"
+    }
+}
+
+// MARK: - UpdateMobileIdentityWrapper
+struct UpdateMobileIdentityWrapper: Codable {
+    let mobileIdentity: UpdatedMobileIdentity
+
+    enum CodingKeys: String, CodingKey {
+        case mobileIdentity = "mobile_identity"
+    }
+}
+
+// MARK: - UpdatedMobileIdentity
+struct UpdatedMobileIdentity: Codable {
+    let isPrimary: Bool
+
+    enum CodingKeys: String, CodingKey {
+        case isPrimary = "is_primary"
+    }
+}

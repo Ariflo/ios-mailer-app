@@ -261,8 +261,8 @@ struct CampaignsView: View, Equatable {
                 title: Text("Smart Number Forwarding"),
                 message: Text("All telephoney related features (ie. Calls, Messages, QR code scans) " +
                                 "will be forwarded to this device via this app." +
-                                " If you are not the intended recipient please tap on the " +
-                                "hamburger menu > tap 'Profile' > 'Logout' immediately.")
+                                " If you are not the primary user please tap on the " +
+                                "hamburger menu > tap 'Profile' > Toggle 'Account Primary User' Off immediately.")
             )
         }
     }

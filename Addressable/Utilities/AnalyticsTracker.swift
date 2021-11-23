@@ -127,6 +127,10 @@ enum AnalyticsEventName: String {
     case mobileUpdateDateRadiusMailing = "mobile_app_radius_mailing_touch_one_target_date_updated"
     case mobileNavigationHamburgerMenuTapped = "mobile_app_navigation_hamburger_menu_tapped"
     case mobilePlayVoiceMailTapped = "mobile_app_play_voicemail_pressed"
+    case mobileIsPrimaryToggledOn = "mobile_app_is_primary_user_toggled_on"
+    case mobileIsPrimaryToggledOff = "mobile_app_is_primary_user_toggled_off"
+    case mobileProfileViewUnauthorizedLogout = "mobile_app_unauthorized_user_logged_out_profile_view"
+    case mobileDashboardViewUnauthorizedLogout = "mobile_app_unauthorized_user_logged_out_dashboard_view"
 }
 
 class AnalyticsTracker {

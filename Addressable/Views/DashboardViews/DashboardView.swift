@@ -5,6 +5,7 @@
 //  Created by Arian Flores on 12/3/20.
 //
 
+// swiftlint:disable type_body_length
 import SwiftUI
 
 enum MainMenu: String, CaseIterable {
@@ -211,6 +212,23 @@ struct DashboardView: View {
                         UIApplication.shared.registerForRemoteNotifications()
                     }
                 }
+
+                if let deviceId = KeyChainServiceUtil.shared[latestDeviceID] {
+                    viewModel.verifyMobileRegistration(with: deviceId) { response in
+                        guard let response = response else { return }
+
+                        guard let mobileIdentity = response.mobileIdentity else {
+                            // Case user has no mobile identity, logout of application
+                            logOutOfApplication()
+                            return
+                        }
+                        // Case user is not logged in, logout of application
+                        if !mobileIdentity.loggedIn {
+                            logOutOfApplication()
+                        }
+                    }
+                }
+
                 if let callManager = app.callManager,
                    let knownLead = callManager.getLeadFromLatestCall() {
                     if knownLead.status == "unknown" && shouldDisplayIncomingLeadSurvey {
@@ -275,6 +293,24 @@ struct DashboardView: View {
             return false
         }
         return !user.smartNumbers.isEmpty
+    }
+    private func logOutOfApplication() {
+        viewModel.analyticsTracker.trackEvent(
+            .mobileDashboardViewUnauthorizedLogout,
+            context: app.persistentContainer.viewContext
+        )
+        // Deregister Device w/ Twilio
+        if let delegate = app.callKitProvider {
+            delegate.credentialsInvalidated()
+        }
+        // Unregister device w/ Apple
+        UIApplication.shared.unregisterForRemoteNotifications()
+
+        // Reset KeyChain Store
+        KeyChainServiceUtil.shared.clearAll()
+
+        // Return to Sign-in
+        app.currentView = .signIn
     }
 }
 

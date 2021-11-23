@@ -14,8 +14,10 @@ let unauthorizedUserResponse = "content=\"authenticity_token\""
 protocol FetchableData {
     // MARK: - Authorization
     func getCurrentUserAuthorization(with basicAuthToken: String) -> AnyPublisher<AuthorizedUserResponse, ApiError>
-    func logoutMobileUser() -> AnyPublisher<GenericAPISuccessResponse, ApiError>
+    func logoutMobileUser(with deviceIdData: Data?) -> AnyPublisher<GenericAPISuccessResponse, ApiError>
     func getTwilioAccessToken(_ deviceIdData: Data?) -> AnyPublisher<TwilioAccessTokenData, ApiError>
+    func verifyMobileIdentity(with deviceId: String) -> AnyPublisher<MobileIdentityResponse, ApiError>
+    func updateUserIsPrimary(with deviceId: String, isPrimaryData: Data?) -> AnyPublisher<GenericAPISuccessResponse, ApiError>
     // MARK: - Incoming Leads
     func getIncomingLeads() -> AnyPublisher<IncomingLeadsResponse, ApiError>
     func getIncomingLeadsWithMessages() -> AnyPublisher<IncomingLeadsResponse, ApiError>
@@ -74,6 +76,16 @@ class ApiService: Service {
 }
 
 extension ApiService: FetchableData {
+    func updateUserIsPrimary(with deviceId: String, isPrimaryData: Data?) -> AnyPublisher<GenericAPISuccessResponse, ApiError> {
+        return makeApiRequest(with: updateUserIsPrimaryRequestComponents(with: deviceId),
+                              postRequestBodyData: nil,
+                              patchRequestBodyData: isPrimaryData)
+    }
+
+    func verifyMobileIdentity(with deviceId: String) -> AnyPublisher<MobileIdentityResponse, ApiError> {
+        return makeApiRequest(with: getMobileIdentityRequestComponents(with: deviceId))
+    }
+
     func getAccount(with accountId: Int) -> AnyPublisher<AccountResponse, ApiError> {
         return makeApiRequest(with: getAccountRequestComponents(with: accountId))
     }
@@ -148,8 +160,8 @@ extension ApiService: FetchableData {
         return makeApiRequest(with: getMailingRecipientsRequestComponents(for: mailingId))
     }
 
-    func logoutMobileUser() -> AnyPublisher<GenericAPISuccessResponse, ApiError> {
-        makeApiRequest(with: logoutMobileUserRequestComponents(), postRequestBodyData: Data())
+    func logoutMobileUser(with deviceIdData: Data?) -> AnyPublisher<GenericAPISuccessResponse, ApiError> {
+        makeApiRequest(with: logoutMobileUserRequestComponents(), postRequestBodyData: deviceIdData)
     }
 
     func getDefaultDataTreeSearchCriteria() -> AnyPublisher<DataTreeSearchCriteriaWrapper, ApiError> {
@@ -418,6 +430,18 @@ private extension ApiService {
         AddressableAPI.components.scheme = AddressableAPI.scheme
         AddressableAPI.components.host = AddressableAPI.host
         AddressableAPI.components.path = AddressableAPI.path + "/auth/mobile_deregistration"
+
+        return AddressableAPI.components
+    }
+
+    func getMobileIdentityRequestComponents(with deviceId: String) -> URLComponents {
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
+
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/mobile_identities/\(deviceId)"
 
         return AddressableAPI.components
     }
@@ -855,6 +879,18 @@ private extension ApiService {
         AddressableAPI.components.scheme = AddressableAPI.scheme
         AddressableAPI.components.host = AddressableAPI.host
         AddressableAPI.components.path = AddressableAPI.path + "/users/\(userId)"
+
+        return AddressableAPI.components
+    }
+
+    func updateUserIsPrimaryRequestComponents(with deviceId: String) -> URLComponents {
+        #if DEBUG
+        AddressableAPI.components.port = AddressableAPI.port
+        #endif
+
+        AddressableAPI.components.scheme = AddressableAPI.scheme
+        AddressableAPI.components.host = AddressableAPI.host
+        AddressableAPI.components.path = AddressableAPI.path + "/mobile_identities/\(deviceId)"
 
         return AddressableAPI.components
     }

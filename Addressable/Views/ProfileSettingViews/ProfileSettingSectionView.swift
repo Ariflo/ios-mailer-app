@@ -23,20 +23,29 @@ struct ProfileSettingSectionView: View {
                 Text(section.rawValue)
                     .font(Font.custom("Silka-Bold", size: 14))
                     .foregroundColor(Color.addressablePurple)
-                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 0))
+                    .padding(
+                        EdgeInsets(
+                            top: section == .smartNumber ? 20 : 0,
+                            leading: 20,
+                            bottom: section == .smartNumber ? 20 : 0,
+                            trailing: 0
+                        )
+                    )
                 Spacer()
-                Button(action: {
-                    getButtonAction(for: section)
-                }) {
-                    Text(getButtonText(for: section))
-                        .font(Font.custom("Silka-Medium", size: 12))
-                        .padding(8)
-                        .foregroundColor(Color.white)
-                        .background(Color.addressablePurple)
-                        .cornerRadius(5)
-                        .multilineTextAlignment(.center)
-                }
-                .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 20))
+                section == .smartNumber ?
+                    nil
+                    : Button(action: {
+                        getButtonAction(for: section)
+                    }) {
+                        Text(getButtonText(for: section))
+                            .font(Font.custom("Silka-Medium", size: 12))
+                            .padding(8)
+                            .foregroundColor(Color.white)
+                            .background(Color.addressablePurple)
+                            .cornerRadius(5)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(EdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 20))
             }
             .background(Color.addressableLightGray)
             .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
@@ -309,6 +318,52 @@ struct ProfileSettingSectionView: View {
                         }
                     }
                 }.padding(20)
+            // MARK: - IsPrimary User Segment Control
+            case .smartNumber:
+                if viewModel.loadingIsPrimary {
+                    VStack {
+                        Spacer()
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                        Spacer()
+                    }.frame(
+                        minWidth: 0,
+                        maxWidth: .infinity,
+                        minHeight: 0,
+                        maxHeight: .infinity,
+                        alignment: .center
+                    )
+                } else {
+                    VStack(alignment: .leading, spacing: 12) {
+                        VStack(spacing: 12) {
+                            Text("As the primary user of this account all smart number phone calls, sms messages " +
+                                    "and other telephoney related notifications will be forwarded to this device.")
+                                .font(Font.custom("Silka-Medium", size: 14))
+                                .foregroundColor(Color.black.opacity(0.3))
+                                .multilineTextAlignment(.center)
+                        }
+                        let isPrimaryUserBinding = Binding<Bool>(
+                            get: { viewModel.isPrimaryUser },
+                            set: { isPrimary in
+                                if !isPrimary {
+                                    viewModel.analyticsTracker.trackEvent(
+                                        isPrimary ? .mobileIsPrimaryToggledOn : .mobileIsPrimaryToggledOff,
+                                        context: app.persistentContainer.viewContext
+                                    )
+                                    viewModel.isPrimaryUser = isPrimary
+                                    viewModel.updateIsPrimary()
+                                } else {
+                                    alertType = .confirmIsPrimary(isPrimary)
+                                    showingAlert = true
+                                }
+                            }
+                        )
+                        Toggle(isOn: isPrimaryUserBinding) {
+                            Text("Primary Account User")
+                                .font(Font.custom("Silka-Medium", size: 14))
+                        }
+                    }.padding(20)
+                }
             }
         }
         .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
@@ -387,6 +442,8 @@ struct ProfileSettingSectionView: View {
                 .mobileLearnMoreAPIPressed,
                 context: app.persistentContainer.viewContext
             )
+        case .smartNumber:
+            do {}
         }
     }
     private func getButtonText(for section: ProfileSections) -> String {
@@ -401,6 +458,8 @@ struct ProfileSettingSectionView: View {
             return "Edit Address"
         case .api:
             return "Learn More"
+        case .smartNumber:
+            return ""
         }
     }
     private func getCurrentUser() -> User? {
