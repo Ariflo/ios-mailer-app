@@ -320,50 +320,35 @@ struct ProfileSettingSectionView: View {
                 }.padding(20)
             // MARK: - IsPrimary User Segment Control
             case .smartNumber:
-                if viewModel.loadingIsPrimary {
-                    VStack {
-                        Spacer()
-                        ProgressView()
-                            .progressViewStyle(CircularProgressViewStyle())
-                        Spacer()
-                    }.frame(
-                        minWidth: 0,
-                        maxWidth: .infinity,
-                        minHeight: 0,
-                        maxHeight: .infinity,
-                        alignment: .center
-                    )
-                } else {
-                    VStack(alignment: .leading, spacing: 12) {
-                        VStack(spacing: 12) {
-                            Text("As the primary user of this account all smart number phone calls, sms messages " +
-                                    "and other telephoney related notifications will be forwarded to this device.")
-                                .font(Font.custom("Silka-Medium", size: 14))
-                                .foregroundColor(Color.black.opacity(0.3))
-                                .multilineTextAlignment(.center)
-                        }
-                        let isPrimaryUserBinding = Binding<Bool>(
-                            get: { viewModel.isPrimaryUser },
-                            set: { isPrimary in
-                                if !isPrimary {
-                                    viewModel.analyticsTracker.trackEvent(
-                                        isPrimary ? .mobileIsPrimaryToggledOn : .mobileIsPrimaryToggledOff,
-                                        context: app.persistentContainer.viewContext
-                                    )
-                                    viewModel.isPrimaryUser = isPrimary
-                                    viewModel.updateIsPrimary()
-                                } else {
-                                    alertType = .confirmIsPrimary(isPrimary)
-                                    showingAlert = true
-                                }
+                VStack(alignment: .leading, spacing: 12) {
+                    VStack(spacing: 12) {
+                        Text("As the primary user of this account all smart number phone calls, sms messages " +
+                                "and other telephoney related notifications will be forwarded to this device.")
+                            .font(Font.custom("Silka-Medium", size: 14))
+                            .foregroundColor(Color.black.opacity(0.3))
+                            .multilineTextAlignment(.center)
+                    }
+                    let isPrimaryUserBinding = Binding<Bool>(
+                        get: { viewModel.isPrimaryUser },
+                        set: { isPrimary in
+                            if !isPrimary {
+                                viewModel.analyticsTracker.trackEvent(
+                                    isPrimary ? .mobileIsPrimaryToggledOn : .mobileIsPrimaryToggledOff,
+                                    context: app.persistentContainer.viewContext
+                                )
+                                viewModel.isPrimaryUser = isPrimary
+                                viewModel.updateIsPrimary()
+                            } else {
+                                alertType = .confirmIsPrimary(isPrimary)
+                                showingAlert = true
                             }
-                        )
-                        Toggle(isOn: isPrimaryUserBinding) {
-                            Text("Primary Account User")
-                                .font(Font.custom("Silka-Medium", size: 14))
                         }
-                    }.padding(20)
-                }
+                    )
+                    Toggle(isOn: isPrimaryUserBinding) {
+                        Text("Primary Account User")
+                            .font(Font.custom("Silka-Medium", size: 14))
+                    }.disabled(viewModel.loadingIsPrimary)
+                }.padding(20)
             }
         }
         .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
