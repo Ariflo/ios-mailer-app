@@ -95,6 +95,75 @@ start_up_addressable() {
 ```
 * Run `start_up_addressable()` in a new Terminal shell to immediately get a working local instance of the Addressable local API running: [See Working Demo](https://youtu.be/ps6QPAr1oao)
 
+## Certification Renwal (circa Mar. 2022)
+
+### *Things to Note* 
+
+* As of this writing there is no "renewing" an Apple certificate, you must create a new one to replace the old one. 
+
+* The steps are the same for renewing all Apple certificates (VOIP, Sandbox, Development, Distribution etc.)
+
+* You do * NOT * need to revoke or remove the original / expiring certificates. If you do, only do so after updating all third-party services with the new certificate.
+
+1 - Login to the [Apple Development Portal](https://developer.apple.com/account/resources/certificates/list), navigate to the "Certificates, Identifiers & Profiles" page.
+
+2 - Tap on the (+) icon.
+
+3 - Select the Software or Service Certificate you desire to create.
+
+4 - Select the related App ID you wish to associate with the certificate.
+
+5 - Follow the [steps to create a new certification request](https://help.apple.com/developer-account/#/devbfa00fef7) on your Mac.
+
+6 - Upload the `.certSigningRequest` file that you just created.
+
+7 - Click the download button to get the `.cer` file from Apple.
+
+8 - Double-click the downloaded `.cer` file on your Mac to add it to your keychain.
+
+9 - Find the newly added certificate in the `Keychain Access Application` window and right-click it to export as `.p12` and create a secure password (store in `1password` or some password manager).
+
+10 - Use the newly created `.p12` certificate to distribute to all third-party services and servers that'll require it for authorization.
+
+### Upload APN Certificate to AWS SNS
+
+1 - Go to Amazon's [AWS SNS](https://us-west-1.console.aws.amazon.com/sns/v3/home?region=us-west-1#/mobile/push-notifications) page, click on the "Push Notifications" tab to see the list of your `Platform Applications`.
+
+2 - Select the application that needs renewed credentials.
+
+3 - Select the `Edit` button.
+
+4 - Select `Certificate` under the "Authentication Method" heading.
+
+5 - Choose the `.p12` file you created locally and provide the secure password.
+
+6 - Save Changes.
+
+### Upload APN Certificate to Twilio
+
+1 - Go to Twilio's [Mobile Push Credentials](https://console.twilio.com/us1/develop/notify/try-it-out?frameUrl=%2Fconsole%2Fnotify%2Fcredentials%2Fcreate%3Fx-target-region%3Dus1) page.
+
+2 - Select the application that needs renewed credentials.
+
+3 - Keep this page open on your browser and open a new `Terminal` shell. We need to extract the certificate key and private key from the `.p12`. 
+
+4 - Enter the following command into your terminal to create the `cert.pem`: <br>```openssl pkcs12 -in [PATH_TO_YOUR_.p12] -nokeys -out cert.pem -nodes```.
+
+5 - Enter the following command into your terminal to create the `key.pem`: <br>```openssl pkcs12 -in [PATH_TO_YOUR_.p12] -nocerts -out key.pem -nodes```.
+
+6 - Run the following command into your terminal: <br>```openssl rsa -in key.pem -out key.pem```.
+
+7 - Run the following command into your terminal: <br> ```open -a TextEdit [PATH_TO_YOUR_cert.pem]```.
+
+9 - Copy and paste everything within and including the `-----BEGIN CERTIFICATE-----` and `-----END CERTIFICATE-----` boundaries to [Mobile Push Credentials](https://console.twilio.com/us1/develop/notify/try-it-out?frameUrl=%2Fconsole%2Fnotify%2Fcredentials%2Fcreate%3Fx-target-region%3Dus1) page under `Certificate`.
+
+10 - Run the following command in your terminal: <br> ```open -a TextEdit [PATH_TO_YOUR_key.pem]```.
+
+11 - Copy and paste everything within and including the `-----BEGIN RSA PRIVATE KEY-----` and `-----END RSA PRIVATE KEY-----` boundaries to [Mobile Push Credentials](https://console.twilio.com/us1/develop/notify/try-it-out?frameUrl=%2Fconsole%2Fnotify%2Fcredentials%2Fcreate%3Fx-target-region%3Dus1) page under `Private Key`.
+
+12 - Save Changes.
+
+
 ## Architecture
 
 This application is developed using Apple's Swift / Swift UI Framework. The application is broken down into three environments, each connecting to the cooresponding Addressable API environment:
@@ -409,3 +478,5 @@ Contributors
 * [oh-my-zsh](https://ohmyz.sh)
 * [Swift-lint](https://github.com/realm/SwiftLint)
 * [Twilio iOS SDK](https://www.twilio.com/docs/voice/sdks/ios)
+* [Renew Apple Push Notifications](https://dontpaniclabs.com/blog/post/2021/04/13/renewing-your-apple-push-notification-ssl-certificate/)
+* [Twilio iOS SDK Quick Guide](https://www.twilio.com/docs/voice/sdks/ios/get-started)
