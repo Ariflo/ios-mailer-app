@@ -15,6 +15,7 @@ enum PushNotificationEvents: String, CaseIterable {
     case mailingListStatus = "mailing_list_status"
     case incomingLeadCall = "incoming_lead_call"
     case incomingLeadMessage = "incoming_lead_message"
+    case dailyDigest = "daily_digest"
 }
 
 protocol PushKitEventDelegate: AnyObject {
@@ -203,6 +204,9 @@ class Application: UIResponder, UIApplicationDelegate, PKPushRegistryDelegate, O
                 return isPressed ? .pushNotificationPressedCall : .pushNotificationRecievedCall
             case .incomingLeadMessage:
                 guard payload.incomingLeadMessage != nil else { break }
+                return isPressed ? .pushNotificationPressedMessage : .pushNotificationRecievedMessage
+            case .dailyDigest:
+                guard payload.dailyDigest != nil else { break }
                 return isPressed ? .pushNotificationPressedMessage : .pushNotificationRecievedMessage
             }
         }

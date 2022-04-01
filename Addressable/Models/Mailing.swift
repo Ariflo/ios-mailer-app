@@ -61,7 +61,7 @@ struct RelatedMailing: Codable {
     let id, accountID, userID: Int
     let name, createdAt, updatedAt: String
     let isCopyApproved, isAssetsApproved: Bool
-    let targetQuantity, finalQuantity: Int
+    let targetQuantity, finalQuantity: Int?
     let hubspotTicketID: Int?
     let subjectListEntryID: Int
     let multiTouchTopicID, parentMailingID: Int?

@@ -262,6 +262,9 @@ struct DashboardView: View {
                         case .incomingLeadMessage:
                             guard pushEvent.incomingLeadMessage != nil else { break }
                             selectedMenuItem = .messages
+                        case .dailyDigest:
+                            guard pushEvent.dailyDigest != nil else { break }
+                            selectedMenuItem = .calls
                         }
                     }
                 }

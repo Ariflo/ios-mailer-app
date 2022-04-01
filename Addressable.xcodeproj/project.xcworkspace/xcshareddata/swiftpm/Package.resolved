@@ -1,70 +1,68 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "MapboxCommon",
-        "repositoryURL": "https://github.com/mapbox/mapbox-common-ios.git",
-        "state": {
-          "branch": null,
-          "revision": "0344eb61ec9e3cf96c81b1767354a8a3cd1246fc",
-          "version": "20.0.0"
-        }
-      },
-      {
-        "package": "MapboxCoreMaps",
-        "repositoryURL": "https://github.com/mapbox/mapbox-core-maps-ios.git",
-        "state": {
-          "branch": null,
-          "revision": "fd3b7e65b51fd984831c1337876b038ed183480b",
-          "version": "10.0.0"
-        }
-      },
-      {
-        "package": "MapboxMobileEvents",
-        "repositoryURL": "https://github.com/mapbox/mapbox-events-ios.git",
-        "state": {
-          "branch": null,
-          "revision": "e29f48d9ed02b31ef51f9774a9c45f1d7c2c2b78",
-          "version": "1.0.6"
-        }
-      },
-      {
-        "package": "MapboxMaps",
-        "repositoryURL": "https://github.com/mapbox/mapbox-maps-ios.git",
-        "state": {
-          "branch": null,
-          "revision": "ff273a812f0414537cfb6f55d4945bf377195269",
-          "version": "10.0.1"
-        }
-      },
-      {
-        "package": "MapboxSearch",
-        "repositoryURL": "https://github.com/mapbox/search-ios.git",
-        "state": {
-          "branch": null,
-          "revision": "5f631b101053a856c64512c4fafff9b6afd70260",
-          "version": "1.0.0-beta.15"
-        }
-      },
-      {
-        "package": "Turf",
-        "repositoryURL": "https://github.com/mapbox/turf-swift.git",
-        "state": {
-          "branch": null,
-          "revision": "dccd79aee4c21298d1beb81cc0e86eccbe911ae0",
-          "version": "2.0.0"
-        }
-      },
-      {
-        "package": "TwilioVoice",
-        "repositoryURL": "https://github.com/twilio/twilio-voice-ios",
-        "state": {
-          "branch": null,
-          "revision": "075cf26abf9b7e4782600f464b564ae6b5cadc4c",
-          "version": "6.3.0"
-        }
+  "pins" : [
+    {
+      "identity" : "mapbox-common-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mapbox/mapbox-common-ios.git",
+      "state" : {
+        "revision" : "0344eb61ec9e3cf96c81b1767354a8a3cd1246fc",
+        "version" : "20.0.0"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "mapbox-core-maps-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mapbox/mapbox-core-maps-ios.git",
+      "state" : {
+        "revision" : "fd3b7e65b51fd984831c1337876b038ed183480b",
+        "version" : "10.0.0"
+      }
+    },
+    {
+      "identity" : "mapbox-events-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mapbox/mapbox-events-ios.git",
+      "state" : {
+        "revision" : "e29f48d9ed02b31ef51f9774a9c45f1d7c2c2b78",
+        "version" : "1.0.6"
+      }
+    },
+    {
+      "identity" : "mapbox-maps-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mapbox/mapbox-maps-ios.git",
+      "state" : {
+        "revision" : "ff273a812f0414537cfb6f55d4945bf377195269",
+        "version" : "10.0.1"
+      }
+    },
+    {
+      "identity" : "search-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mapbox/search-ios.git",
+      "state" : {
+        "revision" : "5f631b101053a856c64512c4fafff9b6afd70260",
+        "version" : "1.0.0-beta.15"
+      }
+    },
+    {
+      "identity" : "turf-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mapbox/turf-swift.git",
+      "state" : {
+        "revision" : "dccd79aee4c21298d1beb81cc0e86eccbe911ae0",
+        "version" : "2.0.0"
+      }
+    },
+    {
+      "identity" : "twilio-voice-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/twilio/twilio-voice-ios",
+      "state" : {
+        "revision" : "075cf26abf9b7e4782600f464b564ae6b5cadc4c",
+        "version" : "6.3.0"
+      }
+    }
+  ],
+  "version" : 2
 }
