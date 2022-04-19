@@ -55,7 +55,7 @@ struct MailingCoverImagePagerView: View, Equatable {
                 .filter { $0 == .cardBack || $0 == .cardFront } : MailingImages.allCases
 
             TabView(selection: isEditingMailingCoverImage ? $selectedCoverImageIndex : $selectedMailingImageIndex) {
-                ForEach(mailingImages.indices) { index in
+                ForEach(mailingImages.indices, id: \.self) { index in
                     switch mailingImages[index] {
                     case .envelopeOutside:
                         MailingImagePreviewView(

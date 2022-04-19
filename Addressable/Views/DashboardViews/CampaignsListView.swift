@@ -157,7 +157,7 @@ struct CampaignsListView: View {
                                 if !getMailings(with: mailingStatus).isEmpty {
                                     let mailingList = getMailings(
                                         with: mailingStatus).filter { isRelatedToSearchQuery($0) }
-                                    ForEach(mailingList.indices) { mailingIndex in
+                                    ForEach(mailingList.indices, id: \.self) { mailingIndex in
                                         if mailingIndex < (isListFiltered ? mailingList.count :
                                                             maxMailingsDisplayCount) {
                                             let mailing = mailingList[mailingIndex]

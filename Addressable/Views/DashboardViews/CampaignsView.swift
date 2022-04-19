@@ -107,7 +107,15 @@ struct CampaignsView: View, Equatable {
                                             .foregroundColor(Color.addressableFadedBlack)
                                         Text(String(describing: stat.rawValue))
                                             .font(Font.custom("Silka-Bold", size: 14))
-                                    }.padding(12)
+                                    }
+                                    .padding(12)
+                                    .onTapGesture {
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileDashboardViewTapOnNumOfCampaign,
+                                            context: app.persistentContainer.viewContext
+                                        )
+                                        selectedMenuItem = .campaigns
+                                    }
                                 case .cards:
                                     Spacer()
                                     VStack(spacing: 6) {
@@ -116,7 +124,15 @@ struct CampaignsView: View, Equatable {
                                             .foregroundColor(Color.addressableFadedBlack)
                                         Text(String(describing: stat.rawValue))
                                             .font(Font.custom("Silka-Bold", size: 14))
-                                    }.padding(12)
+                                    }
+                                    .padding(12)
+                                    .onTapGesture {
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileDashboardViewTapOnNumOfCards,
+                                            context: app.persistentContainer.viewContext
+                                        )
+                                        selectedMenuItem = .campaigns
+                                    }
                                 case .calls:
                                     Spacer()
                                     VStack(spacing: 6) {
@@ -125,7 +141,15 @@ struct CampaignsView: View, Equatable {
                                             .foregroundColor(Color.addressableFadedBlack)
                                         Text(String(describing: stat.rawValue))
                                             .font(Font.custom("Silka-Bold", size: 14))
-                                    }.padding(12)
+                                    }
+                                    .padding(12)
+                                    .onTapGesture {
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileDashboardViewTapOnNumOfCalls,
+                                            context: app.persistentContainer.viewContext
+                                        )
+                                        selectedMenuItem = .calls
+                                    }
                                 case .sms:
                                     Spacer()
                                     VStack(spacing: 6) {
@@ -134,7 +158,15 @@ struct CampaignsView: View, Equatable {
                                             .foregroundColor(Color.addressableFadedBlack)
                                         Text(String(describing: stat.rawValue))
                                             .font(Font.custom("Silka-Bold", size: 14))
-                                    }.padding(12)
+                                    }
+                                    .padding(12)
+                                    .onTapGesture {
+                                        viewModel.analyticsTracker.trackEvent(
+                                            .mobileDashboardViewTapOnNumOfSms,
+                                            context: app.persistentContainer.viewContext
+                                        )
+                                        selectedMenuItem = .messages
+                                    }
                                 }
                             }
                         }

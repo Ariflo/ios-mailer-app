@@ -76,7 +76,7 @@ struct MailingRecipientsListView: View, Equatable {
                         Text("Address:").font(Font.custom("Silka-Light", size: 12))
                         Spacer()
                         Picker(selection: $selectedAddressTypeIndex, label: Text("Address")) {
-                            ForEach(Array(AddressType.allCases).indices) { optionIndex in
+                            ForEach(Array(AddressType.allCases).indices, id: \.self) { optionIndex in
                                 AddressTypeMenuOption(option: AddressType.allCases[optionIndex]).tag(optionIndex)
                             }
                         }.pickerStyle(SegmentedPickerStyle())

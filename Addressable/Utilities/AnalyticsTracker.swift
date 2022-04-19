@@ -131,6 +131,10 @@ enum AnalyticsEventName: String {
     case mobileIsPrimaryToggledOff = "mobile_app_is_primary_user_toggled_off"
     case mobileProfileViewUnauthorizedLogout = "mobile_app_unauthorized_user_logged_out_profile_view"
     case mobileDashboardViewUnauthorizedLogout = "mobile_app_unauthorized_user_logged_out_dashboard_view"
+    case mobileDashboardViewTapOnNumOfCampaign = "mobile_app_dashboard_view_tap_on_num_of_campaigns"
+    case mobileDashboardViewTapOnNumOfCards = "mobile_app_dashboard_view_tap_on_num_of_cards"
+    case mobileDashboardViewTapOnNumOfCalls = "mobile_app_dashboard_view_tap_on_num_of_calls"
+    case mobileDashboardViewTapOnNumOfSms = "mobile_app_dashboard_view_tap_on_num_of_sms"
 }
 
 class AnalyticsTracker {

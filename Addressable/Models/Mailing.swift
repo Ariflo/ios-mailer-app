@@ -29,7 +29,7 @@ struct Mailing: Codable, Identifiable, Equatable {
     let topicDuration, topicSelectionID: Int?
     let mailingStatus: String
     let listStatus: String?
-    let targetDropDate: String
+    let targetDropDate: String?
     let envelopeOutsidePreviewUrl, previewCardFrontUrl, cardInsidePreviewUrl, previewCardBackUrl: String?
 
     enum CodingKeys: String, CodingKey {

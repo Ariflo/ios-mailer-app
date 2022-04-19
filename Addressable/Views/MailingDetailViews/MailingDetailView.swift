@@ -399,7 +399,7 @@ struct MailingDetailView: View, Equatable {
     private func getTargetDropDateObject() -> Date {
         let dateFormatterGet = DateFormatter()
         dateFormatterGet.dateFormat = "yyyy-MM-dd"
-        if let date = dateFormatterGet.date(from: viewModel.mailing.targetDropDate) {
+        if let date = dateFormatterGet.date(from: viewModel.mailing.targetDropDate ?? "") {
             return date
         } else {
             return Date()

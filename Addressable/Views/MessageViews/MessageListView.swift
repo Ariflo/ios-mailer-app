@@ -63,7 +63,7 @@ struct MessageListView: View, Equatable {
                     .progressViewStyle(CircularProgressViewStyle())
             } else {
                 RefreshableScrollView(refreshing: $viewModel.refreshMessagesData) {
-                    List(viewModel.incomingLeadsWithMessages) { lead in
+                    ForEach(viewModel.incomingLeadsWithMessages) { lead in
                         HStack {
                             VStack(alignment: .leading, spacing: 6) {
                                 if let name = lead.firstName {
@@ -90,10 +90,12 @@ struct MessageListView: View, Equatable {
                             selectedLead = lead
                             navigateToChat = true
                         }
-                        .padding(.bottom)
+                        .padding()
+                        .background(Color.white)
+                        .border(width: 1, edges: [.bottom], color: Color.gray.opacity(0.2))
                     }
-                    .listStyle(PlainListStyle())
-                }.background(Color.addressableLightGray)
+                }
+                .background(Color.addressableLightGray)
             }
         }
         .background(

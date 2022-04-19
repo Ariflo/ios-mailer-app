@@ -399,12 +399,6 @@ extension CallService: PushKitEventDelegate {
                 TwilioVoiceSDK.register(accessToken: accessToken, deviceToken: cachedDeviceToken) { error in
                     if let error = error {
                         print("An error occurred while registering: \(error.localizedDescription)")
-                        /*
-                         * Re-register device in the case of failure
-                         */
-                        DispatchQueue.main.async {
-                            UIApplication.shared.registerForRemoteNotifications()
-                        }
                     } else {
                         print("Successfully registered for VoIP push notifications.")
 
