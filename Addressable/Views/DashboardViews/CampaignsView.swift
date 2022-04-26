@@ -20,7 +20,7 @@ enum CampaignsStat: String, CaseIterable {
     case calls = "Calls"
     case sms = "SMS"
 }
-
+// swiftlint:disable type_body_length
 struct CampaignsView: View, Equatable {
     static func == (lhs: CampaignsView, rhs: CampaignsView) -> Bool {
         lhs.selectedMenuItem == rhs.selectedMenuItem

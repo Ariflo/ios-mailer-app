@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/mapbox-common-ios.git",
       "state" : {
-        "revision" : "0344eb61ec9e3cf96c81b1767354a8a3cd1246fc",
-        "version" : "20.0.0"
+        "revision" : "15221bf71677824975d2d9418fe76bd4259e9c3b",
+        "version" : "21.2.1"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/mapbox-core-maps-ios.git",
       "state" : {
-        "revision" : "fd3b7e65b51fd984831c1337876b038ed183480b",
-        "version" : "10.0.0"
+        "revision" : "05cc6505956f2311e1a932fc021e9b14c4cdccb2",
+        "version" : "10.4.2"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/mapbox-events-ios.git",
       "state" : {
-        "revision" : "e29f48d9ed02b31ef51f9774a9c45f1d7c2c2b78",
-        "version" : "1.0.6"
+        "revision" : "1b6c2a34086de40c26f2f97a716ac419f46eb630",
+        "version" : "1.0.7"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/mapbox-maps-ios.git",
       "state" : {
-        "revision" : "ff273a812f0414537cfb6f55d4945bf377195269",
-        "version" : "10.0.1"
+        "revision" : "61ba7962a208100242a72c588ee83e20575bd2d9",
+        "version" : "10.4.3"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/search-ios.git",
       "state" : {
-        "revision" : "5f631b101053a856c64512c4fafff9b6afd70260",
-        "version" : "1.0.0-beta.15"
+        "revision" : "6cf86b1be2be4ff9aee0b02f55add5ae6520d3a8",
+        "version" : "1.0.0-beta.27"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mapbox/turf-swift.git",
       "state" : {
-        "revision" : "dccd79aee4c21298d1beb81cc0e86eccbe911ae0",
-        "version" : "2.0.0"
+        "revision" : "569e0f0e96fda86e1a1dcefaefa68cfa9491ffc1",
+        "version" : "2.4.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/twilio/twilio-voice-ios",
       "state" : {
-        "revision" : "075cf26abf9b7e4782600f464b564ae6b5cadc4c",
-        "version" : "6.3.0"
+        "revision" : "299f89b4053fbfb7511751033b41029a42872b56",
+        "version" : "6.3.1"
       }
     }
   ],
