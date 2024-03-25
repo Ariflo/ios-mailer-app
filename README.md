@@ -1,6 +1,6 @@
 # Addressable: Looking Glass
 
-The mobile (iOS) application extension of the [Addressable Web App](https://live.addressable.app).
+The mobile (iOS) application extension of the now deprecatted [Addressable Web App](https://www.handwrytten.com/resources/addressablemail/).
 
 <p float="left">
 <img src="AppImages/mailing_list.gif" width="250" height="550" />
